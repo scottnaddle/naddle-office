@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "tenantId": "example",
+  "product": {
+    "name": "NaddleOffice",
+    "nameKo": "나들오피스"
+  },
+  "secretRefs": {
+    "modelGatewayKey": "env:NADDLE_MODEL_GATEWAY_KEY"
+  }
+}

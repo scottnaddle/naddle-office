@@ -397,9 +397,19 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 1. **빌드 훅**: `company/policy/build-hook.cjs` 대체 — 브랜드·버전·피드 게이트를 **새 overlay 훅**으로. 업스트림 `publish` 설정을 그대로 쓰되(업스트림이 이미 켜 둠), 회사 정책으로 끄지 않는다 — generic 제품이라 업데이트가 기본이어야 한다.
 2. **자산 네이밍**: `brand.json`의 `productName`에서 파생(`${productName}-Setup-${version}.${ext}`, `electron-builder.cjs:919-921`) → 브랜드만 바꾸면 신규 산출. 앱ID·프로토콜 핸들러·바로가기도 동시 분리(§8.1-10).
    - **[직접확인] devops m292 보강 — `publish` 대상은 상수 하드코딩**: `electron-builder.cjs:29-30`의 `REPO_OWNER='pblsketch'` / `REPO_NAME='openoffice'`가 `config.publish`(`:1001-1006`)에 쓰인다. 브랜드만 바꿔서는 **릴리스 저장소가 업스트림을 가리킨 채** 남는다.
-   - **해결 방식(업스트림 훅 0개)**: `build-hook.cjs`가 `config.publish` 설정(`electron-builder.cjs:1001`) **뒤에** 호출(`:1013`)되므로, 새 overlay 훅이 `config.publish = [{ provider:'github', owner:<소유자>, repo:<저장소> }]`로 **덮어쓸 수 있다** → 업스트림 파일을 수정하지 않는다.
+   - **해결 방식(업스트림 훅 0개)**: `build-hook.cjs`가 `config.publish` 설정(`electron-builder.cjs:1001`) **뒤에** 호출(`:1013`)되므로, 새 overlay 훅이 `config.publish`를 **덮어쓸 수 있다** → 업스트림 파일을 수정하지 않는다.
+   - **확정값 (devops m301)**: `config.publish = [{ provider:'github', owner:'scottnaddle', repo:'naddle-office' }]` — **최종 이름으로.** (릴리스 저장소를 소스와 분리하기로 결정되면 그쪽 저장소명으로 교체.)
    - **[직접확인 devops m294] owner/repo는 **최종 이름**으로 확정**: `owner='scottnaddle'`, `repo='naddle-office'`. GitHub API가 이전 이름으로 307 리다이렉트하지만 **electron-updater가 쓰는 다운로드 URL은 리다이렉트를 따라가지 않을 수 있다** → **리다이렉트에 의존하지 않는다.** 리포명이 바뀌면 **자동 업데이트가 찾는 피드 경로도 바뀐다**는 점이 여기서 확인된다.
-   - **[미확인] 새 결정**: 이 `repos`가 가리키는 **릴리스 저장소**는 소스 저장소와 다를 수 있다(**공개 소스 + 비공개 릴리스 분리**). 어느 쪽을 쓸지 §8 결정 항목에 추가. private 릴리스 저장소를 쓰면 §6.6.3의 provider 제약(토큰 필요)이 걸린다.
+   - **[미확인] 새 결정**: 이 `repos`가 가리키는 **릴리스 저장소**는 소스 저장소와 다를 수 있다(**공개 소스 + 비공개 릴리스 분리**). 어느 쪽을 쓸지 §8 결정 항목에 추가(§8.1-21). private 릴리스 저장소를 쓰면 §6.6.3의 provider 제약(토큰 필요)이 걸린다.
+   - **[직접확인 devops m306] 브랜딩 3축 분리** — 세 축은 규칙이 다르므로 **한 축만 바꿔지는 일이 없도록** 분리해 둔다.
+
+| 축 | 값 | 출처 | 규칙 |
+|---|---|---|---|
+| **산출 파일명** | **영문** (`naddle` 계열) | `brand.json` `productName` → `${productName}-Setup-${version}.${ext}`(`electron-builder.cjs:919-921`)·`${productName}-${version}-${arch}.${ext}`(`:993` dmg) | 릴리스 자산명은 **URL 경로에 쓰인다.** `productName`이 한글이면 파일명에 비ASCII가 들어가 **URL 인코딩·역슬래시 처리에서 예기치 않은 형태**가 될 수 있다 → **반드시 영문** |
+| **앱 ID·프로토콜 핸들러** | **영문** (`naddle://` 계열) | `brand.json` `appId`(`global.ubion.office` 형식)·`winProgIdPrefix` | 프로토콜 핸들러는 영문이어야 하고 **사전 등록·고유성**이 필요. 이미 설치된 앱과의 충돌 회피 |
+| **표시명** | **한글** (`나들오피스`) | `brand.json` `productNameKo`(현재 `유비온오피스` 형식) | 화면·설치 UI에 노출 |
+
+**[직접확인] 업스트림도 이미 이 구분을 쓴다** — 내부 이름은 `ieumoffice`(`packages/i18n/src/product.ts`·`package.json`), `brand.json`에는 `productName`과 `productNameKo`가 **별도 키**로 존재한다. 파일명 규칙은 `productName`에서, 앱 ID는 `appId`/`ProgId`에서 따로 온다 → **3축을 같은 축으로 취급하지 않는다.**
 3. **설치 형태**: NSIS `oneClick:false` + `allowToChangeInstallationDirectory:true`(`:914-915`) → 사용자가 경로 선택, **임의 경로 설치 가능**. 기업 배포에 적합. [직접확인]
 4. **샌드박스/코사인**: macOS는 공증 필수(위). Windows는 서명 + MDM 설치(MSIX는 미서명 앱에 부적합 → NSIS 유지 + 그룹 정책 배포).
 5. **릴리스 파이프라인**: 기존 `ubion-office`는 GitHub Actions 비활성(`gh api` → `{"enabled":false}` [직접확인]) + Mac Studio 로컬 크로스 빌드(`ubion-office` 11-08 인수인계 §6.2). **[직접확인 devops m294 정정] 새 저장소는 Actions가 이미 활성**(`{"enabled":true,"allowed_actions":"all","sha_pinning_required":false}`, 워크플로 0개) → **워크플로를 추가·실행하는 데 저장소 설정 변경 승인이 필요 없다.** m292에서 "새 저장소도 기본 비활성"이라고 한 것은 **틀렸고 여기로 철회한다.** 남는 승인 대상은 **서명 키**와 **릴리스 저장소 공개 범위**다. [직접확인] 다만 **업스트림의 windows-build 워크플로는 그대로 재사용할 수 없다** — 산출물명·자체서명 PFX 경로가 업스트림 기준(`IeumOffice-…`)이라 그대로 쓰면 **산출물 이름과 브랜드가 업스트림 이름으로 나간다.** 새 워크플로가 필요하다.

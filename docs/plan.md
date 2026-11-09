@@ -8,7 +8,8 @@
 
 ## 0. 한 줄 요약
 
-유비온오피스는 **이음오피스(IeumOffice, Apache-2.0) 위에 얹은 "회사 오버레이"**다. 일반 기업용 앱은 (1) 새 저장소, (2) 업스트림 추종 구조를 **공통 코어 + 제품 오버레이**로 바꾸고, (3) "하드코딩된 정책"을 **런타임 테넌트 설정**으로 바꾸는 것이 핵심 작업이다. [직접확인] 코드의 **유비온 고유 문자열 374건 중 285건(76%)은 식별자 이름**이고, URL 리터럴은 **2건뿐**이다 — 즉 대부분은 이름·구조 문제이지 동작 로직 문제가 아니다. [직접확인] **주입 seam 4개(`DaouClient`·`OfficeBrokerClient`·`RelayClient`·`WikiApiClient`)가 이미 새 기능 3종(계정·지식·모델)에 대응한다** — 설정 런타임화만 해결하면 어댑터를 붙이는 방식으로 일반화가 진행되고 대형 재작성은 필요 없다(§3.3.1). [보고] 서버 쪽도 api가 같은 4개 축의 인터페이스(`IdentityProvider`·`KnowledgeSource`·`ModelGateway` 등)를 제시했고, 유비온 전용을 `adapters/ubion`으로 격리해 나중에 얹도록 설계했다(§5.1). **MVP 4~6주 [추정]** — 기간은 전부 추정이며 아래 §6 로드맵에만 있고, 근거는 §3·§6.5의 코드 확인 결과다.
+유비온오피스는 **이음오피스(IeumOffice, Apache-2.0) 위에 얹은 "회사 오버레이"**다. 일반 기업용 앱은 (1) 새 저장소, (2) 업스트림 추종 구조를 **공통 코어 + 제품 오버레이**로 바꾸고, (3) "하드코딩된 정책"을 **런타임 테넌트 설정**으로 바꾸는 것이 핵심 작업이다. [직접확인] 코드의 **유비온 고유 문자열 374건 중 285건(76%)은 식별자 이름**이고, URL 리터럴은 **2건뿐**이다 — 즉 대부분은 이름·구조 문제이지 동작 로직 문제가 아니다. [직접확인] **주입 seam 4개(`DaouClient`·`OfficeBrokerClient`·`RelayClient`·`WikiApiClient`)가 이미 새 기능 3종(계정·지식·모델)에 대응한다** — 설정 런타임화만 해결하면 어댑터를 붙이는 방식으로 일반화가 진행되고 대형 재작성은 필요 없다(§3.3.1). [보고] 서버 쪽도 api가 같은 4개 축의 인터페이스(`IdentityProvider`·`KnowledgeSource`·`ModelGateway` 등)를 제시했고, 유비온 전용을 `adapters/ubion`으로 격리해 나중에 얹도록 설계했다(§5.1).
+[직접확인] **배포 관점에서 mac 자체 업데이트는 ad-hoc 서명에서도 동작한다**(devops m292 정정 반영). 이전 판이 인용한 업스트림 주석은 현재 코드와 어긋났고, 실제 구현(`mac-update.ts`)은 Squirrel.Mac이 아닌 자체 스테이징 경로이며 차단 사유는 파일시스템 3조건이다(§6.6.2). **MVP 4~6주 [추정]** — 기간은 전부 추정이며 아래 §6 로드맵에만 있고, 근거는 §3·§6.5의 코드 확인 결과다.
 
 §3.7의 업스트림 훅 **정확히 21개**는 단정 숫자가 아니라 아래 명령으로 재현된다 [직접확인]: `git diff --name-only --diff-filter=M b8cb8564b...HEAD` 에서 `company/`·`packages/company-policy/`·`packages/ubion-*/`·`docs/` 를 제외하고 `package-lock.json`(generated)도 제외하면 21개가 나온다. §3.1의 374건은 `grep -rn 'ubion\|Ubion\|유비온\|coco\|Daou\|daou' --include='*.ts' --include='*.tsx' packages/company-policy/src packages/ubion-staff-login/src packages/ubion-wiki/src packages/ubion-video/src | grep -v test` 의 출현 라인 수다.
 
@@ -348,10 +349,10 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 | `company/policy/company.policy.json` | 정책 스키마 + endpoint | **런타임 설정으로** (§3.4) |
 | `company/auth.config.json` | ubt1·virtualKey TTL | 재설계(신규 인증 모델) |
 | `company/templates/`·`company/video-themes/` | 빌드 내장 카탈로그 | 테넌트 배포 카탈로그로 (§3.6) |
-| `company/scripts/check-patches.mjs` | 업스트림 21개 훅 상한 검사 | **대체 필요** — 새 제품의 훅 예산 정의 |
+| `company/scripts/check-patches.mjs` | 업스트림 21개 훅 상한 검사 | **대체 필요** — 새 제품의 훅 예산 정의. **[직접확인 devops m292] 대장 구조도 새로 만들어야 한다**: 파일·줄·목적·되돌리는법·회차가 업스트림 기준. 게다가 `check-patches.mjs`의 `IGNORED_PREFIXES`가 **회사 계층 경로를 하드코딩**하므로, 새 저장소에서는 overlay 경로명이 달라져 **checker 스크립트 자체를 새 저장소용으로 다시 짜야 한다 → 이것 자체가 훅 1개**다 |
 | `company/security/.gitleaksignore` | 푸시 게이트 | 재사용 가능 |
 | `company/PATCHES.md` | 훅 대장 | 재사용 가능(제품별 별도 대장 권장) |
-| `company/docs/` | 배포 체크리스트·런북·Windows 빌드 | **재설계** (서버 endpoint·브랜드 전부 다름) |
+| `company/docs/` | 배포 체크리스트·런북·Windows 빌드 | **재설계** (서버 endpoint·브랜드 전부 다름). **[직접확인 devops m292]** 유비온 서버(nginx allowlist·bot·gateway) 전용이라 그대로 이식하면 안 된다. 이식 시 **서버 배포 문서(체크리스트·런북)와 빌드 경로 문서(Windows 크로스 빌드)를 분리**하는 게 낫다 — 서버 쪽은 tenant별로 달라지고, 빌드 쪽은 서버와 무관하게 재사용 가능 |
 
 **[추정] 핵심**: 새 리포에는 upstream을 그대로 받고 **새로운 overlay 계층**을 만드는 구조가 필요하다.
 
@@ -361,6 +362,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 3. **내부 도메인 제외** — `llm.ubion.global`·`lms.ubion.global`·`bot.ubion.global`·`coco.ubion.co.kr` 등 사내 엔드포인트는 **기본값으로 남기면 안 된다.** 일반 제품의 기본값은 비어 있거나 예시값이어야 하고, 실제 값은 테넌트 설정에서만 온다(§3.4).
 4. **기여·보안·릴리스 정책** — 공개 저장소이므로 `CONTRIBUTING.md`·`SECURITY.md`(신고 경로)·릴리스/서명 절차가 필요하다. [직접확인] 업스트림에 이미 이 파일들이 있다 — Apache-2.0 §4(a)(b)(c)(d)와 함께 동봉 대상.
 5. **공개 전환 자체가 저장소 설정 변경** — ✓ 승인 대상이며, 위 1~4가 통과한 뒤에야 실행한다. `check-patches`의 "21개 훅 상한" 규칙은 유비온의 것이므로, 새 제품의 훅 예산(훅 목록 + 상한 + 되돌리는법)을 새로 정의해야 한다. 이건 §3.7의 병목과 직결된다 — **공통 코어에 훅을 두면 새 제품은 훅을 0개 상속**받는다.
+6. **릴리스 파이프라인 활성화도 저장소 설정 변경** — ✓ 승인 대상 (GitHub Actions는 새 저장소에서도 기본 비활성, §6.6.4-5). 자동 업데이트를 켜려면 이 승인이 선행이다.
 
 ### 6.6.2 업스트림의 자동 업데이트는 켜져 있다 [직접확인]
 
@@ -369,26 +371,39 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 - `apps/shell/electron-builder.cjs` — `publish` provider 설정이 업스트림 기본으로 들어 있고, `latest.yml`(Windows NSIS)·`beta-mac.yml`(macOS)·`beta-linux.yml`을 릴리스에 올리는 구조.
 - **유비온은 이걸 끈다**: `company/policy/build-hook.cjs:457-461` — `policy.updates.enabled !== true`면 `config.publish = null`, `nsis.publish = null`, `rpm.publish = null` → **피드가 아예 구워지지 않는다.** 주석: "TEMPORARY (Scott): updates stay off until the company generic update feed exists."
 
-**[직접확인] 함정**: macOS 자체 업데이트는 ad-hoc 서명 앱에서는 막힌다. `apps/shell/electron-builder.cjs:978-988` — `config.mac.identity = '-'`, `hardenedRuntime = false`, `notarize = false`, `dmg.sign = false` (Apple Silicon이 실행 자체에 ad-hoc 서명을 요구하고, ad-hoc은 hardened runtime의 라이브러리 검증을 통과하지 못함). 주석에 "**Squirrel.Mac cannot install updates into such an app**" — macOS 자체 업데이트는 이식 불가하므로 릴리스 페이지로 유도한다. → §6.6.3.
+**[직접확인] macOS 자체 업데이트 — ad-hoc 서명에서도 동작한다 (devops m292 정정 반영).**
+이 항목은 이전 판이 **틀렸다.** 근거가 업스트림 주석(`electron-builder.cjs:978-988`)이었는데, 그 주석은 **현재 코드와 어긋난다.** 실제 구현 기준:
+- **`apps/shell/src/main/mac-update.ts:146-172` `installMacStaging`** — "Points electron-updater's Mac download at `stage` instead of **Squirrel.Mac**". Squirrel.Mac은 **쓰이지 않는다.** electron-updater의 `updateDownloaded`를 가로채 앱 옆에 zip을 풀어 교체하고 `update-downloaded`를 직접 발행한다.
+- **`mac-update.ts:57-66` `macSelfUpdateBlock`** — 실제 차단 사유는 **3가지 파일시스템 조건**뿐이다: `not-an-app-bundle`(앱 번들이 아닌 경로 실행) · `translocated`(격리 경로 실행) · `read-only`(설치 폴더 쓰기 불가). **ad-hoc 서명은 차단 목록에 없다.**
+- **`mac-update.ts:20-21`** — "Nothing here adds or strips the quarantine flag: the app downloads the zip itself, so the files never carry one and the new version opens without the Gatekeeper prompt the first install needed." → 스테이징 경로는 **격리 플래그 없이** 새 버전을 연다.
+- `updater.ts:958`(차단 판정)·`:963`(`installMacStaging` 호출) — **릴리스 페이지로 유도하지 않는다.** `updater.ts:704`의 "릴리스 페이지"는 **수동 설치** 진입점 설명이다.
+
+→ **결론: macOS 자체 업데이트 경로는 그대로 쓸 수 있다.** 막히는 것은 서명이 아니라 위 3가지 실행 조건이다. **릴리스 페이지로 우회시키는 경로를 새로 만들 필요도 없다.**
+[직접확인] mac 서명(ad-hoc `identity='-'`·`hardenedRuntime=false`·`notarize=false`·`dmg.sign=false`)은 **자체 업데이트를 막는 요소가 아니다.** → §6.6.3의 mac 결정에서 **이유만** 바뀐다.
 
 ### 6.6.3 서명·업데이트 피드·채널 — 결정 사항
 
 | 결정 | 현재 상태 [직접확인] | 일반 제품에 필요한 것 |
 |---|---|---|
-| **mac 서명** | ad-hoc(`identity='-'`)·hardenedRuntime off·notarize off | **Developer ID + notarize** 필요. 없으면 첫 실행마다 "열기" 우회 + Gatekeeper friction → 기업 배포에 부적합 |
+| **mac 서명** | ad-hoc(`identity='-'`)·hardenedRuntime off·notarize off | **Developer ID + notarize** 필요 — 단 **이유가 "자체 업데이트 불가"가 아니다**(ad-hoc에서도 자체 업데이트는 동작한다, §6.6.2). 진짜 이유는 **Gatekeeper 마찰(첫 실행 "열기" 우회 반복) + 기업 MDM 배포 불가** |
 | **Windows 서명** | 유비온 릴리스는 **미서명** (PE 인증서 테이블 비어 있음 — `ubion-office` 11-08 인수인계 §6.2). 업스트림은 `GENOFFICE_WIN_SIGN_MODE`(`test`=자체서명 PFX, `production`=DigiCert KeyLocker) 경로를 제공(`electron-builder.cjs:945-954`) | **production 서명 필수** — "알 수 없는 게시자" 경고로는 기업 MDM 배포 불가. §8 결정 |
-| **자동 업데이트 피드** | 유비온은 **끔**(publish=null). 업스트림은 GitHub provider + `latest.yml` | **자체 피드 필요**. GitHub provider(공개 repo 한정)·S3·자체 서버 중 선택 → §8 결정 |
+| **자동 업데이트 피드** | 유비온은 **끔**(publish=null). 업스트림은 GitHub provider + `latest.yml` | **자체 피드 필요**. GitHub provider·S3·자체 서버 중 선택 → §8 결정. **[직접확인] 제약**: electron-updater의 `github` provider는 **토큰 없이 동작하는 공개 저장소 전제**다(`updater.ts:55-56` "the repository is public, which is why no token or feed URL has to be injected"). **private 릴리스 저장소를 쓰면 토큰이 필요**하고 토큰을 클라이언트에 넣는 것은 시크릿 배포 문제가 된다 → **private 릴리스 저장소를 쓸 경우 `s3`/`generic` provider로 피드를 분리하는 쪽이 안전** |
 | **업데이트 채널** | `stable`/`beta` 2개 | 채널 개념 재사용 가능. 단 enterprise는 "ring"(테스트→필로트→전체) 운영이 필요할 수 있음 → §8 결정 |
 | **Windows 서명자 종속** | — | [직접확인] `ubion-office` 11-08 인수인계 §6.2 릴리스 노트에 이미 명시됨 — 서명 없으면 나중 업데이트가 서명자에 종속. **서명 키 교체 경로(코드서명 인증서 교체)를 초기 설계에 포함해야 한다** |
 | **릴리스 자산** | `UbionOffice-Setup-0.12.11-ubion.1.exe`(NSIS x64, 미서명) 등 | 새 제품은 **자사 앱ID·서명·피드**로 별도 자산. 기존 자산은 **삭제하지 않는다**(windows-build.md §7 규칙) |
 
-### 6.6.4 빌드·배포 경로 재설계 방향 [추정]
+### 6.6.4 빌드·배포 경로 재설계 방향 [추정] — [직접확인] 코드 근거 포함
 
 1. **빌드 훅**: `company/policy/build-hook.cjs` 대체 — 브랜드·버전·피드 게이트를 **새 overlay 훅**으로. 업스트림 `publish` 설정을 그대로 쓰되(업스트림이 이미 켜 둠), 회사 정책으로 끄지 않는다 — generic 제품이라 업데이트가 기본이어야 한다.
 2. **자산 네이밍**: `brand.json`의 `productName`에서 파생(`${productName}-Setup-${version}.${ext}`, `electron-builder.cjs:919-921`) → 브랜드만 바꾸면 신규 산출. 앱ID·프로토콜 핸들러·바로가기도 동시 분리(§8.1-10).
+   - **[직접확인] devops m292 보강 — `publish` 대상은 상수 하드코딩**: `electron-builder.cjs:29-30`의 `REPO_OWNER='pblsketch'` / `REPO_NAME='openoffice'`가 `config.publish`(`:1001-1006`)에 쓰인다. 브랜드만 바꿔서는 **릴리스 저장소가 업스트림을 가리킨 채** 남는다.
+   - **해결 방식(업스트림 훅 0개)**: `build-hook.cjs`가 `config.publish` 설정(`electron-builder.cjs:1001`) **뒤에** 호출(`:1013`)되므로, 새 overlay 훅이 `config.publish = [{ provider:'github', owner:<소유자>, repo:<저장소> }]`로 **덮어쓸 수 있다** → 업스트림 파일을 수정하지 않는다.
+   - **[미확인] 새 결정**: 이 `repos`가 가리키는 **릴리스 저장소**는 소스 저장소와 다를 수 있다(**공개 소스 + 비공개 릴리스 분리**). 어느 쪽을 쓸지 §8 결정 항목에 추가. private 릴리스 저장소를 쓰면 §6.6.3의 provider 제약(토큰 필요)이 걸린다.
 3. **설치 형태**: NSIS `oneClick:false` + `allowToChangeInstallationDirectory:true`(`:914-915`) → 사용자가 경로 선택, **임의 경로 설치 가능**. 기업 배포에 적합. [직접확인]
 4. **샌드박스/코사인**: macOS는 공증 필수(위). Windows는 서명 + MDM 설치(MSIX는 미서명 앱에 부적합 → NSIS 유지 + 그룹 정책 배포).
-5. **릴리스 파이프라인**: 기존은 GitHub Actions 비활성(`gh api` → `{"enabled":false}` [직접확인]) + Mac Studio 로컬 크로스 빌드(`ubion-office` 11-08 인수인계 §6.2). 새 리포에서는 **릴리스 파이프라인·서명 키 관리**가 Phase 0 산출물이어야 한다 — 지금은 피드가 없는 상태라 자동화가 불가능.
+5. **릴리스 파이프라인**: 기존은 GitHub Actions 비활성(`gh api` → `{"enabled":false}` [직접확인]) + Mac Studio 로컬 크로스 빌드(`ubion-office` 11-08 인수인계 §6.2). 새 리포에서도 **Actions가 기본적으로 꺼져 있으므로**, 릴리스 파이프라인을 만들려면 **Actions 활성화 = 저장소 설정 변경 = ✓ 승인 대상**이다. 자동 업데이트를 켜려면 이 승인이 선행이다. [직접확인 devops m292] 새 저장소에서도 Actions 비활성 기본이며, **업스트림의 windows-build 워크플로는 그대로 재사용할 수 없다** — 산출물명·자체서명 PFX 경로가 업스트림 기준(`IeumOffice-…`)이라 그대로 쓰면 **산출물 이름과 브랜드가 업스트림 이름으로 나간다.** 새 워크플로가 필요하다.
+   - **[추정] 서명 키 관리를 초기 설계에 포함** (devops 동의): 피드가 없어서 자동화가 어려운 문제가 아니라, **서명 키 관리(보관·주입·교체·폐기)**와 **매핑(어떤 빌드가 어떤 키로 서명되는지)**가 없으면 "서명 교체" 시점에 **어떤 사용자가 갱신 불가 상태가 되는지 추적이 안 된다.** 키 교체 경로는 초기 설계에 넣는다.
+   - **[직접확인] Windows 배포 방식**: MSIX는 미서명 앱에 부적합 → NSIS 유지가 맞다. **enterprise MDM은 NSIS + 그룹 정책 배포가 표준**이며, NSIS `allowToChangeInstallationDirectory:true`가 이미 켜져 있어 그대로 쓸 수 있다.
 
 ### 6.6.5 서버 운영 관점 (api 보고 인용)
 
@@ -396,6 +411,12 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 - [직접확인] 현재 서버는 systemd/tsx/nginx + JSON 파일 + 파일 기반 secrets. Postgres/Redis/오브젝트 스토리지/마이그레이션/HA 없음.
 - [직접확인] 감사 로그는 메모리 1000개 + stdout(`audit.ts:1-8`) → 기업 PoC 수준에서는 부족. [추정] 일반 제품 Phase 0에 최소 영구 audit + 요청 ID를 넣어야 한다.
 - [추정] 자동 업데이트를 켜면 **클라이언트-버전 ↔ 서버-계약 호환성** 관리가 필요. 업스트림은 `latest.yml`로 버전만 맞추지만, 서버 API가 바뀌면 구버전 클라이언트가 깨진다 → 서버는 **하위 호환 API 유지**가 필요하고, 업데이트 채널과 서버 배포 순서를 함께 계획해야 한다.
+- **[추정 → 확정] 권장 순서 (devops m292 보강 — 서버가 클라이언트보다 먼저)**: stable 채널로 먼저 나가면 구버전 클라이언트가 **즉시** 새 서버를 만나므로, **채널을 여는 것보다 서버 배포가 먼저**다.
+  1) 서버가 **구버전 계약을 유지한 채** 먼저 배포(추가 호환 API)
+  2) **beta 채널**로 클라이언트 검증
+  3) 서버의 **구버전 지원 종료 시점을 먼저 공지**
+  4) 그 뒤 **stable 릴리스**
+  → 즉 **어떤 채널을 언제 열지**를 서버 배포와 함께 계획해야 한다.
 
 ---
 
@@ -410,7 +431,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 6. **템플릿 원격 실행은 서명 검증 전 금지** — [보고] api m254. 스크립트/프레젠테이션 템플릿은 실행 가능한 코드를 포함할 수 있어, 배포 경로에 서명 검증이 없으면 임의 코드 실행 위험.
 7. **Windows 서명·오프라인 설치는 별도 과제** — [보고] api m254 + `ubion-office` 11-08 인수인계 §6.2의 기존 미서명 상태.
 8. **★ 자동 업데이트와 서버 계약의 호환성** [추정] — 업데이트를 켜면 구버전 클라이언트가 새 서버 API와 어긋날 수 있다. 서버는 하위 호환 API를 유지해야 하고 업데이트 채널과 서버 배포 순서를 함께 계획해야 한다(§6.6.5). 유비온은 지금 피드가 꺼져 있어 이 문제를 아직 겪지 않았다.
-9. **★ macOS 자체 업데이트 불가** [직접확인] — ad-hoc 서명 앱은 Squirrel.Mac이 업데이트를 설치할 수 없어 릴리스 페이지로 유도한다(`electron-builder.cjs:978-988`). 공증을 도입하지 않으면 이 구조가 계속된다(§6.6.2).
+9. ~~**★ macOS 자체 업데이트 불가**~~ → **[직접확인] 판정 뒤집힘 (devops m292)**. mac 자체 업데이트는 **ad-hoc 서명에서도 동작한다.** 실제 구현은 Squirrel.Mac이 아니라 `mac-update.ts:146-172`의 자체 스테이징 경로이며, 차단 사유는 서명이 아니라 `mac-update.ts:57-66`의 3가지 파일시스템 조건(`not-an-app-bundle`·`translocated`·`read-only`)이다. 근거가 되었던 업스트림 주석(`electron-builder.cjs:978-988`)은 **현재 코드와 어긋난다**(§6.6.2). 잔여 위험은 **Gatekeeper 마찰과 MDM 배포 불가**로 mac 서명 필요성의 이유만 바뀐다.
 10. **릴리스 파이프라인 부재** [직접확인] — GitHub Actions 비활성 + 로컬 크로스 빌드 대체. 새 리포에서 서명·피드를 다루려면 파이프라인 재설계가 선행되어야 한다(§6.6.4).
 
 ### 미확인 (이 저장소에서 확인할 수 없음)
@@ -419,7 +440,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 - [미확인] **@web의 클라이언트·배포 조사 결과 미수신**(2026-11-09 14:30 KST 기준). §6.5는 research가 직접 확인한 코드 근거로 보완했지만, web이 보는 "기능별 앱 내 붙는 위치"·"기업별 설정 파일 방식"·"훅 21개 중 범용 제품에 필요한 것/불필요한 것" 세 항목은 web 관점 교차 검증이 필요하다.
 - [미확인] 새 리포에 이음오피스 코드를 가져오는 방식·시점 — m262는 "계획서 결론 뒤"로만 확정. 코어 저장소로 쓸지 제품 저장소로 쓸지(§4 옵션 B/C)는 미결.
 - [미확인] 자동 업데이트 피드 정책 — 현재 꺼짐 상태이며 일반 제품에서는 필수(§6.5.2·§6.6.3).
-- [미확인] **@devops의 배포·릴리스 검토 결과 미수신**(2026-11-09 14:2x KST 기준). §6.6은 research가 코드에서 직접 확인한 근거로 작성했지만, devops 관점의 검토가 필요하다.
+- [보고] **@devops의 배포·릴리스 검토는 수신**(m292)해 §6.6에 반영했다. **핵심 정정 1건: §6.6.2의 "macOS 자체 업데이트 불가"가 사실과 달랐다** — mac 자체 업데이트는 ad-hoc 서명에서도 동작하며, 근거로 인용했던 업스트림 주석이 현재 코드와 어긋났다(§6.6.2·§6.6.3·§7-9). 나머지 6건은 보강이며 §6.6.1·§6.6.4·§6.6.5·§8.1에 반영했다. [직접확인] research가 devops의 코드 인용(`mac-update.ts:57-66`·`:146-172`·`:20-21`·`electron-builder.cjs:29-30`·`:1001-1013`·`updater.ts:748`·`build-hook.cjs:457-461`)을 **모두 소스에서 재확인**했다.
 - [보고] **@api의 서버 조사 결과는 수신**해 §5.1에 반영했다. 다만 **research가 서버 코드로 재검증하지 않았다** — §5.1 전체가 [보고]다. 서버 코드가 이 저장소 밖에 있어 확인이 불가하다.
 - [보고] **위키 gateway의 라이선스·소유권**은 저장소 밖이라 확인할 수 없다 — 공개 배포(결정 2) 전에 사람이 확인해야 한다.
 - [미확인] 새 리포의 시그닝 키 보유 주체·갱신 절차·MDM 연동 방식.
@@ -456,6 +477,9 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 18. **리포 공개 전환 시점** (결정 2) — private 유지하다가 공개 전 점검 5개(§6.6.1)를 통과하면 전환. **저장소 설정 변경이라 ✓ 승인 대상.**
 19. **제공형 클라우드의 요금·SLA·데이터 주권 리전** (결정 3) — §5의 하이브리드 구조에서 제공할 서비스 수준.
 20. **오픈소스 기여·보안 신고 경로** (결정 2) — 공개 저장소이므로 `CONTRIBUTING.md`·`SECURITY.md` 정책 확정.
+21. **릴리스 저장소의 공개/비공개 분리** (devops m292) — `config.publish`가 가리키는 저장소가 소스 저장소와 같아야 하는지, 별도 private 릴리스 저장소로 분리할지. private면 github provider에 토큰이 필요해 `s3`/`generic` provider로 피드를 분리하는 쪽이 안전(§6.6.3).
+22. **서명 키 보유 주체·갱신 절차·MDM 연동** — scott 결정 필요(보유 주체 불명, devops m292).
+23. **enterprise ring 운영 여부** — 테스트→필로트→전체 ring이 필요한가. 현 `stable`/`beta` 2채널로 부족하면 `updater.ts:748` `CHANNEL_FEED` 수정 = **업스트림 훅 1개**이므로 훅 예산에 포함시켜 설계한다(§6.6.3).
 
 ---
 

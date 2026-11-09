@@ -1,6 +1,6 @@
 # 일반 기업용 오피스 앱 — 조사·계획서
 
-> **상태: 조사 완료 · 계획서 초안.** 대상 리포 `scottnaddle/ieumoffice-enterprise`(private, Apache-2.0, `main`) — m262 지시대로 `docs/plan.md`로 PR(base `main`, 브랜치 `plan/enterprise-edition-v0`) 제출. **머지 금지.**
+> **상태: 조사 완료 · 계획서 초안.** 대상 리포 `scottnaddle/naddle-office`(private, Apache-2.0, `main`) — m262 지시대로 `docs/plan.md`로 PR(base `main`, 브랜치 `plan/enterprise-edition-v0`) 제출. **머지 금지.**
 > 기준 코드: `scottnaddle/ubion-office` main `01b4efe4` (2026-11-09 확인) · 조사 2026-11-09 14:0x KST · 읽기 전용(코드·서버·설치·저장소 설정 변경 없음)
 > 표기: **[직접확인]** 이 문서를 쓴 조사자가 직접 확인 · **[보고]** 다른 담당자 보고 · **[추정]** 규모·기간은 추정 · **[미확인]** 확인되지 않음
 
@@ -32,7 +32,7 @@
 | 5 | **자동 업데이트 피드 운영 필요** | §6.6.3·§6.6.4 — 서명·채널·피드 호스팅·롤백 |
 | 6 | **새 리포는 처음 코드를 어떻게 채울지 미정** | §8.1-11 — 아래 §4.5 선택지 |
 
-[직접확인] 결정 2는 **리포를 private으로 두는 현재 상태와 상충**한다 — `scottnaddle/ieumoffice-enterprise`는 private이고, 공개 전환은 저장소 설정 변경이라 ✓ 승인 대상이다(§6.6.1·§8.1).
+[직접확인] 결정 2는 **리포를 private으로 두는 현재 상태와 상충**한다 — `scottnaddle/naddle-office`는 private이고, 공개 전환은 저장소 설정 변경이라 ✓ 승인 대상이다(§6.6.1·§8.1).
 
 ### 비목표 (이번 단계)
 - 코드·서버·설치·저장소 설정 변경 없음 (조사·계획만).
@@ -392,7 +392,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 ## 8. 결정이 필요한 질문 (한 번에)
 
 **scott-air15에게**
-1. ~~새 리포 이름·소유자·공개 범위~~ → **확정됨(m261·m262·m263)**: `scottnaddle/ieumoffice-enterprise`, private, 기본 브랜치 `main`, Apache-2.0 LICENSE + README만 있는 빈 리포. 저장소 설정 변경 불필요(답 m263).
+1. ~~새 리포 이름·소유자·공개 범위~~ → **확정됨(m261·m262·m263)**: `scottnaddle/naddle-office`(제품명 '나들오피스' 반영해 리포명 변경됨 — [직접확인] 2026-11-09 API가 `ieumoffice-enterprise` → `naddle-office`로 307 리다이렉트), private, 기본 브랜치 `main`, Apache-2.0 LICENSE + README만 있는 빈 리포. 저장소 설정 변경 불필요(답 m263).
 2. **유비온오피스와 새 제품의 관계** — (a) 새 리포가 공통 코어 + 유비온 오버레이 둘 다, (b) 새 리포가 일반 제품 전용이고 공통 코어는 ubion-office에 남음, (c) 업스트림 추종을 별도 코어 저장소로. → §4 옵션 B/C 선택과 직결.
 3. 대상 고객 규모(수십~수천 명?) — self-host 적합성 판단.
 4. 배포 방식: 클라우드 제공 vs 각 기업 자체 설치.
@@ -405,7 +405,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 ### 8.1 추가 결정 항목 (신규 리포 확정에 따라)
 
 
-8. **브랜드·상표 — 제품명 '나들오피스' (결정 4).** Apache-2.0 §6은 원 저작의 상호·상표·제품명 사용을 허용하지 않되, **원 저작의 출처를 설명하는 데 필요한 통상적 사용은 허용**한다. 리포명·설명에 "IeumOffice 기반"이라 쓰고 NOTICE를 그대로 복사하는 것은 §6이 허용하는 출처 표기 범위에 든다. 그러나 **"IeumOffice Enterprise"를 상용 제품명·로고로 쓰면 상표 사용 문제가 된다** → 결정된 제품명은 **'나들오피스'**로 이 문제를 회피한다. **남은 확인(사람)**: '나들오피스' 상표·도메인 등재 가능 여부, 앱 ID·프로토콜 핸들러명(`UbionOffice`/`ubionoffice` 계열)의 분리 규칙, 리포명 변경(`ieumoffice-enterprise` → '나들오피스' 기반 명칭) 일정. [미확인] 상표·도메인은 사람이 확인 필요.
+8. **브랜드·상표 — 제품명 '나들오피스' (결정 4).** Apache-2.0 §6은 원 저작의 상호·상표·제품명 사용을 허용하지 않되, **원 저작의 출처를 설명하는 데 필요한 통상적 사용은 허용**한다. 리포명·설명에 "IeumOffice 기반"이라 쓰고 NOTICE를 그대로 복사하는 것은 §6이 허용하는 출처 표기 범위에 든다. 그러나 **"IeumOffice Enterprise"를 상용 제품명·로고로 쓰면 상표 사용 문제가 된다** → 결정된 제품명은 **'나들오피스'**로 이 문제를 회피한다. **남은 확인(사람)**: '나들오피스' 상표·도메인 등재 가능 여부, 앱 ID·프로토콜 핸들러명(`UbionOffice`/`ubionoffice` 계열)의 분리 규칙, 리포명 변경(`ieumoffice-enterprise` → `naddle-office`)은 **이미 반영됨**[직접확인]. [미확인] 상표·도메인은 사람이 확인 필요.
 9. **자동 업데이트 피드.** 현재 꺼짐(`company/policy/build-hook.cjs` 주석). 일반 제품은 테넌트별 업데이트가 사실상 필수 → 자체 피드 운영 방식(제어판·패키지 저장소·수동 배포) 결정 필요.
 10. **테넌트별 appId 규칙.** `brand.json`의 `appId`·`desktopName`·`winProgIdPrefix`가 동일하면 두 제품이 같은 컴퓨터에 동시 설치될 때 충돌한다. 유비온(`global.ubion.office`)과 일반 제품의 appId 분리 규칙 필요.
 11. **새 리포의 첫 코드 (결정 6).** §4.5의 A(업스트림에서 직접)·B(ubion-office에서 분기)·C(공통 코어 먼저) 중 택일. **추천은 A**이지만 결정 2(고객 불특정·오픈소스 배포)와 §4 구조 선택을 동시에 걸기 때문에 사람이 정한다. A·B는 §4의 공통 코어 여부와 직결된다.
@@ -440,7 +440,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 ## 10. 라이선스 (Apache-2.0 · NOTICE)
 
 [직접확인] **인용 출처를 분명히 한다.**
-- **LICENSE 조항** — 출처는 **`scottnaddle/ubion-office`의 `LICENSE`**(= Apache-2.0 전문, `LICENSE:2-4`, `LICENSE:190` "Copyright 2026 Mainfunc, Inc."). 새 리포 `scottnaddle/ieumoffice-enterprise`의 `main`에도 **같은 Apache-2.0 LICENSE가 이미 있다**(11357B, `gh api .../license` → `Apache-2.0`) [직접확인].
+- **LICENSE 조항** — 출처는 **`scottnaddle/ubion-office`의 `LICENSE`**(= Apache-2.0 전문, `LICENSE:2-4`, `LICENSE:190` "Copyright 2026 Mainfunc, Inc."). 새 리포 `scottnaddle/naddle-office`의 `main`에도 **같은 Apache-2.0 LICENSE가 이미 있다**(11357B, `gh api .../license` → `Apache-2.0`) [직접확인].
 - **NOTICE** — 출처는 **`scottnaddle/ubion-office`의 `NOTICE`**. **새 리포에는 NOTICE 파일이 아직 없다**(현재 `main`은 LICENSE + README뿐) [직접확인] → §6.6.1에서 "NOTICE 동봉"을 Phase 0 항목으로 명시해야 한다.
 - 아래 인용문은 전부 **`ubion-office`의 `LICENSE`·`NOTICE`** 기준이다.
 

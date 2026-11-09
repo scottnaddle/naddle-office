@@ -406,10 +406,12 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 | 축 | 값 | 출처 | 규칙 |
 |---|---|---|---|
 | **산출 파일명** | **영문** (`naddle` 계열) | `brand.json` `productName` → `${productName}-Setup-${version}.${ext}`(`electron-builder.cjs:919-921`)·`${productName}-${version}-${arch}.${ext}`(`:993` dmg) | 릴리스 자산명은 **URL 경로에 쓰인다.** `productName`이 한글이면 파일명에 비ASCII가 들어가 **URL 인코딩·역슬래시 처리에서 예기치 않은 형태**가 될 수 있다 → **반드시 영문** |
-| **앱 ID·프로토콜 핸들러** | **영문** (`naddle://` 계열) | `brand.json` `appId`(`global.ubion.office` 형식)·`winProgIdPrefix` | 프로토콜 핸들러는 영문이어야 하고 **사전 등록·고유성**이 필요. 이미 설치된 앱과의 충돌 회피 |
+| **앱 ID·프로토콜 핸들러·바로가기** | **영문** (`naddle://` 계열) | `brand.json` `appId`(`global.ubion.office` 형식)·`protocolName`·`desktopName`·`winProgIdPrefix`·`packagedAppName`·`executableName` | 프로토콜 핸들러는 영문이어야 하고 **사전 등록·고유성**이 필요. 이미 설치된 앱과의 충돌 회피. **파일명 규칙과 규칙이 다르다**(파일명은 `productName`에서, 앱 ID는 `appId`/`ProgId`에서 따로 옴) |
 | **표시명** | **한글** (`나들오피스`) | `brand.json` `productNameKo`(현재 `유비온오피스` 형식) | 화면·설치 UI에 노출 |
 
 **[직접확인] 업스트림도 이미 이 구분을 쓴다** — 내부 이름은 `ieumoffice`(`packages/i18n/src/product.ts`·`package.json`), `brand.json`에는 `productName`과 `productNameKo`가 **별도 키**로 존재한다. 파일명 규칙은 `productName`에서, 앱 ID는 `appId`/`ProgId`에서 따로 온다 → **3축을 같은 축으로 취급하지 않는다.**
+
+→ **이 3축의 확정 시점은 §8.1-8(영문 표기·상표·도메인)·§8.1-10(테넌트별 appId 규칙)에 묶어 공개 전에 처리한다.** 지금 한 축만 바뀌면 산출물명·업데이트 경로·설치 충돌이 어긋난다.
 3. **설치 형태**: NSIS `oneClick:false` + `allowToChangeInstallationDirectory:true`(`:914-915`) → 사용자가 경로 선택, **임의 경로 설치 가능**. 기업 배포에 적합. [직접확인]
 4. **샌드박스/코사인**: macOS는 공증 필수(위). Windows는 서명 + MDM 설치(MSIX는 미서명 앱에 부적합 → NSIS 유지 + 그룹 정책 배포).
 5. **릴리스 파이프라인**: 기존 `ubion-office`는 GitHub Actions 비활성(`gh api` → `{"enabled":false}` [직접확인]) + Mac Studio 로컬 크로스 빌드(`ubion-office` 11-08 인수인계 §6.2). **[직접확인 devops m294 정정] 새 저장소는 Actions가 이미 활성**(`{"enabled":true,"allowed_actions":"all","sha_pinning_required":false}`, 워크플로 0개) → **워크플로를 추가·실행하는 데 저장소 설정 변경 승인이 필요 없다.** m292에서 "새 저장소도 기본 비활성"이라고 한 것은 **틀렸고 여기로 철회한다.** 남는 승인 대상은 **서명 키**와 **릴리스 저장소 공개 범위**다. [직접확인] 다만 **업스트림의 windows-build 워크플로는 그대로 재사용할 수 없다** — 산출물명·자체서명 PFX 경로가 업스트림 기준(`IeumOffice-…`)이라 그대로 쓰면 **산출물 이름과 브랜드가 업스트림 이름으로 나간다.** 새 워크플로가 필요하다.
@@ -479,7 +481,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 8. **브랜드·상표 — 제품명 '나들오피스' (결정 4).** Apache-2.0 §6은 원 저작의 상호·상표·제품명 사용을 허용하지 않되, **원 저작의 출처를 설명하는 데 필요한 통상적 사용은 허용**한다. 리포명·설명에 "IeumOffice 기반"이라 쓰고 NOTICE를 그대로 복사하는 것은 §6이 허용하는 출처 표기 범위에 든다. 그러나 **"IeumOffice Enterprise"를 상용 제품명·로고로 쓰면 상표 사용 문제가 된다** → 결정된 제품명은 **'나들오피스'**로 이 문제를 회피한다. **남은 확인(사람)**: '나들오피스'·'naddle'의 **상표·도메인 충돌 검색**(공개 전), 앱 ID·프로토콜 핸들러명(`UbionOffice`/`ubionoffice` 계열)의 분리 규칙. 리포명 변경(`ieumoffice-enterprise` → `naddle-office`)은 **이미 반영됨**[직접확인]. [미확인] 상표·도메인은 사람이 확인 필요.
 - **★ 영문 표기·앱 ID는 공개 전에 최종 확정 (orchy m296)** — 영문 표기(`naddle`)는 **릴리스 파일명·앱 ID·프로토콜 핸들러에 영구히 박힌다.** 공개 후 바꾸면 **이미 배포된 버전의 업데이트 경로까지 영향**을 받는다(§6.6.4-2의 `config.publish` owner/repo도 마찬가지). → 공개 전 확인 항목이며, **'naddle'만 봤을 때 '나들오피스'로 헷갈리지 않는지**도 한 번 점검한다. 앱 ID·핸들러 규칙은 §8.1-10과 함께 확정.
 9. **자동 업데이트 피드.** 현재 꺼짐(`company/policy/build-hook.cjs` 주석). 일반 제품은 테넌트별 업데이트가 사실상 필수 → 자체 피드 운영 방식(제어판·패키지 저장소·수동 배포) 결정 필요.
-10. **테넌트별 appId 규칙.** `brand.json`의 `appId`·`desktopName`·`winProgIdPrefix`가 동일하면 두 제품이 같은 컴퓨터에 동시 설치될 때 충돌한다. 유비온(`global.ubion.office`)과 일반 제품의 appId 분리 규칙 필요.
+10. **테넌트별 appId 규칙.** `brand.json`의 `appId`·`protocolName`·`desktopName`·`winProgIdPrefix`가 동일하면 두 제품이 같은 컴퓨터에 동시 설치될 때 충돌한다. 유비온(`global.ubion.office`)과 일반 제품의 appId 분리 규칙 필요. **[직접확인] §6.6.4-2의 브랜딩 3축(산출 파일명=영문 `productName` / 앱 ID·핸들러=영문 `appId` 계열 / 표시명=한글 `productNameKo`)과 함께 확정한다** — 3축은 서로 다른 설정 키에서 오고 규칙도 다르다. 공개 전 확정 대상(§8.1-8).
 11. **새 리포의 첫 코드 (결정 6).** §4.5의 A(업스트림에서 직접)·B(ubion-office에서 분기)·C(공통 코어 먼저) 중 택일. **추천은 A**이지만 결정 2(고객 불특정·오픈소스 배포)와 §4 구조 선택을 동시에 걸기 때문에 사람이 정한다. A·B는 §4의 공통 코어 여부와 직결된다.
 12. **설정 파일 위치 규칙.** 선례(`~/.config/ubion/*.env`)를 일반 제품으로 확장할 때 경로 규칙(`~/.config/<tenantId>/…`?)과 파일 모드(600)·경로 재정의 규칙을 어떻게 정할지.
 13. **mac 서명·공증** — ad-hoc(하드코딩 `identity='-'`, `notarize=false`)로는 기업 배포에 Gatekeeper 마찰이 크다. Developer ID + notarize 도입 여부·인증서 보유 주체·갱신 주기(§6.6.3).

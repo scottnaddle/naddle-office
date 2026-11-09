@@ -144,6 +144,22 @@
 - `scripts/update-feed-utils.cjs` 존재 — 피드 yml의 버전 파싱과 **forward-only promote/upload 가드**를 담고 있음(의존성 0).
 - 다만 이 파일의 헤더 주석이 참조하는 `mac-release-upload.cjs`·`promote-stable.cjs`는 **이 저장소에도 업스트림 `main`에도 없습니다**(0건) `[직접확인]` → 피드 업로드·promote는 **새로 작성해야 합니다** (업스트림 `main`에도 없습니다).
 
+### 2.9 플랫폼별 러너 제약 — 보조 실행 파일은 **패키징 시점에 자동 생성**된다 [직접확인]
+
+`apps/shell/electron-builder.cjs:113` `ensurePlatformHelpers()`가 **OS별로 다른 보조 실행 파일을 패키징 직전에 컴파일**합니다. 이 구조는 "어떤 러너에서 빌드할 수 있는가"를 결정합니다.
+
+| 산출물 | 필요한 러너 | 근거 |
+|---|---|---|
+| Windows | **Windows 러너 필수** | `electron-builder.cjs:119`-`:125`·`:130`-`:134` — `process.platform === 'win32'`일 때만 `build-win.mjs`로 `win-ocr.exe`·`win-quicklook.exe`를 컴파일 |
+| macOS | **macOS 러너 필수** | 같은 함수의 darwin 분기(`:114`-`:116`)가 `compileVisionOcr()`(`:93`-`:103`)로 swiftc 컴파일 |
+| linux | linux 러너 | 헬퍼 분기 없음. `xlsx-sidecar`만 필요 |
+
+**→ Windows 빌드를 macOS·Linux 러너에서 돌리면 빌드는 성공하면서 OCR·QuickLook 헬퍼가 조용히 빠집니다** (extraResources `electron-builder.cjs:638`-`:643`에서 파일이 없으면 그것만 기능 손실). 업스트림 CI는 `windows-2025`를 쓰므로 이 함정에는 걸리지 않습니다.
+
+**사이드카 크로스 빌드 경로는 v0.12.11에 이미 있습니다**
+- `apps/sheets/native/xlsx-engine/.cargo/config.toml` 존재. 파일 주석에 명시: **"cargo discovers .cargo/config.toml from the *working directory*, not from --manifest-path"** → `apps/sheets`의 `native:build` 스크립트가 `--config native/xlsx-engine/.cargo/config.toml`을 이미 붙이고 있습니다(누락하면 MSVC CRT 정적 링크가 빠짐).
+- 업스트림 CI는 Windows 러너에서 **호스트용(MSVC) 사이드카**를 만든 뒤 `target/x86_64-pc-windows-gnu/release/`로 **복사**합니다(업스트림 `windows-build.yml:95`-`:102`) — 즉 electron-builder가 기대하는 **경로 이름(gnu)과 실제 빌드 타깃(msvc)이 다릅니다.** mac/linux에서 크로스 빌드할 때는 **gnu 타깃을 직접 빌드**해야 합니다.
+
 ---
 
 ## 3. 파이프라인 설계
@@ -203,6 +219,7 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 - **서명 단계 추가(신규)**: `GENOFFICE_WIN_SIGN_MODE`를 `production`(또는 `test`)으로 넘기고, **`scripts/win-sign.cjs`를 먼저 작성**해야 합니다(§2.5). **이 스크립트가 없으면 이 워크플로는 반드시 실패해야 합니다** — "서명 없이 통과"는 §2.5 주석이 경고한 그대로 "installer는 서명됐지만 child process가 죽는" 상황을 재현합니다.
 - **extraResources 서명**: `xlsx-sidecar.exe`·`win-ocr.exe`·`win-quicklook.exe`를 **패키징 전에** 서명해야 합니다. 워크플로가 서명→electron-builder가 패키징하는 순서.
 - `latest.yml`의 `path:`가 설치 파일명과 일치하는지 검사(업스트림 `:143`)는 그대로 씁니다.
+- **러너 고정**: Windows 산출물은 **Windows 러너에서만** 만듭니다(§2.9). 이유: `win-ocr.exe`·`win-quicklook.exe`가 패키징 시점에 Windows 전용 `csc.exe`로 컴파일됩니다(`electron-builder.cjs:119`-`:125`·`:130`-`:134`). 다른 OS 러너에서는 **빌드가 성공하면서 헬퍼가 빠져** OCR·QuickLook 기능이 조용히 사라집니다.
 - **선택**: `GENOFFICE_WIN_ARM64=1`(업스트림 `electron-builder.cjs:46`·`:50`-`:52`) — arm64 는 7-Zip BCJ 필터가 필요(`ELECTRON_BUILDER_7Z_FILTER=BCJ`). x64와 arm64는 **사이드카 target 경로가 다르므로** 별도 cargo 빌드가 필요합니다(`:54` `winSidecarTarget`).
 
 #### 빌드 워크플로 안의 publish — 업스트림 방식 [직접확인]
@@ -329,6 +346,7 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 | 9 | **`publish` provider 덮어쓰기를 훅 1개로 쓸지, config 인자로 분리할지** | §3.5, §3.9 | 훅 예산 0 유지 여부 |
 | 10 | **enterprise ring 운영 여부** (stable/beta 2채널로 부족한지) | `updater.ts:747` `CHANNEL_FEED` | 채널 설계 확정 |
 | 11 | **mac 자체 업데이트 스테이징 경로(결정 0097) 유지 여부** | `mac-update.ts:154`, `updater.ts:955`·`:960` | 서명 후에도 그대로 써도 동작함(무해) |
+| 12 | **Windows 산출물을 Windows 러너에서만 만들지, 로컬 크로스 빌드를 지원할지** | §2.9 (`electron-builder.cjs:113`) | mac/linux 빌드는 OCR·QuickLook가 조용히 빠짐 |
 
 ---
 
@@ -354,6 +372,7 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 - **[미확인]** 업스트림 `main`의 워크플로가 `v0.12.11` 코드에서 그대로 동작하는지는 **스텝 단위 대조가 필요**합니다. 이 문서에서는 스크립트 존재 여부만 확인했습니다(§2.1).
 - **[미확인]** `notarize-dmg.js`가 CI용으로 `APPLE_ID` 3종 방식만 지원하는 상황에서, **Developer ID 인증서를 CI에 어떻게 임포트할지**(p12 → keychain → keychain 프로필)는 실행 순서와 credential 방식에 따라 달라집니다. §5 결정 3의 세부 사항.
 - **[미확인]** `scripts/update-feed-utils.cjs`의 주석이 참조하는 `mac-release-upload.cjs`·`promote-stable.cjs`가 업스트림 어디에도 없습니다. 피드 업로드·promote는 **신규 작성 필요**입니다.
+- **[미확인]** mac/linux에서 만든 Windows 설치 파일에서 **OCR·QuickLook 헬퍼를 채우는 방법**은 정해지지 않았습니다(§2.9). 후보는 ① Windows 러너 고정(업스트림 방식) ② Windows 러너에서 만든 헬퍼를 artifact로 넘겨 받아 붙이기. 어느 쪽이든 CI 설계에 반영해야 합니다(§5 결정 12).
 - **[미확인]** 빌드 산출물의 재현성(같은 소스·툴체인 → 같은 해시)은 이 저장소에서 아직 측정하지 않았습니다. 해시는 항상 직접 계산해 기록해야 합니다.
 - **[보고]** mac 자체 업데이트가 ad-hoc 서명에서도 동작한다는 근거는 `docs/plan.md` §6.6.2(devops m292 정정, research 재확인)에 있습니다.
 

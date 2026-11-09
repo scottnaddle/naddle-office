@@ -8,7 +8,7 @@
 
 ## 0. 한 줄 요약
 
-유비온오피스는 **이음오피스(IeumOffice, Apache-2.0) 위에 얹은 "회사 오버레이"**다. 일반 기업용 앱은 (1) 새 저장소, (2) 업스트림 추종 구조를 **공통 코어 + 제품 오버레이**로 바꾸고, (3) "하드코딩된 정책"을 **런타임 테넌트 설정**으로 바꾸는 것이 핵심 작업이다. [직접확인] 코드의 **유비온 고유 문자열 374건 중 285건(76%)은 식별자 이름**이고, URL 리터럴은 **2건뿐**이다 — 즉 대부분은 이름·구조 문제이지 동작 로직 문제가 아니다. [직접확인] **주입 seam 4개(`DaouClient`·`OfficeBrokerClient`·`RelayClient`·`WikiApiClient`)가 이미 새 기능 3종(계정·지식·모델)에 대응한다** — 설정 런타임화만 해결하면 어댑터를 붙이는 방식으로 일반화가 진행되고 대형 재작성은 필요 없다(§3.3.1). **MVP 4~6주 [추정]** — 기간은 전부 추정이며 아래 §6 로드맵에만 있고, 근거는 §3·§6.5의 코드 확인 결과다.
+유비온오피스는 **이음오피스(IeumOffice, Apache-2.0) 위에 얹은 "회사 오버레이"**다. 일반 기업용 앱은 (1) 새 저장소, (2) 업스트림 추종 구조를 **공통 코어 + 제품 오버레이**로 바꾸고, (3) "하드코딩된 정책"을 **런타임 테넌트 설정**으로 바꾸는 것이 핵심 작업이다. [직접확인] 코드의 **유비온 고유 문자열 374건 중 285건(76%)은 식별자 이름**이고, URL 리터럴은 **2건뿐**이다 — 즉 대부분은 이름·구조 문제이지 동작 로직 문제가 아니다. [직접확인] **주입 seam 4개(`DaouClient`·`OfficeBrokerClient`·`RelayClient`·`WikiApiClient`)가 이미 새 기능 3종(계정·지식·모델)에 대응한다** — 설정 런타임화만 해결하면 어댑터를 붙이는 방식으로 일반화가 진행되고 대형 재작성은 필요 없다(§3.3.1). [보고] 서버 쪽도 api가 같은 4개 축의 인터페이스(`IdentityProvider`·`KnowledgeSource`·`ModelGateway` 등)를 제시했고, 유비온 전용을 `adapters/ubion`으로 격리해 나중에 얹도록 설계했다(§5.1). **MVP 4~6주 [추정]** — 기간은 전부 추정이며 아래 §6 로드맵에만 있고, 근거는 §3·§6.5의 코드 확인 결과다.
 
 §3.7의 업스트림 훅 **정확히 21개**는 단정 숫자가 아니라 아래 명령으로 재현된다 [직접확인]: `git diff --name-only --diff-filter=M b8cb8564b...HEAD` 에서 `company/`·`packages/company-policy/`·`packages/ubion-*/`·`docs/` 를 제외하고 `package-lock.json`(generated)도 제외하면 21개가 나온다. §3.1의 374건은 `grep -rn 'ubion\|Ubion\|유비온\|coco\|Daou\|daou' --include='*.ts' --include='*.tsx' packages/company-policy/src packages/ubion-staff-login/src packages/ubion-wiki/src packages/ubion-video/src | grep -v test` 의 출현 라인 수다.
 
@@ -242,6 +242,42 @@ api 보고(m254) 권고: **MVP는 A(기업별 단독 설치)**, 검증 후 C(하
 - [추정] 이 형태는 api m254가 말한 "하이브리드(control plane + dedicated data plane)"와 같고, **A→C 순서**가 자연스럽다. **C를 먼저 만들면 멀티테넌트 재작성을 먼저 만나게 된다**(§7 위험 5) — A를 먼저 검증하고 C는 그 위에 얹는다.
 - [미확인] 제공형 클라우드의 요금·SLA·주권 리전 요구는 아직 없다 → §8 결정 항목.
 
+### 5.1 서버 구조 — api 조사 결과 반영 (m280) [보고]
+
+> [보고] api가 2026-11-09 14:2x KST에 서버 차트 결과를 보냈다. 아래는 그 내용이며, **research가 코드로 재검증하지 않은 [보고]**다. §3의 클라이언트 측 근거와 별개.
+
+**권장 구조: 테넌트별 데이터 플레인 + 중앙 컨트롤 플레인**
+
+| 평면 | 위치 | 담당 | 저장하는 것 |
+|---|---|---|---|
+| Control plane | 우리가 제공하는 클라우드 | 테넌트 registry · entitlement/license · 릴리스·업데이트 manifest · 상태·과금·지원 | **테넌트 콘텐츠·키·세션은 저장하지 않음.** 서명된 entitlement/release manifest만 발급 |
+| Data plane | 고객 셀프호스트 **또는** 우리 전용 인스턴스 | nginx + bot/broker + wiki gateway + Postgres + Redis + S3 호환 스토리지 + worker(+선택 search) | 테넌트별 DB/schema·bucket·secret·namespace 분리 |
+
+**[보고] 최소 MVP 구성**: nginx + bot/broker + Postgres + S3 + worker. Redis는 인스턴스 2개 이상 또는 공유 rate-limit이 필요할 때. 검색은 기존 gateway로 시작. 단일 노드 개발은 JSON adapter 유지 가능.
+
+**[보고] 테넌트 설정**: `tenant.yaml`(브랜드·IdP·knowledge source·model gateway·template registry·retention·feature flags) + secret refs. 서명·검증된 설정만 받고 **repo에 비밀값 금지**.
+
+**[보고] SaaS 모드**: control plane은 서명된 entitlement/release manifest만 발급하고, data plane이 **pull**한다. control plane으로의 인바운드 접근이 없다. 텔레메트리는 opt-in.
+
+**[보고] 서버 Phase 0 산출물**
+1. 인터페이스: `IdentityProvider`(OIDC Authorization Code+PKCE 우선, SAML 후속) · `Directory`/SCIM · `KnowledgeSource` · `TemplateRegistry` · `ModelGateway` · `AuditSink`
+2. Postgres 스키마(tenants/users/roles/identities/sessions·revocations/templates/audit) · Redis(rate-limit·challenge·cache) · S3(templates·knowledge assets)
+3. durable audit + request-id · health/ready · migrations · backup/restore
+4. config schema·feature flags. **유비온 전용은 `adapters/ubion`(Daou web+DM, wiki, LiteLLM)으로 격리**해 나중에 얹을 수 있게
+5. 오픈소스 위생: 이음오피스 업스트림에서 새 이력으로 시작(ubion-office 이력 미포함)·내부 도메인/IP/비밀값 제외·`.env.example`만·secret scanning·Apache-2.0/NOTICE
+6. 업데이트 서버: 서명된 manifest(channel/version/sha256/min OS/notes) · immutable artifact · rollback 포인터 · staged rollout. 클라이언트는 서명·해시 검증
+
+**[보고] 서버 측 위험**
+- 현재 JSON store·in-memory challenge는 **다중 인스턴스와 양립 불가** → Phase 0에서 Postgres/Redis 어댑터 필요.
+- 테넌트 격리는 MVP에서 **공유 row-level이 아니라 DB/schema·bucket·secret 분리**. 공유 SaaS는 격리·노이즈·데이터 레지던시 검증 후.
+- **위키 gateway 소스가 이 저장소 밖**이라 공개 전 라이선스·소유권 확인 필요.
+- **다우 DM·`sub`는 코어가 아니라 Ubion adapter로.** 코어 인증은 OIDC/SAML.
+- 업데이트 피드는 공급망 표면 — 코드 서명·해시·롤백 없이는 운영하지 않음.
+
+**[보고] 서버 규모 [추정]**: Phase 0 1~2주 · Phase 1 4~6주 · Phase 2 6~10주 — §6 로드맵과 동일.
+
+**[추정] 코드 경계와의 연결**: api의 `IdentityProvider`·`KnowledgeSource`·`ModelGateway` 인터페이스는 §3.3.1의 클라이언트 seam(`DaouClient`·`OfficeBrokerClient`·`RelayClient`·`WikiApiClient`)과 **서버·클라이언트가 같은 4개 축으로 나뉜다.** `adapters/ubion` 격리는 §9의 "유비온 고유 코드는 유비온 오버레이로" 원칙을 서버 쪽에 적용한 것이고, 결정 1(나중에 유비온에도 적용 가능)의 기술적 근거가 된다.
+
 ---
 
 ## 6. 로드맵 (상대 순서, 기간은 [추정])
@@ -380,10 +416,12 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 ### 미확인 (이 저장소에서 확인할 수 없음)
 - [미확인] 지식 게이트웨이 내부 구현 → 어댑터 경계 확정 불가 (3번).
 - [미확인] 첫 일반 고객이 IdP·지식 소스·배포 형태 중 무엇을 요구하는지 → Phase 1 범위 확정 불가.
-- [미확인] **@web의 클라이언트·배포 조사 결과 미수신**(2026-11-09 14:15 KST 기준). §6.5는 research가 직접 확인한 코드 근거로 보완했지만, web이 보는 "기능별 앱 내 붙는 위치"·"기업별 설정 파일 방식"·"훅 21개 중 범용 제품에 필요한 것/불필요한 것" 세 항목은 web 관점으로 교차 검증이 필요하다.
+- [미확인] **@web의 클라이언트·배포 조사 결과 미수신**(2026-11-09 14:30 KST 기준). §6.5는 research가 직접 확인한 코드 근거로 보완했지만, web이 보는 "기능별 앱 내 붙는 위치"·"기업별 설정 파일 방식"·"훅 21개 중 범용 제품에 필요한 것/불필요한 것" 세 항목은 web 관점 교차 검증이 필요하다.
 - [미확인] 새 리포에 이음오피스 코드를 가져오는 방식·시점 — m262는 "계획서 결론 뒤"로만 확정. 코어 저장소로 쓸지 제품 저장소로 쓸지(§4 옵션 B/C)는 미결.
 - [미확인] 자동 업데이트 피드 정책 — 현재 꺼짐 상태이며 일반 제품에서는 필수(§6.5.2·§6.6.3).
-- [미확인] **@devops의 배포·릴리스·서버 운영 검토 결과 미수신**(2026-11-09 14:2x KST 기준). §6.6은 research가 코드에서 직접 확인한 근거로 작성했지만, devops 관점의 검토가 필요하다.
+- [미확인] **@devops의 배포·릴리스 검토 결과 미수신**(2026-11-09 14:2x KST 기준). §6.6은 research가 코드에서 직접 확인한 근거로 작성했지만, devops 관점의 검토가 필요하다.
+- [보고] **@api의 서버 조사 결과는 수신**해 §5.1에 반영했다. 다만 **research가 서버 코드로 재검증하지 않았다** — §5.1 전체가 [보고]다. 서버 코드가 이 저장소 밖에 있어 확인이 불가하다.
+- [보고] **위키 gateway의 라이선스·소유권**은 저장소 밖이라 확인할 수 없다 — 공개 배포(결정 2) 전에 사람이 확인해야 한다.
 - [미확인] 새 리포의 시그닝 키 보유 주체·갱신 절차·MDM 연동 방식.
 - [미확인] 서버가 어디까지 일반화돼야 하는지 — `bot-server`는 이 저장소 밖.
 
@@ -392,7 +430,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 ## 8. 결정이 필요한 질문 (한 번에)
 
 **scott-air15에게**
-1. ~~새 리포 이름·소유자·공개 범위~~ → **확정됨(m261·m262·m263)**: `scottnaddle/naddle-office`(제품명 '나들오피스' 반영해 리포명 변경됨 — [직접확인] 2026-11-09 API가 `ieumoffice-enterprise` → `naddle-office`로 307 리다이렉트), private, 기본 브랜치 `main`, Apache-2.0 LICENSE + README만 있는 빈 리포. 저장소 설정 변경 불필요(답 m263).
+1. ~~새 리포 이름·소유자·공개 범위~~ → **확정됨(m261·m262·m263)**: `scottnaddle/naddle-office`(제품명 '나들오피스' 반영해 리포명 변경됨 — [직접확인] 2026-11-09 API가 `ieumoffice-enterprise` → `naddle-office`로 307 리다이렉트), private, 기본 브랜치 `main`, Apache-2.0 LICENSE + README만 있는 빈 리포. 저장소 설정 변경 불필요(답 m263). 리포명은 **제품명 계열**(`naddle-office`, 결정 4의 '나들오피스'와 스펠링 계열)로 변경됐다(m282).
 2. **유비온오피스와 새 제품의 관계** — (a) 새 리포가 공통 코어 + 유비온 오버레이 둘 다, (b) 새 리포가 일반 제품 전용이고 공통 코어는 ubion-office에 남음, (c) 업스트림 추종을 별도 코어 저장소로. → §4 옵션 B/C 선택과 직결.
 3. 대상 고객 규모(수십~수천 명?) — self-host 적합성 판단.
 4. 배포 방식: 클라우드 제공 vs 각 기업 자체 설치.
@@ -405,7 +443,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 ### 8.1 추가 결정 항목 (신규 리포 확정에 따라)
 
 
-8. **브랜드·상표 — 제품명 '나들오피스' (결정 4).** Apache-2.0 §6은 원 저작의 상호·상표·제품명 사용을 허용하지 않되, **원 저작의 출처를 설명하는 데 필요한 통상적 사용은 허용**한다. 리포명·설명에 "IeumOffice 기반"이라 쓰고 NOTICE를 그대로 복사하는 것은 §6이 허용하는 출처 표기 범위에 든다. 그러나 **"IeumOffice Enterprise"를 상용 제품명·로고로 쓰면 상표 사용 문제가 된다** → 결정된 제품명은 **'나들오피스'**로 이 문제를 회피한다. **남은 확인(사람)**: '나들오피스' 상표·도메인 등재 가능 여부, 앱 ID·프로토콜 핸들러명(`UbionOffice`/`ubionoffice` 계열)의 분리 규칙, 리포명 변경(`ieumoffice-enterprise` → `naddle-office`)은 **이미 반영됨**[직접확인]. [미확인] 상표·도메인은 사람이 확인 필요.
+8. **브랜드·상표 — 제품명 '나들오피스' (결정 4).** Apache-2.0 §6은 원 저작의 상호·상표·제품명 사용을 허용하지 않되, **원 저작의 출처를 설명하는 데 필요한 통상적 사용은 허용**한다. 리포명·설명에 "IeumOffice 기반"이라 쓰고 NOTICE를 그대로 복사하는 것은 §6이 허용하는 출처 표기 범위에 든다. 그러나 **"IeumOffice Enterprise"를 상용 제품명·로고로 쓰면 상표 사용 문제가 된다** → 결정된 제품명은 **'나들오피스'**로 이 문제를 회피한다. **남은 확인(사람)**: '나들오피스'·'naddle'의 **상표·도메인 충돌 검색**(공개 전), 앱 ID·프로토콜 핸들러명(`UbionOffice`/`ubionoffice` 계열)의 분리 규칙. 리포명 변경(`ieumoffice-enterprise` → `naddle-office`)은 **이미 반영됨**[직접확인]. [미확인] 상표·도메인은 사람이 확인 필요.
 9. **자동 업데이트 피드.** 현재 꺼짐(`company/policy/build-hook.cjs` 주석). 일반 제품은 테넌트별 업데이트가 사실상 필수 → 자체 피드 운영 방식(제어판·패키지 저장소·수동 배포) 결정 필요.
 10. **테넌트별 appId 규칙.** `brand.json`의 `appId`·`desktopName`·`winProgIdPrefix`가 동일하면 두 제품이 같은 컴퓨터에 동시 설치될 때 충돌한다. 유비온(`global.ubion.office`)과 일반 제품의 appId 분리 규칙 필요.
 11. **새 리포의 첫 코드 (결정 6).** §4.5의 A(업스트림에서 직접)·B(ubion-office에서 분기)·C(공통 코어 먼저) 중 택일. **추천은 A**이지만 결정 2(고객 불특정·오픈소스 배포)와 §4 구조 선택을 동시에 걸기 때문에 사람이 정한다. A·B는 §4의 공통 코어 여부와 직결된다.

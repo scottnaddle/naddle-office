@@ -8,7 +8,9 @@
 
 ## 0. 한 줄 요약
 
-유비온오피스는 **이음오피스(IeumOffice, Apache-2.0) 위에 얹은 "회사 오버레이"**다. 일반 기업용 앱은 (1) 새 저장소, (2) 업스트림 추종 구조를 **공통 코어 + 제품 오버레이**로 바꾸고, (3) "하드코딩된 정책"을 **런타임 테넌트 설정**으로 바꾸는 것이 핵심 작업이다. [직접확인] 코드의 **유비온 고유 문자열 374건 중 285건(76%)은 식별자 이름**이고, URL 리터럴은 **2건뿐**이다 — 즉 대부분은 이름·구조 문제이지 동작 로직 문제가 아니다. [추정] MVP 4~6주.
+유비온오피스는 **이음오피스(IeumOffice, Apache-2.0) 위에 얹은 "회사 오버레이"**다. 일반 기업용 앱은 (1) 새 저장소, (2) 업스트림 추종 구조를 **공통 코어 + 제품 오버레이**로 바꾸고, (3) "하드코딩된 정책"을 **런타임 테넌트 설정**으로 바꾸는 것이 핵심 작업이다. [직접확인] 코드의 **유비온 고유 문자열 374건 중 285건(76%)은 식별자 이름**이고, URL 리터럴은 **2건뿐**이다 — 즉 대부분은 이름·구조 문제이지 동작 로직 문제가 아니다. **MVP 4~6주 [추정]** — 기간은 전부 추정이며 아래 §6 로드맵에만 있고, 근거는 §3·§6.5의 코드 확인 결과다.
+
+§3.7의 업스트림 훅 **정확히 21개**는 단정 숫자가 아니라 아래 명령으로 재현된다 [직접확인]: `git diff --name-only --diff-filter=M b8cb8564b...HEAD` 에서 `company/`·`packages/company-policy/`·`packages/ubion-*/`·`docs/` 를 제외하고 `package-lock.json`(generated)도 제외하면 21개가 나온다. §3.1의 374건은 `grep -rn 'ubion\|Ubion\|유비온\|coco\|Daou\|daou' --include='*.ts' --include='*.tsx' packages/company-policy/src packages/ubion-staff-login/src packages/ubion-wiki/src packages/ubion-video/src | grep -v test` 의 출현 라인 수다.
 
 ---
 
@@ -31,12 +33,12 @@
 
 | 시나리오 | 필요 기능 | 현재 코드 근거 |
 |---|---|---|
-| 임직사가 사내 wiki에서 문서 검색 | 지식관리 | `packages/ubion-wiki/src/` 11파일 (read-only bridge) |
-| 임직사가 SSO로 로그인 | 계정관리 | **현재 Daou/coco 고정** — OIDC/SAML/LDAP 없음 (api m253) |
+| 임직원이 사내 wiki에서 문서 검색 | 지식관리 | `packages/ubion-wiki/src/` 11파일 (read-only bridge) |
+| 임직원이 SSO로 로그인 | 계정관리 | **현재 다우(Daou)/coco 고정** — OIDC/SAML/LDAP 없음 (api m253) |
 | 매니저가 사내 템플릿을 배포 | 템플릿 관리 | `company/templates/` — 빌드 내장, 서버 API 없음 (api m253) |
-| 임직사가 사내 모델 사용 | 계정관리 | LiteLLM per-user virtual key (`packages/company-policy/src/auth/litellm-key.ts`) |
+| 임직원이 사내 모델 사용 | 계정관리 | LiteLLM per-user virtual key (`packages/company-policy/src/auth/litellm-key.ts`) |
 
-[직접확인] **현재 계정 모델은 Daou 1:1 코드로 고정** — `packages/company-policy/src/auth/daou-dm-auth.ts`(83줄), `schema.ts:53-54` `daouServerUrl`. 일반 기업용 SSO로 가려면 이 계층 전체가 교체 대상이다.
+[직접확인] **현재 계정 모델은 다우(Daou) 1:1 코드로 고정** — `packages/company-policy/src/auth/daou-dm-auth.ts`(83줄), `schema.ts:53-54` `daouServerUrl`. 일반 기업용 SSO로 가려면 이 계층 전체가 교체 대상이다.
 
 ---
 
@@ -49,12 +51,12 @@
 | 분류 | 라인 수 | 비율 | 의미 |
 |---|---:|---:|---|
 | **식별자 이름만** (`UbionProfile`, `ubionVideoOpen`, IPC 채널명 등) | 285 | 76% | 이름 변경. 동작 불변 |
-| Daou/coco 참조 | 87 | 23% | 실제 통합 지점 (아래 §3.3) |
+| 다우(Daou)/coco 참조 | 87 | 23% | 실제 통합 지점 (아래 §3.3) |
 | **URL 리터럴** | **2** | **0.5%** | 아래 2줄뿐 |
 
 패키지별:
 
-| 패키지 | src 파일 | 라인 | 유비온/데아우 출현 |
+| 패키지 | src 파일 | 라인 | 유비온/다우(Daou) 출현 |
 |---|---:|---:|---:|
 | `packages/company-policy` | 58 | 9,754 | 257 |
 | `packages/ubion-video` | 39 | 8,490 | 78 |
@@ -74,12 +76,12 @@
 
 | 지점 | 파일:줄 | 일반화 방향 |
 |---|---|---|
-| Daou 웹 로그인 + DM 코드 | `packages/company-policy/src/auth/daou-dm-auth.ts`(83줄) | `DaouClient` 인터페이스(`:17-21`: `userSeq()`, `readChallengeCode()`)가 이미 **주입 seam** — 이 接口만 IdP별로 교체 |
-| 데아우 서버 URL | `packages/company-policy/src/schema.ts:53-54,136,141` | 정책 필드. 값 교체는 쉬움, **프로토콜이 coco 전용** |
+| 다우(Daou) 웹 로그인 + DM 코드 | `packages/company-policy/src/auth/daou-dm-auth.ts`(83줄) | `DaouClient` 인터페이스(`:17-21`: `userSeq()`, `readChallengeCode()`)가 이미 **주입 지점** — 이 부분만 IdP별로 교체 |
+| 다우(Daou) 서버 URL | `packages/company-policy/src/schema.ts:53-54,136,141` | 정책 필드. 값 교체는 쉬움, **프로토콜이 coco 전용** |
 | 로그인 세션 파티션 | `packages/company-policy/src/main.ts:61,517-528` | `OFFICE_DAOU_PARTITION` — IdP별 쿠키 파티션 개념으로 일반화 |
 | 위키 grant 계약 | `packages/company-policy/src/auth/wiki-session-grant.ts`(109줄) | `wss1` 3세그먼트 토큰(`:15-18`) — **지식 소스별 계약이 다를 수 있음** |
 | 키체인 항목 | `packages/company-policy/src/auth/key-store.ts:44-45` | `ubion.litellm.key` / `ubion.litellm.expiresAt` — 이름만 |
-| 정책 endpoint 4종 | `company/policy/company.policy.json:11,82,86,95-96` | `llm.ubion.global` · `lms.ubion.global/video-api` · `lms.ubion.global/api/wiki` · `bot.ubion.global` · `coco.ubion.co.kr` |
+| 정책 endpoint **5종** | `company/policy/company.policy.json`의 `endpoint.baseUrl`(`:11`)·`video.baseUrl`(`:82`)·`wiki.baseUrl`(`:86`)·`staffLogin.baseUrl`(`:95`)·`staffLogin.daouServerUrl`(`:96`) | `https://llm.ubion.global/v1` · `https://lms.ubion.global/video-api` · `https://lms.ubion.global/api/wiki` · `https://bot.ubion.global` · `https://coco.ubion.co.kr` — 전부 공개 도메인이며 IP·토큰류 없음 |
 
 ### 3.4 ★ 가장 중요한 구조적 발견 — 정책은 **빌드 시점 상수** [직접확인]
 
@@ -118,10 +120,20 @@ packages/company-policy/src/brand.ts:1    import brand  from '../../../company/b
 
 `company/PATCHES.md:46` — 업스트림 파일 수정 **상한 21개** (`check-patches`가 22개를 실패시킨다). [직접확인] `git diff --diff-filter=M b8cb8564b...HEAD`의 업스트림 경로 변경 파일은 22개이고 `package-lock.json`(generated)이 제외 대상 → **정확히 21개**. 목록:
 
-- `packages/ai-provider/src/` 6개 (registry·provider-selection·media·image-backend·search-settings·legacy-settings)
-- `apps/shell/src/` 5개 (index.ts·default-app.ts·updater.ts·Home.tsx·SettingsModal.tsx·KbAskPanel.tsx)
-- `packages/ui/src/` 2개 (use-skill-proposals.tsx·AiModelPicker.tsx)
-- 패키지·앱별: `packages/ai-provider/src/` 6개(registry·provider-selection·media·image-backend·search-settings·legacy-settings) · `apps/shell/src/` 6개(index.ts·default-app.ts·updater.ts·Home.tsx·SettingsModal.tsx·KbAskPanel.tsx) · `packages/ui/src/` 2개(use-skill-proposals.tsx·AiModelPicker.tsx) · `packages/pipelines/src/slides/templates/catalog.ts` · `packages/i18n/src/product.ts` · `packages/cli/src/names.ts` · `packages/electron-utils/src/user-skills-bridge.ts` · `apps/slides/src/renderer/ai/TemplateGallery.tsx` · `apps/shell/electron-builder.cjs`
+**[직접확인] 확인 명령**: `git diff --name-only --diff-filter=M b8cb8564b...HEAD` 에서 `company/`·`packages/company-policy/`·`packages/ubion-*/`·`docs/` 를 제외하고 `package-lock.json`(generated)도 제외하면 **21개**가 나온다.
+
+| 위치 | 개수 | 파일 |
+|---|---:|---|
+| `apps/shell/` | 7 | `electron-builder.cjs` · `src/main/default-app.ts` · `src/main/index.ts` · `src/main/updater.ts` · `src/renderer/src/Home.tsx` · `src/renderer/src/KbAskPanel.tsx` · `src/renderer/src/SettingsModal.tsx` |
+| `packages/ai-provider/src/` | 6 | `image-backend.ts` · `legacy-settings.ts` · `media.ts` · `provider-selection.ts` · `registry.ts` · `search-settings.ts` |
+| `packages/ui/src/` | 2 | `AiModelPicker.tsx` · `use-skill-proposals.tsx` |
+| `apps/slides/src/renderer/ai/` | 1 | `TemplateGallery.tsx` |
+| `packages/cli/src/` | 1 | `names.ts` |
+| `packages/electron-utils/src/` | 1 | `user-skills-bridge.ts` |
+| `packages/i18n/src/` | 1 | `product.ts` |
+| `packages/pipelines/src/slides/templates/` | 1 | `catalog.ts` |
+| (루트) | 1 | `package.json` |
+| **합계** | **21** | 7+6+2+1+1+1+1+1+1 = **21** ✓
 
 **중요 관찰** [직접확인]: 회사가 기능을 붙이는 방식은 **업스트림 파일에 import 1줄을 심는 패턴**이다 —
 ```
@@ -157,7 +169,7 @@ apps/shell/src/main/index.ts:112             import { initCompanyMain, initCompa
 
 **단, 순서가 중요하다** [추정]:
 - **Phase 0에 §3.4(런타임 테넌트 설정)를 먼저 해결한다.** 이게 있어야 코어를 제품 오버레이로 쪼갤 수 있다. 설정을 못 런타임화한 채로 쪼개면 두 곳에 설정이 생긴다.
-- 코어 분리는 새 리포가 생기고, 첫 일반 고객의 요구(어떤 IdP·어떤 지식 소스)가 concretize된 뒤에 한다. 지금 쪼개면 추측으로 API를 확정하게 된다.
+- 코어 분리는 새 리포가 생기고, 첫 일반 고객의 요구(어떤 IdP·어떤 지식 소스)가 구체화(명확해지는) 뒤에 한다. 지금 쪼개면 추측으로 API를 확정하게 된다.
 
 ---
 
@@ -178,7 +190,7 @@ api 보고(m254) 권고: **MVP는 A(기업별 단독 설치)**, 검증 후 C(하
 
 | Phase | 내용 | 기간 [추정] | 선행 조건 |
 |---|---|---|---|
-| **0. 기반 분리** | ① **정책을 런타임 설정으로** (§3.4 — 정적 import → 테넌트 설정 로더) ② `auth.config.json`/`brand.json` 스키마 일반화 ③ `DaouClient` seam 확인·정리 ④ audit 스키마 ⑤ Docker Compose ⑥ **릴리스 파이프라인·서명·업데이트 피드 설계** (§6.6.4) ⑦ 새 overlay 계층·훅 예산 규칙 (§6.6.1) | 1~2주 | 없음 (여기서 시작) |
+| **0. 기반 분리** | ① **정책을 런타임 설정으로** (§3.4 — 정적 import → 테넌트 설정 로더) ② `auth.config.json`/`brand.json` 스키마 일반화 ③ `DaouClient` seam 확인·정리 ④ audit 스키마 ⑤ Docker Compose ⑥ **릴리스 파이프라인·서명·업데이트 피드 설계** (§6.6.4) ⑦ 새 overlay 계층·훅 예산 규칙 (§6.6.1) ⑧ **새 리포에 NOTICE 동봉** (§10 — 새 리포 `main`에 아직 NOTICE가 없음) | 1~2주 | 없음 (여기서 시작) |
 | **1. MVP** | OIDC SSO+역할+SCIM basic · 지식 read-only 어댑터 1종 · 템플릿 카탈로그 read-only · 테넌트별 LiteLLM · 영구 audit | 4~6주 | Phase 0 |
 | **2. 확장** | 지식 수집·ACL·검색 · 템플릿 작성·승인 · SAML/LDAP · 관리 UI · 쿼터·비용 · 멀티테넌트/하이브리드 | 6~10주 | Phase 1 + 첫 고객 요구 |
 
@@ -186,12 +198,12 @@ api 보고(m254) 권고: **MVP는 A(기업별 단독 설치)**, 검증 후 C(하
 
 **우리 몫 추가** [추정]: 위 표에 다음을 더한다 —
 - 테넌트 설정 로더 + 관리 UI: 클라이언트/인프라 8~12
-- `company-policy` 패키지에서 유비온 고유 코드 분리(`ubion-proposal-*` 템플릿, 데아우 전용 모듈): 클라이언트 5~8
+- `company-policy` 패키지에서 유비온 고유 코드 분리(`ubion-proposal-*` 템플릿, 다우 전용 모듈): 클라이언트 5~8
 - 공통 코어 저장소 분리(신규 리포 생성 후): 2~3주
 
 ---
 
-## 6.5 클라이언트·배포 관점 (web 차트로 배정됨 — 미수신, research가 코드 근거로 보완)
+## 6.5 클라이언트·배포 관점 (web에 배정 — 미수신, research가 코드 근거로 보완)
 
 > **[미확인]** @web의 클라이언트 조사 결과가 아직 @research에게 오지 않았다(2026-11-09 14:15 KST 기준). 아래는 research가 저장소에서 직접 확인한 **코드 근거만**이다. web 결과가 도착하면 이 절을 갱신한다.
 
@@ -263,10 +275,10 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 | 결정 | 현재 상태 [직접확인] | 일반 제품에 필요한 것 |
 |---|---|---|
 | **mac 서명** | ad-hoc(`identity='-'`)·hardenedRuntime off·notarize off | **Developer ID + notarize** 필요. 없으면 첫 실행마다 "열기" 우회 + Gatekeeper friction → 기업 배포에 부적합 |
-| **Windows 서명** | 유비온 릴리스는 **미서명** (PE 인증서 테이블 비어 있음, §6.2). 업스트림은 `GENOFFICE_WIN_SIGN_MODE`(`test`=자체서명 PFX, `production`=DigiCert KeyLocker) 경로를 제공(`electron-builder.cjs:945-954`) | **production 서명 필수** — "알 수 없는 게시자" 경고로는 기업 MDM 배포 불가. §8 결정 |
+| **Windows 서명** | 유비온 릴리스는 **미서명** (PE 인증서 테이블 비어 있음 — `ubion-office` 11-08 인수인계 §6.2). 업스트림은 `GENOFFICE_WIN_SIGN_MODE`(`test`=자체서명 PFX, `production`=DigiCert KeyLocker) 경로를 제공(`electron-builder.cjs:945-954`) | **production 서명 필수** — "알 수 없는 게시자" 경고로는 기업 MDM 배포 불가. §8 결정 |
 | **자동 업데이트 피드** | 유비온은 **끔**(publish=null). 업스트림은 GitHub provider + `latest.yml` | **자체 피드 필요**. GitHub provider(공개 repo 한정)·S3·자체 서버 중 선택 → §8 결정 |
 | **업데이트 채널** | `stable`/`beta` 2개 | 채널 개념 재사용 가능. 단 enterprise는 "ring"(테스트→필로트→전체) 운영이 필요할 수 있음 → §8 결정 |
-| **Windows 서명자 종속** | — | [직접확인] §6.2 릴리스 노트에 이미 명시됨 — 서명 없으면 나중 업데이트가 서명자에 종속. **서명 키 교체 경로(코드서명 인증서 교체)를 초기 설계에 포함해야 한다** |
+| **Windows 서명자 종속** | — | [직접확인] `ubion-office` 11-08 인수인계 §6.2 릴리스 노트에 이미 명시됨 — 서명 없으면 나중 업데이트가 서명자에 종속. **서명 키 교체 경로(코드서명 인증서 교체)를 초기 설계에 포함해야 한다** |
 | **릴리스 자산** | `UbionOffice-Setup-0.12.11-ubion.1.exe`(NSIS x64, 미서명) 등 | 새 제품은 **자사 앱ID·서명·피드**로 별도 자산. 기존 자산은 **삭제하지 않는다**(windows-build.md §7 규칙) |
 
 ### 6.6.4 빌드·배포 경로 재설계 방향 [추정]
@@ -275,7 +287,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 2. **자산 네이밍**: `brand.json`의 `productName`에서 파생(`${productName}-Setup-${version}.${ext}`, `electron-builder.cjs:919-921`) → 브랜드만 바꾸면 신규 산출. 앱ID·프로토콜 핸들러·바로가기도 동시 분리(§8.1-10).
 3. **설치 형태**: NSIS `oneClick:false` + `allowToChangeInstallationDirectory:true`(`:914-915`) → 사용자가 경로 선택, **임의 경로 설치 가능**. 기업 배포에 적합. [직접확인]
 4. **샌드박스/코사인**: macOS는 공증 필수(위). Windows는 서명 + MDM 설치(MSIX는 미서명 앱에 부적합 → NSIS 유지 + 그룹 정책 배포).
-5. **릴리스 파이프라인**: 기존은 GitHub Actions 비활성(`gh api` → `{"enabled":false}` [직접확인]) + Mac Studio 로컬 크로스 빌드(§6.2). 새 리포에서는 **릴리스 파이프라인·서명 키 관리**가 Phase 0 산출물이어야 한다 — 지금은 피드가 없는 상태라 자동화가 불가능.
+5. **릴리스 파이프라인**: 기존은 GitHub Actions 비활성(`gh api` → `{"enabled":false}` [직접확인]) + Mac Studio 로컬 크로스 빌드(`ubion-office` 11-08 인수인계 §6.2). 새 리포에서는 **릴리스 파이프라인·서명 키 관리**가 Phase 0 산출물이어야 한다 — 지금은 피드가 없는 상태라 자동화가 불가능.
 
 ### 6.6.5 서버 운영 관점 (api 보고 인용)
 
@@ -291,11 +303,11 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 ### 위험
 1. **★ 업스트림 훅 21개 이중 병목** — §3.7. 두 제품을 따로 추종하면 충돌 해결이 배가된다.
 2. **★ 정책이 빌드 상수** — §3.4. 런타임 설정으로 못 바꾸면 "기업별 운영" 목표가 불가능. Phase 0 최우선.
-3. **지식 게이트웨이 소스가 저장소 밖** — [보고] api m254. `ubion-wiki-gateway`가 127.0.0.1:8794에서 도는 **외부 서비스**. 이 저장소엔 읽기 전용 계약(`/v1/search|page|recent|index`)만 보인다 → **지식 어댑터 일반화 범위를 이 저장소만으로 확정할 수 없다.**
-4. **데아우 `sub`/profile/role을 다른 IdP로 매핑하는 계약 미정** — [보고] api m254. 서버 `sub` = Daou userSeq (`office/broker.ts`) [직접확인] `company.policy.json:96` `daouServerUrl`.
+3. **지식 게이트웨이 소스가 저장소 밖** — [보고] api m254. `ubion-wiki-gateway`는 별도 서버의 로컬 포트에서 도는 **외부 서비스**로, 이 저장소에는 코드가 없다. 이 저장소엔 읽기 전용 계약(`/v1/search|page|recent|index`)만 보인다 → **지식 어댑터 일반화 범위를 이 저장소만으로 확정할 수 없다.**
+4. **다우(Daou) `sub`/profile/role을 다른 IdP로 매핑하는 계약 미정** — [보고] api m254. 서버 `sub` = Daou userSeq (`office/broker.ts`) [직접확인] `company.policy.json:96` `daouServerUrl`.
 5. **멀티테넌트와 현재 저장 모델 양립 불가** — [직접확인] §5.
 6. **템플릿 원격 실행은 서명 검증 전 금지** — [보고] api m254. 스크립트/프레젠테이션 템플릿은 실행 가능한 코드를 포함할 수 있어, 배포 경로에 서명 검증이 없으면 임의 코드 실행 위험.
-7. **Windows 서명·오프라인 설치는 별도 과제** — [보고] api m254 + §6.2의 기존 미서명 상태.
+7. **Windows 서명·오프라인 설치는 별도 과제** — [보고] api m254 + `ubion-office` 11-08 인수인계 §6.2의 기존 미서명 상태.
 8. **★ 자동 업데이트와 서버 계약의 호환성** [추정] — 업데이트를 켜면 구버전 클라이언트가 새 서버 API와 어긋날 수 있다. 서버는 하위 호환 API를 유지해야 하고 업데이트 채널과 서버 배포 순서를 함께 계획해야 한다(§6.6.5). 유비온은 지금 피드가 꺼져 있어 이 문제를 아직 겪지 않았다.
 9. **★ macOS 자체 업데이트 불가** [직접확인] — ad-hoc 서명 앱은 Squirrel.Mac이 업데이트를 설치할 수 없어 릴리스 페이지로 유도한다(`electron-builder.cjs:978-988`). 공증을 도입하지 않으면 이 구조가 계속된다(§6.6.2).
 10. **릴리스 파이프라인 부재** [직접확인] — GitHub Actions 비활성 + 로컬 크로스 빌드 대체. 새 리포에서 서명·피드를 다루려면 파이프라인 재설계가 선행되어야 한다(§6.6.4).
@@ -318,12 +330,12 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 1. ~~새 리포 이름·소유자·공개 범위~~ → **확정됨(m261·m262·m263)**: `scottnaddle/ieumoffice-enterprise`, private, 기본 브랜치 `main`, Apache-2.0 LICENSE + README만 있는 빈 리포. 저장소 설정 변경 불필요(답 m263).
 2. **유비온오피스와 새 제품의 관계** — (a) 새 리포가 공통 코어 + 유비온 오버레이 둘 다, (b) 새 리포가 일반 제품 전용이고 공통 코어는 ubion-office에 남음, (c) 업스트림 추종을 별도 코어 저장소로. → §4 옵션 B/C 선택과 직결.
 3. 대상 고객 규모(수십~수천 명?) — self-host 적합성 판단.
-4. 배포形态: 클라우드 제공 vs 각 기업 자체 설치.
+4. 배포 방식: 클라우드 제공 vs 각 기업 자체 설치.
 
 **개발·운영 결정**
-5. 데아우 계정 모델을 OIDC로 대체할 때, `sub`(userSeq)·프로필·역할을 IdP 중립으로 바꾸는 계약 — 서버 쪽 결정 필요 (api 영역).
+5. 다우(Daou) 계정 모델을 OIDC로 대체할 때, `sub`(userSeq)·프로필·역할을 IdP 중립으로 바꾸는 계약 — 서버 쪽 결정 필요 (api 영역).
 6. 훅 21개를 공통 코어에 남기고 양쪽 제품이 공유할지, 제품별로 갈라질지. → 업그레이드 비용을 결정한다.
-7. 멀티테넌트를 언제引入할지(MVP는 self-host로 가도 되는지).
+7. 멀티테넌트를 언제 도입할지(MVP는 self-host로 가도 되는지).
 
 ### 8.1 추가 결정 항목 (신규 리포 확정에 따라)
 
@@ -346,31 +358,36 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 |---|---|---|---|
 | 업스트림 | 공유 | 공유 | 이음오피스 Apache-2.0 (§10) |
 | 훅 21개 | 유지 | **공통 코어에서 공유** 권장 | §3.7 — 이중 병목 방지 |
-| 데아우 인증 | 유지 | **OIDC로 교체** | §3.3 — 데아우는 유비온 그룹웨어 |
+| 다우(Daou) 인증 | 유지 | **OIDC로 교체** | §3.3 — 다우는 유비온 그룹웨어 |
 | 정책·브랜드 | `company.policy.json` 고정 | **테넌트 런타임 설정** | §3.4 — 핵심 분기점 |
 | `ubion-proposal-*` 템플릿 | 유지 | 제외(테넌트 배포로 대체) | §3.6 |
 | 브랜드 문자열 | '유비온' 고정 | 테넌트별 | §3.5 — `strings.ts` 중앙화 활용 |
 | 서버 | `bot.ubion.global` | 기업별 자체 설치(추천) | §5 |
 
-**분리 기준 한 줄**: **데아우·유비온 문자열·유비온 전용 템플릿은 유비온 오버레이로.** 나머지(업스트림 훅, `packages/company-policy`의 구조, 브릿지 패턴)는 공통 코어.
+**분리 기준 한 줄**: **다우(Daou)·유비온 문자열·유비온 전용 템플릿은 유비온 오버레이로.** 나머지(업스트림 훅, `packages/company-policy`의 구조, 브릿지 패턴)는 공통 코어.
 
 ---
 
 ## 10. 라이선스 (Apache-2.0 · NOTICE)
 
-[직접확인] 이 저장소는 Apache-2.0 (`LICENSE:2-4`, `LICENSE:190` "Copyright 2026 Mainfunc, Inc."). `NOTICE`의 "IeumOffice modifications" 절:
+[직접확인] **인용 출처를 분명히 한다.**
+- **LICENSE 조항** — 출처는 **`scottnaddle/ubion-office`의 `LICENSE`**(= Apache-2.0 전문, `LICENSE:2-4`, `LICENSE:190` "Copyright 2026 Mainfunc, Inc."). 새 리포 `scottnaddle/ieumoffice-enterprise`의 `main`에도 **같은 Apache-2.0 LICENSE가 이미 있다**(11357B, `gh api .../license` → `Apache-2.0`) [직접확인].
+- **NOTICE** — 출처는 **`scottnaddle/ubion-office`의 `NOTICE`**. **새 리포에는 NOTICE 파일이 아직 없다**(현재 `main`은 LICENSE + README뿐) [직접확인] → §6.6.1에서 "NOTICE 동봉"을 Phase 0 항목으로 명시해야 한다.
+- 아래 인용문은 전부 **`ubion-office`의 `LICENSE`·`NOTICE`** 기준이다.
+
+`ubion-office`의 `NOTICE` 중 "IeumOffice modifications" 절:
 
 > "IeumOffice (https://github.com/pblsketch/openoffice) is a modified version of GenOffice (https://github.com/genspark-ai/genoffice), the work this file's opening notice refers to. Files of the original work have been changed, added and removed by the IeumOffice contributors; the repository history records each change. The modifications are licensed under the Apache License, Version 2.0, like the original work."
 
 **Apache-2.0 §4(derivative works) 관점** [직접확인 LICENSE 조문 확인]:
 - 수정·배포 **허용**. 수정본도 Apache-2.0으로 배포 가능.
-- 조건: **라이선스·NOTICE·변경 사실 명시**(§4a/4b/4c), 원작자专利·상표권 부여 없음(§3), 보증 없음(§7).
+- 조건: **라이선스·NOTICE·변경 사실 명시**(§4a/4b/4c), 원작자 특허·상표권 부여 없음(§3), 보증 없음(§7).
 - `NOTICE`는 §4d상 **파생 배포물에 반드시 포함**. 파생물은 원 NOTICE를 **복사**해야 하며 원 NOTICE를 "수정본으로 대체"할 수 없다. → 새 제품도 `NOTICE`의 "IeumOffice modifications" 절과 "GenOffice ... Copyright 2026 Mainfunc, Inc."을 **그대로 포함**해야 한다.
 - **상표는 Apache-2.0이 부여하지 않는다** (§6). `NOTICE`도 명시: "The Apache License 2.0 grants no rights to the names or logos 'IeumOffice', '이음오피스' or 'GenOffice' (section 6)."
   → **새 제품은 '이음오피스'/'IeumOffice'/'GenOffice' 명칭·로고를 쓰면 안 된다.** 별도 제품명 필요 (가칭 `enterprise-office`는 **가칭일 뿐**).
 - 서드파티: 슬라이드 템플릿 12종 = MIT(frontend-slides) · 폰트 = SIL OFL 1.1 · 내장 스킬 5종 = MIT/Apache-2.0 · Lucide = ISC/MIT · Roboto = Apache-2.0 · Unicode UCD = Unicode-3.0 · rhwp = MIT · hangul = BSD-3. → **모두 상용·재배포 가능하나 각 라이선스 문구를 유지·동봉**해야 한다. [직접확인 `NOTICE` 전문]
 
-**⚠ 리포명에 대한 주의** [직접확인]: 확정된 리포 이름은 `ieumoffice-enterprise`다. Apache-2.0 §6은 라이선스 소유자의 상호·상표·제품명 사용 권한을 부여하지 않되, **원 저작의 출처를 설명하는 데 필요한 통상적 사용은 허용**한다. 리포명·설명에 "IeumOffice 기반"이라 쓰고 NOTICE를 그대로 복사하는 것은 §6이 허용하는 출처 표기 범위에 든다. 그러나 **"IeumOffice Enterprise"를 상용 제품명·로고로 쓰면 상표 사용 문제가 된다.** → §8 결정 항목으로 §12에 추가.
+**⚠ 리포명에 대한 주의** [직접확인]: 확정된 리포 이름은 `ieumoffice-enterprise`다. Apache-2.0 §6은 라이선스 소유자의 상호·상표·제품명 사용 권한을 부여하지 않되, **원 저작의 출처를 설명하는 데 필요한 통상적 사용은 허용**한다. 리포명·설명에 "IeumOffice 기반"이라 쓰고 NOTICE를 그대로 복사하는 것은 §6이 허용하는 출처 표기 범위에 든다. 그러나 **"IeumOffice Enterprise"를 상용 제품명·로고로 쓰면 상표 사용 문제가 된다.** → §8.1 결정 항목에 추가.
 
 **결론** [추정]: 라이선스는 **장벽이 아니다.** Apache-2.0 파생물이므로 새 상용 제품으로 판매 가능하고, 전제조건은 (1) LICENSE+NOTICE 동봉·수정사실 명시 (2) 이음오피스/GenOffice 상표 미사용 (3) 서드파티 고지 유지. **지금 필요한 유일한 조치는 새 제품의 브랜드 자산을 만드는 것**이고, 그것은 [추정] `company/brand.json`이 이미 파라미터화돼 있어(`productName`·`appId`·`executableName`·`protocolName`·`icon`) **재사용 가능한 구조**다.
 
@@ -380,7 +397,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 
 ## 11. 조사 범위 · 하지 않은 것
 
-- **읽기 전용만 했다.** 코드·서버·설치·저장소 설정 변경 없음. 커밋·푸시 없음. PR 없음 (m252).
+- **읽기 전용만 했다.** 코드·서버·설치·저장소 설정 변경 없음. 커밋은 이 계획서 문서 1건뿐이고 코드 변경 없음. PR #1은 미병합 상태로 제출했다(m262 지시).
 - **열지 않은 것**: 비밀값·토큰·세션·env/secrets 파일. 서버는 상태·로그·문서만 봤다. 설치·빌드 실행 없음.
 - **확인하지 못한 것**: §7 미확인 4건 + 지식 게이트웨이 내부 구현.
 - **내 추정 vs 확인 구분**: §3.7의 훅 분류, §6의 기간·파일 수, §10의 "장벽이 아니다"는 모두 [추정]/[직접확인 LICENSE 조문] 기반 판단.

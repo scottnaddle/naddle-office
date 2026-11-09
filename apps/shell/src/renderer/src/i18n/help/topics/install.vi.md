@@ -1,0 +1,38 @@
+# Cài đặt GenOffice
+
+Mọi phiên bản đều được công bố trên [trang phát hành (Releases)](https://github.com/pblsketch/openoffice/releases/latest) của dự án trên GitHub. Phiên bản này được phát hành cho Windows.
+
+## Chọn tệp cho máy của bạn
+
+| Nền tảng    | Yêu cầu                              | Tệp                             |
+| ----------- | ------------------------------------ | ------------------------------- |
+| **Windows** | Windows 10 trở lên, Intel/AMD 64-bit | `GenOffice-Setup-<version>.exe` |
+
+Các bản cũ hơn vẫn nằm trên trang phát hành.
+
+## Trên Windows
+
+1. Tải `GenOffice-Setup-<version>.exe` về từ trang phát hành.
+2. Chạy tệp đó. Trình cài đặt chưa được ký mã, nên trước tiên Windows có thể hiện một cửa sổ màu xanh "Windows đã bảo vệ PC của bạn". Chọn **Thông tin thêm**, rồi chọn **Vẫn chạy**. Câu chữ cụ thể tùy vào phiên bản Windows của bạn.
+3. Làm theo trình cài đặt cho đến hết.
+
+Nó đưa GenOffice vào menu Start và đăng ký `.docx`, `.xlsx`, `.pptx`, `.pdf` cùng các định dạng tương tự, để nhấp đúp vào một tệp là mở được tệp đó.
+
+Vì trình cài đặt chưa được ký, bạn chỉ nên chạy tệp đã tải về từ trang phát hành nói trên.
+
+## Cập nhật
+
+- GenOffice tìm phiên bản mới hơn trên chính trang phát hành đó của GitHub. Khi có bản mới được công bố, **Cài đặt ▸ Giới thiệu** sẽ đề nghị cập nhật: nhấn **Cập nhật lên …**, chờ tải xong, rồi nhấn **Khởi động lại và cài đặt**. Trên Windows, một cửa sổ hiển thị tiến trình cài đặt; khi xong, GenOffice mở lại cùng các tài liệu bạn đang mở. Trên Mac, ứng dụng sẽ đóng, được thay bằng phiên bản mới rồi mở lại cùng các tài liệu bạn đang mở. Điều này áp dụng cho ứng dụng trong thư mục Ứng dụng; ứng dụng mở trực tiếp từ ảnh đĩa sẽ chỉ bạn tới trang tải xuống. Bản cập nhật chỉ được cài khi bạn nhấn nút đó, không phải khi bạn chỉ đóng ứng dụng.
+- **Menu (☰) ▸ Kiểm tra bản cập nhật** sẽ kiểm tra bất cứ khi nào bạn yêu cầu. Trên Mac là **Trợ giúp ▸ Kiểm tra bản cập nhật**.
+- Khi việc kiểm tra thất bại — không có mạng, hoặc chưa có bản nào được công bố — thì không có gì xảy ra, và ứng dụng vẫn hoạt động như trước.
+- **Kênh cập nhật**, cũng nằm trong Cài đặt ▸ Giới thiệu, là Ổn định hoặc Beta. Đổi kênh sẽ có hiệu lực ngay và kiểm tra bản cập nhật; nó sẽ không hạ bản cài đặt Beta về lại Ổn định.
+- Các bản cập nhật cũng chưa được ký mã. Trước khi cài một bản, ứng dụng đối chiếu tệp đã tải về với mã kiểm tra (checksum) được công bố cùng bản phát hành đó.
+- Nếu bấm **Khởi động lại và cài đặt** mà ứng dụng đóng lại nhưng phiên bản mới không xuất hiện, lần mở tiếp theo ứng dụng sẽ báo điều đó và đề nghị cập nhật lại. Lần này trình cài đặt mở trong cửa sổ riêng, nên bạn theo dõi được và trả lời yêu cầu quyền quản trị viên. Nếu vẫn không được, cửa sổ cập nhật sẽ chỉ đến trang tải xuống; cài bằng tệp tải từ đó vẫn giữ nguyên cài đặt và tài liệu của bạn. Quá trình cập nhật được ghi vào `update-log.txt` trong thư mục dữ liệu của ứng dụng (gõ `%APPDATA%\GenOffice` vào thanh địa chỉ của File Explorer để mở). Hãy đính kèm tệp này khi báo lỗi.
+
+## Bản dựng bạn đang chạy
+
+**Cài đặt ▸ Giới thiệu** là nơi ứng dụng báo bạn đang có phiên bản nào, đang theo kênh nào và dự án nằm ở đâu. Ở đó cũng ghi tên dự án nguồn mở mà ứng dụng này dựa trên.
+
+## Dòng lệnh đi kèm luôn
+
+Mọi bản cài đặt đều kèm lệnh `ieumoffice` nói chuyện với đúng những engine mà cửa sổ dùng, nên cả hai không bao giờ bất đồng về một tệp. `ieumoffice install-cli` đưa nó vào `PATH` của bạn. Xem [Dòng lệnh và tác nhân](help://cli) để biết nó làm được gì.

@@ -1,0 +1,38 @@
+# Instalacja GenOffice
+
+Każda wersja jest publikowana na [stronie Releases](https://github.com/pblsketch/openoffice/releases/latest) projektu w serwisie GitHub. Ta wersja jest wydawana dla systemu Windows.
+
+## Wybierz plik dla swojego komputera
+
+| Platforma   | Wymagania                                  | Plik                            |
+| ----------- | ------------------------------------------ | ------------------------------- |
+| **Windows** | Windows 10 lub nowszy, 64-bitowy Intel/AMD | `GenOffice-Setup-<version>.exe` |
+
+Starsze wersje pozostają na stronie Releases.
+
+## W systemie Windows
+
+1. Pobierz plik `GenOffice-Setup-<version>.exe` ze strony Releases.
+2. Uruchom go. Instalator nie ma podpisu cyfrowego, więc Windows może najpierw wyświetlić niebieskie okno „System Windows ochronił ten komputer”. Wybierz **Więcej informacji**, a potem **Uruchom mimo to**. Dokładne brzmienie zależy od wersji systemu Windows.
+3. Przejdź przez instalator do końca.
+
+Instalator umieszcza GenOffice w menu Start i rejestruje `.docx`, `.xlsx`, `.pptx`, `.pdf` i podobne, więc dwuklik na plik go otwiera.
+
+Ponieważ instalator nie jest podpisany, uruchamiaj tylko taki, który został pobrany z podanej wyżej strony Releases.
+
+## Aktualizacje
+
+- GenOffice szuka nowszej wersji na tej samej stronie Releases w serwisie GitHub. Gdy taka zostanie opublikowana, zaproponuje ją okno **Ustawienia ▸ O aplikacji**: naciśnij **Zaktualizuj do …**, poczekaj na pobranie, a potem naciśnij **Uruchom ponownie i zainstaluj**. W systemie Windows okno pokazuje postęp instalacji; po jej zakończeniu GenOffice otworzy się ponownie z dokumentami, które były otwarte. Na Macu aplikacja zamyka się, zostaje zastąpiona nową wersją i otwiera się ponownie z otwartymi dokumentami. Dotyczy to aplikacji w folderze Aplikacje; aplikacja otwarta bezpośrednio z obrazu dysku wskaże zamiast tego stronę pobierania. Aktualizacja instaluje się tylko po naciśnięciu tego przycisku, nigdy przy zwykłym zamknięciu aplikacji.
+- **Menu (☰) ▸ Sprawdź aktualizacje…** sprawdza na żądanie. Na komputerze Mac jest to **Pomoc ▸ Sprawdź aktualizacje…**.
+- Gdy sprawdzenie się nie powiedzie — brak sieci albo nic jeszcze nie opublikowano — nic się nie dzieje, a aplikacja działa jak dotąd.
+- **Kanał aktualizacji**, również w Ustawienia ▸ O aplikacji, to Stabilny lub Beta. Zmiana działa natychmiast i sprawdza, czy jest aktualizacja; nie cofnie instalacji Beta do kanału Stabilnego.
+- Aktualizacje również nie mają podpisu cyfrowego. Przed instalacją aplikacja porównuje pobrany plik z sumą kontrolną opublikowaną razem z danym wydaniem.
+- Jeśli **Uruchom ponownie i zainstaluj** zamyka aplikację, ale nowa wersja się nie pojawia, przy następnym uruchomieniu aplikacja o tym poinformuje i ponownie zaproponuje aktualizację. Tym razem instalator otworzy się we własnym oknie, więc można śledzić jego postęp i odpowiedzieć na prośbę o uprawnienia administratora. Jeśli i to nie pomoże, okno aktualizacji wskaże stronę pobierania; instalacja z pobranego tam pliku zachowuje ustawienia i dokumenty. Przebieg aktualizacji jest zapisywany w `update-log.txt` w folderze danych aplikacji (wpisz `%APPDATA%\GenOffice` w pasku adresu Eksploratora plików, aby go otworzyć). Dołącz ten plik, zgłaszając problem.
+
+## Kompilacja, którą uruchamiasz
+
+**Ustawienia ▸ O aplikacji** to miejsce, w którym aplikacja zgłasza posiadaną wersję, kanał, za którym podąża, i to, gdzie mieszka projekt. Podaje też nazwę projektu open source, na którym ta aplikacja jest oparta.
+
+## Wiersz poleceń jest w zestawie
+
+Każda instalacja zawiera polecenie `ieumoffice`, które komunikuje się z tymi samymi silnikami co okno, więc oba nigdy nie różnią się w ocenie pliku. `ieumoffice install-cli` umieszcza je w `PATH`. Co potrafi, dowiesz się w rozdziale [Wiersz poleceń i agenci](help://cli).

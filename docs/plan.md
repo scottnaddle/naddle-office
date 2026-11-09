@@ -1,6 +1,6 @@
 # 일반 기업용 오피스 앱 — 조사·계획서
 
-> **상태: 조사 완료 · 계획서 초안.** 대상 리포 `scottnaddle/naddle-office`(private, Apache-2.0, `main`) — m262 지시대로 `docs/plan.md`로 PR(base `main`, 브랜치 `plan/enterprise-edition-v0`) 제출. **머지 금지.**
+> **상태: 조사 완료 · 계획서 v1.** @api·@devops 검토 반영, @qa가 @web 대신 임시 수행한 클라이언트 조사 반영.  대상 리포 `scottnaddle/naddle-office`(private, Apache-2.0, `main`) — m262 지시대로 `docs/plan.md`로 PR(base `main`, 브랜치 `plan/enterprise-edition-v0`) 제출. **머지 금지.**
 > 기준 코드: `scottnaddle/ubion-office` main `01b4efe4` (2026-11-09 확인) · 조사 2026-11-09 14:0x KST · 읽기 전용(코드·서버·설치·저장소 설정 변경 없음)
 > 표기: **[직접확인]** 이 문서를 쓴 조사자가 직접 확인 · **[보고]** 다른 담당자 보고 · **[추정]** 규모·기간은 추정 · **[미확인]** 확인되지 않음
 
@@ -183,6 +183,11 @@ apps/shell/src/main/index.ts:112             import { initCompanyMain, initCompa
 
 **해석**: 두 제품이 같은 업스트림을 따라가려면, 이 21개 훅이 **양쪽 제품에서 동일하게 유지**되거나(공통 코어), **제품별로 갈라져** 충돌 비용이 배수가 된다. → §4 옵션 A/B/C의 결정 요인.
 
+**★ 훅 절감은 기대하지 말 것 — @qa 분류가 정정 (m311) [보고]**
+qa가 21개를 나눠 봤다: **메커니즘 13개**(updater·electron-builder·posttest·index 초기화·i18n/product·default-app·cli/names·SettingsModal·ai-provider 6개 — 거의 무조건 필요) + **기능 8개**(지식 3·템플릿 2·Home.tsx·AiModelPicker 표시명 — 탑재 여부별). [직접확인] **로그인·지식·템플릿·잠금 AI를 모두 탑재하면 21개 전부가 메커니즘으로 재사용된다 → 훅 수는 줄어들지 않는다.**
+[직접확인] 남은 UBION 하드코딩은 '사내 AI' 문구·`ubion-*` 채널명·위키 프롬프트의 '회사(UBION)' 문자열 정도 — **전부 설정화 대상**.
+→ **의미**: §4 옵션 C의 "제품 오버레이는 훅 없음"은 **총량 절감이 아니라 충돌 면의 분리**로 읽어야 한다. **21개 상한은 낮출 목표가 아니라 새 저장소에서 유지·관리할 대상 목록**이다(§6.6.1의 checker 재작성 = 훅 1개는 그대로 유효).
+
 ---
 
 ## 4. 업스트림 추종 구조 선택지
@@ -316,7 +321,7 @@ api 보고(m254) 권고: **MVP는 A(기업별 단독 설치)**, 검증 후 C(하
 | 항목 | 현재 | 일반 제품 관점 |
 |---|---|---|
 | NSIS 설치 방식 | `oneClick: false`, `allowToChangeInstallationDirectory: true` (`apps/shell/electron-builder.cjs:914-915`) | 사용자가 설치 경로 선택 → **임의 경로 설치 가능**(enterprise 배포에 적합) |
-| 자산 이름 | `${productName}-Setup-${version}.${ext}` (`:919-921`) | `brand.json`의 `productName`에서 파생 → **브랜드만 바꾸면 신규로 산출** |
+| 자산 이름 | `${productName}-Setup-${version}.${ext}` (`:919-921`) | `brand.json`의 `productName`에서 파생 → **브랜드만 바꾸면 신규로 산출**. 단 **productName은 영문**이어야 한다(URL 경로, §6.6.4-2의 3축) |
 | 앱 ID·바로가기 | `brand.json`의 `appId`·`desktopName`·`winProgIdPrefix` | 테넌트별 **동시 설치 충돌** 가능 → 테넌트별 appId 규칙 필요 |
 | 자동 업데이트 | **꺼짐** (`company/policy/build-hook.cjs` 주석: "TEMPORARY (Scott): updates stay off until the company generic update feed exists") | 일반 제품은 **자체 피드 필요** → §8 결정 항목 |
 | 로그 경로 | `packages/company-policy/src/main.ts:318` → `~/Library/Logs/ubion-office` | 브랜드별 경로로 분리해야 다중 제품 동시 설치가 안전 |
@@ -331,6 +336,43 @@ api 보고(m254) 권고: **MVP는 A(기업별 단독 설치)**, 검증 후 C(하
 **해석**: **테넌트 설정을 사용자 홈의 JSON/ENV 파일로 두는 패턴이 이미 검증돼 있다.** 일반화는 이 패턴을 `company.policy.json` 전체로 확장하는 것이고, 파일 위치·권한(모드 600)·경로 재정의 규칙을 재사용하면 된다. [추정] 이것이 §6 Phase 0 ①의 설계 근거다.
 
 ---
+
+### 6.5.4 기능별 부착점 — @qa 결과 (web 임시 대행) [보고]
+
+> [보고] orchy m299로 @qa가 @web 대신 임시 수행. 대상 `ubion-office` main `01b4efe4`, 읽기 전용·설치 금지. **[직접확인] 표기는 qa가 파일:줄 근거로 구분** — research가 소스에서 재확인한 항목을 표시했다.
+
+| 기능 | 부착 지점 | 비고 |
+|---|---|---|
+| **계정·로그인** | 창=`packages/ubion-staff-login`(자체 패키지, `extraResources`로 실림 — `paths.ts:6-12`가 `resourcesPath`에서 읽음). main 연결=`company-policy/src/main.ts` `createStaffLoginMain`(`staffLogin.enabled` 게이트), 초기화=`index.ts:9557` `initCompanyMain`. UI 진입=`Home.tsx` 헤더 프로필 카드 + `header-profile.tsx:356` '로그인 관리…' + 다리 `user-skills-bridge.ts:222` | **[직접확인] 이미 런타임 리소스 방식** — `paths.ts:6-12`가 `opts.isPackaged ? join(resourcesPath,…) : join(appPath,…)` |
+| **지식 패널** | AI 패널 스킬 목록 `use-skill-proposals.tsx:40,86`(`companyPanelSkills`) / 스킬·프롬프트 `ubion-wiki/src/renderer.ts:14,22`(`wiki_search/page/recent`) / 빈 KB 폴백 `KbAskPanel.tsx:81,688-689,1000` / IPC 다리 `user-skills-bridge.ts:217-218` | [보고] 새 '내부 지식관리'는 이 4군데가 부착면 |
+| **템플릿** | 갤러리 탭 `TemplateGallery.tsx:29,265-266` / 등록 API `packages/pipelines/src/slides/templates/catalog.ts` `registerCompanyTemplates` / 회사 템플릿 `company-policy/src/templates/`(`slide-catalog`·`ubion-proposal-*`·`gallery-tabs`; `brand.ts:3`이 side-effect import로 전 프로세스 등록) | [보고] |
+
+[직접확인] research 교차 확인: `packages/ubion-staff-login/src/paths.ts:6-12`의 런타임 리소스 분기, `packages/company-policy/src/brand.ts:1`(brand JSON 정적 import)과 `:3`(side-effect import) — **qa의 부착점 표기는 저장소와 일치한다.**
+
+### 6.5.5 기업별 설정 외부화 — @qa 2층 구조 [보고 + 직접확인]
+
+[보고] qa의 결론: **현재 3개 설정이 모두 빌드타임 번들** — policy(`store.ts:1` 정적 import, 주입점은 `init.ts:68` `options.raw`이나 기본은 미사용) / brand(`brand.ts:1` 정적 + `build-hook.cjs:22` 설치자 신원) / auth.config(`auth/config.ts:1` + `build-hook.cjs:21` 딥링크 스킴).
+
+**[직접확인] §3.4 정적 import 5건과 정합한다.** qa가 말한 "설정 3종"은 policy·brand·auth.config이고, §3.4의 5개 import **줄**은 policy이 `index.ts:1`·`store.ts:1` **2곳**에서 옵니다 → 4줄 + `video-themes/manifest.json` 1줄 = 5줄. **양쪽 숫자가 충돌하지 않는다.**
+
+**[추정] 2층 구조 — 신원(빌드) vs 정책(런타임)**
+- **빌드타임 유지**: `appId`·`productName`·파일 연결(`.desktop`·바로가기)·딥링크 스킴 — **설치자에 심기는 값**이므로 테넌트가 바꿀 수 없어야 한다.
+- **런타임화 대상**: 앱 내 정책·브랜드·인증 제공자. qa가 짚은 **선례**가 이미 있다 — `packages/ubion-staff-login/src/paths.ts:6-12`가 시작 시 `resources`의 JSON을 읽는 패턴. 즉 **설정 주입 지점이 이미 런타임 리소스 읽기 형태로 존재**하므로, policy·brand를 같은 형태로 옮기는 것은 새 발상이 아니라 **기존 패턴 확장**이다.
+- [추정] 단 `product.ts`와 `build-hook.cjs`의 brand 참조도 런타임 값 수용으로 손봐야 한다.
+
+**[보고] 배포 선택지 2안**
+- **(a) 기업별 설치 파일** (현 구조) — `build-hook` 파라미터화.
+- **(b) 범용 바이너리 + 기업 설정 파일 프로비저닝** — (b)는 런타임 외부화의 전제. 업데이트 피드는 **기업별 generic feed**가 필요하고, 현재 `updater.ts`가 R0로 전면 차단한다. [직접확인] `company/PATCHES.md:90`에 **`provider: generic` 기반 피드로 전환**하는 계획이 이미 명시돼 있다 → (b)의 피드 전제와 **기존 계획이 일치**한다.
+
+### 6.5.6 21훅 중 일반 제품에 필요한 것 — @qa 분류 [보고]
+
+[보고] qa의 분류:
+- **메커니즘 13개(거의 무조건 필요)** — `updater.ts`·`electron-builder.cjs`·`package.json` posttest·`index.ts`(초기화)·`i18n/product.ts`·`default-app.ts`·`cli/names.ts`(브랜드 주입)·`SettingsModal.tsx`·ai-provider 6개(제공자 잠금).
+- **기능 8개(탑재 여부별)** — `use-skill-proposals`·`user-skills-bridge`·`KbAskPanel`(지식) / `catalog.ts`·`TemplateGallery`(템플릿) / `Home.tsx`(프로필 카드 필요, 영상 카드 선택) / `AiModelPicker` 표시명(문구만, 선택).
+- **[직접확인] 결론**: 로그인+지식+템플릿+잠금 AI를 **다-functions 탑재하면 21개 전부가 메커니즘으로 재사용**된다 → **훅 수는 줄어들지 않는다.**
+- [직접확인] 훅 본문에 남은 UBION 하드코딩은 '사내 AI' 문구·`ubion-*` 채널명·위키 프롬프트의 '회사(UBION)' 문자열 정도 — **전부 설정화 대상.**
+
+[직접확인] **이건 §3.7의 예상과 반대다.** §3.7은 "공통 코어에 훅을 두면 새 제품은 훅을 0개 상속"한다고 가정했는데, qa의 분류는 **기능을 다 넣으면 훅이 그대로 남는다**고 말한다. → **결론: 훅 절감은 기대하지 말아야 하고, 대신 훅을 "기계적으로 재사용 가능한 것"으로 정규화하는 것이 목표**여야 한다. §3.7의 21개 상한은 **낮출 목표가 아니라 새 저장소에서 유지·관리할 대상 목록**이다.
 
 ---
 
@@ -450,8 +492,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
 ### 미확인 (이 저장소에서 확인할 수 없음)
 - [미확인] 지식 게이트웨이 내부 구현 → 어댑터 경계 확정 불가 (3번).
 - [미확인] 첫 일반 고객이 IdP·지식 소스·배포 형태 중 무엇을 요구하는지 → Phase 1 범위 확정 불가.
-- [미확인] **@web의 클라이언트·배포 조사 결과 미수신**(2026-11-09 14:52 KST 기준). §6.5는 research가 직접 확인한 코드 근거로 보완했지만, web이 보는 "기능별 앱 내 붙는 위치"·"기업별 설정 파일 방식"·"훅 21개 중 범용 제품에 필요한 것/불필요한 것" 세 항목은 web 관점 교차 검증이 필요하다.
-- [보고] **orchy m299로 @qa가 @web 대신 임시 수행** — 읽기 전용·설치 금지, `ubion-office` main `01b4efe4` 대상. 결과 수신 시 §6.5를 qa 근거로 갱신하되 **web이 나중에 답하면 교차검증 표기**를 남긴다.
+- [보고] **@web의 클라이언트·배포 조사는 여전히 미수신.** orchy m299로 **@qa가 임시 수행**(읽기 전용·설치 금지, `ubion-office` main `01b4efe4`)해 m311로 결과를 보냈고, §6.5.4(기능 부착점)·§6.5.5(설정 외부화 2층 구조)·§6.5.6(21훅 분류)에 반영했다. **[직접확인] research가 qa의 파일:줄 근거를 소스에서 재확인**했다(`paths.ts:6-12` 런타임 리소스 분기·`brand.ts:1`/`:3`·`store.ts:1`·`auth/config.ts:1`·`PATCHES.md:90` `provider: generic` 계획·§3.4 정적 import 5줄). **web이 나중에 답하면 교차검증 표기**를 남긴다.
 - [미확인] 새 리포에 이음오피스 코드를 가져오는 방식·시점 — m262는 "계획서 결론 뒤"로만 확정. 코어 저장소로 쓸지 제품 저장소로 쓸지(§4 옵션 B/C)는 미결.
 - [미확인] 자동 업데이트 피드 정책 — 현재 꺼짐 상태이며 일반 제품에서는 필수(§6.5.2·§6.6.3).
 - [보고] **@devops의 배포·릴리스 검토는 수신**(m292)해 §6.6에 반영했다. **핵심 정정 1건: §6.6.2의 "macOS 자체 업데이트 불가"가 사실과 달랐다** — mac 자체 업데이트는 ad-hoc 서명에서도 동작하며, 근거로 인용했던 업스트림 주석이 현재 코드와 어긋났다(§6.6.2·§6.6.3·§7-9). 나머지 6건은 보강이며 §6.6.1·§6.6.4·§6.6.5·§8.1에 반영했다. [직접확인] research가 devops의 코드 인용(`mac-update.ts:57-66`·`:146-172`·`:20-21`·`electron-builder.cjs:29-30`·`:1001-1013`·`updater.ts:748`·`build-hook.cjs:457-461`)을 **모두 소스에서 재확인**했다.

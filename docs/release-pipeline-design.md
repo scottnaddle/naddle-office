@@ -42,7 +42,14 @@
 → **이 저장소에는 릴리스 파이프라인이 "있지만 옮기지 않은" 상태가 아니라 "아예 없는" 상태입니다.** 업스트림 `main`의 워크플로를 **가져오는 것 자체가** Phase 0의 첫 작업입니다.
 → 동시에 업스트림 `main`의 워크플로는 `v0.12.11` 이후 313커밋 분량 기준의 코드를 전제로 작성되어 있으므로, **가져온 뒤 v0.12.11 코드에 맞게 대조·조정하는 단계가 반드시 필요**합니다.
 
-**대조 결과(선행 확인)** — `ci.yml`이 호출하는 루트 스크립트 13종은 전부 `v0.12.11`에 존재합니다(`licenses`·`format:check`·`check:theme-colors`·`check:skill-version`·`check:help-langs`·`check:english-comments`·`check:no-genspark`·`lint`·`typecheck`·`fixtures`·`dist:mac`·`dist:win`·`dist:linux`), Sheets 워크스페이스의 `fixtures`·`compat`도 존재합니다. → **CI 워크플로 이식의 기술적 장애물은 낮습니다** `[추정]`.
+**대조 결과(선행 확인)** — `ci.yml`이 호출하는 루트 스크립트 13종은 전부 `v0.12.11`에 존재합니다(`licenses`·`format:check`·`check:theme-colors`·`check:skill-version`·`check:help-langs`·`check:english-comments`·`check:no-genspark`·`lint`·`typecheck`·`fixtures`·`dist:mac`·`dist:win`·`dist:linux`), Sheets 워크스페이스의 `fixtures`·`compat`도 존재합니다.
+
+**→ 추가 확인: `ci.yml`의 모든 실행 명령·참조 경로가 `v0.12.11`에 존재합니다** [직접확인].
+- 실행 명령: `npm ci`·`npm run build:all`·`npm test`·`npm run licenses`·`npm run format:check`·`npm run check:*`(4종)·`npm run lint`·`npm run typecheck`·`npm run fixtures`·`npm run native:build -w @genoffice/sheets`·`npm run fixtures -w @genoffice/sheets`·`npm run compat -w @genoffice/sheets`·`npm run check:skill-version`·`npx playwright install chromium`·`npx playwright test --config apps/markdown/playwright.config.ts`·`xvfb-run --auto-servernum -- npm run test:e2e` — 전부 존재.
+- 참조 경로: `fixtures/generated`(존재)·`e2e/playwright.config.ts`(존재)·`apps/markdown/playwright.config.ts`(존재).
+- `@playwright/test` ^1.61.1이 `v0.12.11`과 `main` **양쪽** 루트 `package.json`에 있음(`npx playwright`가 쓸 바이너리).
+- **브랜딩 수정 필요 없음**: `ci.yml`에는 제품명·저장소명 참조가 없습니다(참조하는 건 워크스페이스 이름 `@genoffice/*`뿐이고, 그 이름은 업스트림 내부 이름 유지 결정에 따라 그대로입니다).
+- → **`ci.yml`은 수정 없이 그대로 이식할 수 있습니다.** 남는 미확인은 "실제로 통과하는가"뿐이며, 이는 CI 실행에서 확인됩니다(§8).
 
 ### 2.2 Actions는 이미 활성 — 저장소 설정 변경 불필요
 
@@ -200,8 +207,9 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 - 트리거: `pull_request` + `push: main` + `workflow_dispatch` (업스트림 `ci.yml:10`-`:14`와 동일)
 - job: `test`(ubuntu-latest)·`e2e`(ubuntu-22.04 — **24.04는 Electron 렌더러 spawn이 막혀서 22.04 고정**, 업스트림 `ci.yml:170`-`:173` 주석)
 - 권한: `contents: read` (`ci.yml:21`)
-- **변경 지점**: 업스트림 `main`과 313커밋 차이이므로, 각 `run:` 스텝이 `v0.12.11`에서 그대로 동작하는지 스텝 단위로 확인(특히 `npm run fixtures` 재현 대조와 e2e).
-- secrets: **0건** — 이 워크플로는 승인 없이 추가·실행 가능.
+- **브랜딩 수정**: **필요 없음** (§2.1 — 제품명·저장소명 참조가 없고, 워크스페이스 이름만 씁니다).
+- **남은 확인**: 명령·경로 존재는 확인됐지만(§2.1), **실제 통과 여부는 CI 실행에서만 확인**됩니다. 특히 `npm run fixtures` 재현 대조(`git diff --exit-code -- fixtures/generated`)와 e2e(vitest·xvfb·Electron 렌더러 spawn)는 통과해야 의미가 있습니다.
+- secrets: **0건** — 이 워크플로는 승인 없이 추가·실행 가능합니다.
 
 #### `mac-build.yml` (이식 + 수정)
 - **필수 수정 1 — IeumOffice 하드코딩 제거**: `:128`(`apps/shell/release/$dir/IeumOffice.app`)·`:135`·`:143`·`:156`·`:157`·`:183`-`:184`가 앱 이름·버전 피드 파일명을 하드코딩합니다. 브랜드 값(§2.3)으로 치환해야 하며, **치환 값은 §5 결정 7 확정 전까지 "플레이스홀더"로 두고 실패하도록** 합니다(잘못된 이름으로 릴리스되면 업데이트 경로가 박힙니다).
@@ -369,7 +377,8 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 
 ## 8. 열린 질문 · 검증 못 한 것
 
-- **[미확인]** 업스트림 `main`의 워크플로가 `v0.12.11` 코드에서 그대로 동작하는지는 **스텝 단위 대조가 필요**합니다. 이 문서에서는 스크립트 존재 여부만 확인했습니다(§2.1).
+- **[확인됨]** `ci.yml`의 모든 실행 명령·참조 경로가 `v0.12.11`에 존재하고 브랜딩 수정이 필요 없습니다(§2.1). → **이식 자체는 막히지 않습니다.**
+- **[미확인]** `ci.yml`의 각 job이 `v0.12.11`에서 **실제로 통과하는가**는 CI 실행에서만 확인됩니다. 빌드 3종(`mac-build`·`linux-build`·`windows-build`)은 명령 목록이 `ci.yml`과 달라 별도 대조가 필요합니다(§3.2).
 - **[미확인]** `notarize-dmg.js`가 CI용으로 `APPLE_ID` 3종 방식만 지원하는 상황에서, **Developer ID 인증서를 CI에 어떻게 임포트할지**(p12 → keychain → keychain 프로필)는 실행 순서와 credential 방식에 따라 달라집니다. §5 결정 3의 세부 사항.
 - **[미확인]** `scripts/update-feed-utils.cjs`의 주석이 참조하는 `mac-release-upload.cjs`·`promote-stable.cjs`가 업스트림 어디에도 없습니다. 피드 업로드·promote는 **신규 작성 필요**입니다.
 - **[미확인]** mac/linux에서 만든 Windows 설치 파일에서 **OCR·QuickLook 헬퍼를 채우는 방법**은 정해지지 않았습니다(§2.9). 후보는 ① Windows 러너 고정(업스트림 방식) ② Windows 러너에서 만든 헬퍼를 artifact로 넘겨 받아 붙이기. 어느 쪽이든 CI 설계에 반영해야 합니다(§5 결정 12).

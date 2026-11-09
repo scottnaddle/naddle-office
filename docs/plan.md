@@ -8,7 +8,7 @@
 
 ## 0. 한 줄 요약
 
-유비온오피스는 **이음오피스(IeumOffice, Apache-2.0) 위에 얹은 "회사 오버레이"**다. 일반 기업용 앱은 (1) 새 저장소, (2) 업스트림 추종 구조를 **공통 코어 + 제품 오버레이**로 바꾸고, (3) "하드코딩된 정책"을 **런타임 테넌트 설정**으로 바꾸는 것이 핵심 작업이다. [직접확인] 코드의 **유비온 고유 문자열 374건 중 285건(76%)은 식별자 이름**이고, URL 리터럴은 **2건뿐**이다 — 즉 대부분은 이름·구조 문제이지 동작 로직 문제가 아니다. **MVP 4~6주 [추정]** — 기간은 전부 추정이며 아래 §6 로드맵에만 있고, 근거는 §3·§6.5의 코드 확인 결과다.
+유비온오피스는 **이음오피스(IeumOffice, Apache-2.0) 위에 얹은 "회사 오버레이"**다. 일반 기업용 앱은 (1) 새 저장소, (2) 업스트림 추종 구조를 **공통 코어 + 제품 오버레이**로 바꾸고, (3) "하드코딩된 정책"을 **런타임 테넌트 설정**으로 바꾸는 것이 핵심 작업이다. [직접확인] 코드의 **유비온 고유 문자열 374건 중 285건(76%)은 식별자 이름**이고, URL 리터럴은 **2건뿐**이다 — 즉 대부분은 이름·구조 문제이지 동작 로직 문제가 아니다. [직접확인] **주입 seam 4개(`DaouClient`·`OfficeBrokerClient`·`RelayClient`·`WikiApiClient`)가 이미 새 기능 3종(계정·지식·모델)에 대응한다** — 설정 런타임화만 해결하면 어댑터를 붙이는 방식으로 일반화가 진행되고 대형 재작성은 필요 없다(§3.3.1). **MVP 4~6주 [추정]** — 기간은 전부 추정이며 아래 §6 로드맵에만 있고, 근거는 §3·§6.5의 코드 확인 결과다.
 
 §3.7의 업스트림 훅 **정확히 21개**는 단정 숫자가 아니라 아래 명령으로 재현된다 [직접확인]: `git diff --name-only --diff-filter=M b8cb8564b...HEAD` 에서 `company/`·`packages/company-policy/`·`packages/ubion-*/`·`docs/` 를 제외하고 `package-lock.json`(generated)도 제외하면 21개가 나온다. §3.1의 374건은 `grep -rn 'ubion\|Ubion\|유비온\|coco\|Daou\|daou' --include='*.ts' --include='*.tsx' packages/company-policy/src packages/ubion-staff-login/src packages/ubion-wiki/src packages/ubion-video/src | grep -v test` 의 출현 라인 수다.
 
@@ -83,13 +83,36 @@
 | 키체인 항목 | `packages/company-policy/src/auth/key-store.ts:44-45` | `ubion.litellm.key` / `ubion.litellm.expiresAt` — 이름만 |
 | 정책 endpoint **5종** | `company/policy/company.policy.json`의 `endpoint.baseUrl`(`:11`)·`video.baseUrl`(`:82`)·`wiki.baseUrl`(`:86`)·`staffLogin.baseUrl`(`:95`)·`staffLogin.daouServerUrl`(`:96`) | `https://llm.ubion.global/v1` · `https://lms.ubion.global/video-api` · `https://lms.ubion.global/api/wiki` · `https://bot.ubion.global` · `https://coco.ubion.co.kr` — 전부 공개 도메인이며 IP·토큰류 없음 |
 
+### 3.3.1 이미 존재하는 주입 seam — 어댑터 후보 목록 [직접확인]
+
+`grep -rn "export interface .*Client|export interface .*Adapter|export interface .*Provider"` 결과, 호출자가 주입하는 형태의 인터페이스만 추렸다. **메서드 집합이 작아 이미 분리 가능한 지점**이다.
+
+| seam | 파일:줄 | 메서드 | 일반화 방향 |
+|---|---|---|---|
+| `DaouClient` | `packages/company-policy/src/auth/daou-dm-auth.ts:18` | `userSeq()` · `readChallengeCode()` | **IdP 후보 1번** — OIDC/SAML 구현체가 이 2개만 제공하면 됨 |
+| `OfficeBrokerClient` | `packages/company-policy/src/auth/office-broker-client.ts:134` | `dmChallenge()` · `dmToken()` · `refresh()` · `logout()` · `me()` | 인증 제공자 추상화의 중심 계약. `me()`가 프로필·역할을 반환 → **IdP 중립 프로필 모델의 정의 지점** |
+| `RelayClient` | `packages/company-policy/src/auth/relay-client.ts:97` | `challenge()` · `token()` · `litellmKey()` · `exchangeTeamsHandoff()` | 모델 게이트웨이(LiteLLM) 추상화 지점. `exchangeTeamsHandoff`는 팀 온보딩 — 일반 제품의 계정관리에 그대로 대응 |
+| `WikiApiClient` | `packages/ubion-wiki/src/client.ts:41` | `baseUrl()` · `getSession()` | **지식 소스 어댑터 후보 1번** — Confluence/SharePoint/Notion 등 각 1개 구현 |
+| `VideoApiClient` | `packages/ubion-video/src/client.ts:80` | `createJob()` · `getJob()` · `cancelJob()` · `getResult()` · `streamEvents()` | 영상 렌더 서비스 계약. 일반 제품에는 선택 기능 |
+| `RenderClient` | `packages/ubion-video/src/render-client.ts:169` | `validate()` · `createRender()` · `getJob()` · `cancelJob()` · `getArtifacts()` · `previewTts()` | 로컬 렌더 경로. 제품 선택 기능 |
+
+**[직접확인] 확인 명령**: `grep -rn "export interface .*Client\|export interface .*Adapter\|export interface .*Provider" --include="*.ts" packages/company-policy/src packages/ubion-staff-login/src packages/ubion-wiki/src packages/ubion-video/src | grep -v test`
+
+**해석** [추정]: **주입 seam은 이미 충분하다.** `DaouClient`·`OfficeBrokerClient`·`RelayClient`·`WikiApiClient` 4개가 새 기능 3종(계정·지식·모델)에 정확히 대응한다. 즉 §3.4의 설정 런타임화만 해결하면 **어댑터 구현을 붙이는 방식**으로 일반화가 진행될 수 있고, 대형 재작성은 필요 없다. 반면 `MediaAdapter`(`packages/company-policy/src/media.ts:11`)는 `id`·`kind` 2필드짜리 데이터 타입이라 seam이 아니라 **값 객체**다 — 이번 범위 밖.
+
 ### 3.4 ★ 가장 중요한 구조적 발견 — 정책은 **빌드 시점 상수** [직접확인]
 
+[직접확인] 확인 명령: `grep -rn "import .* from '.*\.json'" --include="*.ts" packages/company-policy/src packages/ubion-wiki/src packages/ubion-video/src packages/ubion-staff-login/src | grep -v test` → **정적 JSON import 5건**:
+
 ```
-packages/company-policy/src/index.ts:1   import policy from '../../../company/policy/company.policy.json'
-packages/company-policy/src/store.ts:1   import rawPolicy from '../../../company/policy/company.policy.json'
-packages/company-policy/src/brand.ts:1    import brand  from '../../../company/brand.json'
+packages/company-policy/src/index.ts:1          import policy      from '../../../company/policy/company.policy.json'
+packages/company-policy/src/store.ts:1          import rawPolicy   from '../../../company/policy/company.policy.json'
+packages/company-policy/src/brand.ts:1           import brand       from '../../../company/brand.json'
+packages/company-policy/src/auth/config.ts:1    import rawAuthConfig from '../../../../company/auth.config.json'
+packages/ubion-video/src/flow/templates.ts:14  import bundled     from '../../../../company/video-themes/manifest.json'
 ```
+
+**따라서 정적 import는 정책 3건만이 아니라 5건**이고, `auth.config.json`·`video-themes/manifest.json`도 bake된다.
 
 정적 import → JSON이 **번들에 bake**된다. 런타임에 테넌트 설정을 갈아끼울 방법이 없다.
 
@@ -163,6 +186,7 @@ apps/shell/src/main/index.ts:112             import { initCompanyMain, initCompa
 ### 추천: **C (공통 코어 + 제품 오버레이)** — 단, 단계적
 
 이유(근거):
+0. **[직접확인] §3.3.1의 주입 seam 4개가 이미 새 기능 3종에 대응한다.** → 공통 코어를 쪼갰을 때 각 제품은 **어댑터 구현체만** 갖게 되고, 공통 코어는 거의 손대지 않는다. 이 구조가 C의 비용을 낮춘다.
 1. 새 리포가 확정됐고 [직접확인] §3.7에서 훅 21개가 매 동기화 병목임을 확인했다. B는 이 비용을 정확히 두 배로 만든다.
 2. §3.4에서 정책이 빌드 상수임을 확인했다. 이걸 해결하지 않으면 "어떤 기업도 자기 환경에 맞춰 운영"이라는 목표 자체가 불가능하다 — 이건 구조 선택보다 **선행 조건**이다.
 3. A는 가장 싸지만 §3.1의 374건이 계속 유비온 저장소에 쌓여, 새 리포 분리(m250)와 어긋난다.
@@ -190,8 +214,8 @@ api 보고(m254) 권고: **MVP는 A(기업별 단독 설치)**, 검증 후 C(하
 
 | Phase | 내용 | 기간 [추정] | 선행 조건 |
 |---|---|---|---|
-| **0. 기반 분리** | ① **정책을 런타임 설정으로** (§3.4 — 정적 import → 테넌트 설정 로더) ② `auth.config.json`/`brand.json` 스키마 일반화 ③ `DaouClient` seam 확인·정리 ④ audit 스키마 ⑤ Docker Compose ⑥ **릴리스 파이프라인·서명·업데이트 피드 설계** (§6.6.4) ⑦ 새 overlay 계층·훅 예산 규칙 (§6.6.1) ⑧ **새 리포에 NOTICE 동봉** (§10 — 새 리포 `main`에 아직 NOTICE가 없음) | 1~2주 | 없음 (여기서 시작) |
-| **1. MVP** | OIDC SSO+역할+SCIM basic · 지식 read-only 어댑터 1종 · 템플릿 카탈로그 read-only · 테넌트별 LiteLLM · 영구 audit | 4~6주 | Phase 0 |
+| **0. 기반 분리** | ① **정책을 런타임 설정으로** (§3.4 — 정적 import → 테넌트 설정 로더) ② `auth.config.json`/`brand.json` 스키마 일반화 ③ **주입 seam 4개 정리** (§3.3.1 — `DaouClient`·`OfficeBrokerClient`·`RelayClient`·`WikiApiClient`) ④ audit 스키마 ⑤ Docker Compose ⑥ **릴리스 파이프라인·서명·업데이트 피드 설계** (§6.6.4) ⑦ 새 overlay 계층·훅 예산 규칙 (§6.6.1) ⑧ **새 리포에 NOTICE 동봉** (§10 — 새 리포 `main`에 아직 NOTICE가 없음) | 1~2주 | 없음 (여기서 시작) |
+| **1. MVP** | **기존 seam에 어댑터 구현** (§3.3.1) — OIDC 구현체(`DaouClient`·`OfficeBrokerClient` 대체) + 역할·SCIM basic · 지식 read-only 어댑터 1종(`WikiApiClient` 대체) · 템플릿 카탈로그 read-only · 테넌트별 LiteLLM(`RelayClient` 대체) · 영구 audit | 4~6주 | Phase 0 |
 | **2. 확장** | 지식 수집·ACL·검색 · 템플릿 작성·승인 · SAML/LDAP · 관리 UI · 쿼터·비용 · 멀티테넌트/하이브리드 | 6~10주 | Phase 1 + 첫 고객 요구 |
 
 [추정] 파일 수: 서버 20~35 · 인프라 10~20 · 클라이언트 15~25 (api m254와 대체로 일치).

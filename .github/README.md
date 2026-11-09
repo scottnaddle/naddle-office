@@ -2,12 +2,14 @@
 
 나들오피스는 **이음오피스(IeumOffice)** 를 기반으로 만든 일반 기업용 오피스 앱입니다. 특정 회사에 종속되지 않고, 기업이 자기 환경의 인증·지식 소스·모델 게이트웨이·템플릿을 설정해 운영할 수 있는 것을 목표로 합니다.
 
-- **내부 지식관리**: 사내 위키/문서 소스를 연결해 검색·열람
-- **계정관리**: OIDC/SAML 등 기업 IdP와 역할·계정 관리
-- **문서 템플릿 관리**: 기업별 템플릿 카탈로그 배포·갱신
-- **배포**: 기업별 셀프호스트와 제공형 클라우드를 함께 지원하는 하이브리드 구조
+아래 항목은 **목표·계획**이며 현재 구현된 기능이 아닙니다. 현재 저장소는 업스트림 `v0.12.11`을 가져온 초기 단계입니다.
 
-이 저장소는 초기 개발 단계입니다. 계획과 범위는 [`docs/plan.md`](../docs/plan.md)를 참고하세요.
+- **내부 지식관리(예정)**: 사내 위키/문서 소스를 연결해 검색·열람
+- **계정관리(예정)**: 기업 IdP와 역할·계정 관리. OIDC를 우선 검토하고 SAML은 후속 계획입니다.
+- **문서 템플릿 관리(예정)**: 기업별 템플릿 카탈로그 배포·갱신
+- **배포(목표)**: 기업별 셀프호스트와 제공형 클라우드를 함께 지원하는 하이브리드 구조
+
+계획과 범위는 [`docs/plan.md`](../docs/plan.md)를 참고하세요.
 
 ## 출처와 라이선스
 
@@ -18,7 +20,7 @@
 - 나들오피스 고지: [NOTICE-NADDLE.md](../NOTICE-NADDLE.md)
 - 이 문서는 GitHub에서 업스트림 `README.md`보다 먼저 표시됩니다. 루트 `README.md`·`README.en.md`는 업스트림 원문이며 이 저장소에서 수정하지 않습니다.
 
-IeumOffice·GenOffice의 이름과 로고는 각 원저작자의 상표입니다. 이 프로젝트는 그 상표를 제품명이나 로고로 사용하지 않으며, Apache-2.0 §6이 허용하는 범위에서 출처를 설명하는 목적으로만 사용합니다.
+IeumOffice·GenOffice의 이름과 로고는 각 원저작자의 상표 또는 명칭일 수 있습니다. 이 프로젝트는 그 이름과 로고를 제품명이나 로고로 사용하지 않으며, Apache-2.0 §6이 허용하는 범위에서 출처를 설명하는 목적으로만 사용합니다.
 
 ---
 
@@ -26,12 +28,14 @@ IeumOffice·GenOffice의 이름과 로고는 각 원저작자의 상표입니다
 
 NaddleOffice is an enterprise office application built on **IeumOffice**. It is designed to be configured for each organization's own identity provider, knowledge source, model gateway, and document templates.
 
-- **Internal knowledge**: connect and search company knowledge sources
-- **Account management**: enterprise IdP (OIDC/SAML), roles, and account lifecycle
-- **Template management**: organization-specific template catalogs and updates
-- **Deployment**: self-hosted per organization or a managed cloud, in a hybrid structure
+The items below are **planned goals**, not currently implemented features. This repository is at the initial stage of importing upstream `v0.12.11`.
 
-This repository is in early development. See [`docs/plan.md`](../docs/plan.md) for the plan and scope.
+- **Internal knowledge (planned)**: connect and search company knowledge sources
+- **Account management (planned)**: enterprise IdP integration, roles, and account lifecycle. OIDC is the first candidate; SAML is a later plan.
+- **Template management (planned)**: organization-specific template catalogs and updates
+- **Deployment (goal)**: self-hosted per organization or a managed cloud, in a hybrid structure
+
+See [`docs/plan.md`](../docs/plan.md) for the plan and scope.
 
 ## Origin and license
 
@@ -42,4 +46,4 @@ This repository starts from [IeumOffice](https://github.com/pblsketch/openoffice
 - NaddleOffice notices: [NOTICE-NADDLE.md](../NOTICE-NADDLE.md)
 - This file is shown by GitHub before the upstream `README.md`. The root `README.md` and `README.en.md` are upstream files and are not modified in this repository.
 
-The names and logos of IeumOffice and GenOffice are trademarks of their respective owners. This project does not use them as a product name or logo; they are used only to describe origin, as permitted by Apache-2.0 §6.
+The names and logos of IeumOffice and GenOffice may be trademarks or names of their respective owners. This project does not use them as a product name or logo; they are used only to describe origin, as permitted by Apache-2.0 §6.

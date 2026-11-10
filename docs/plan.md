@@ -457,7 +457,7 @@ m267 지시대로, 새 제품에는 `company/`·`packages/company-policy`·`pack
    - **[직접확인] devops m292 보강 — `publish` 대상은 상수 하드코딩**: `electron-builder.cjs:29-30`의 `REPO_OWNER='pblsketch'` / `REPO_NAME='openoffice'`가 `config.publish`(`:1001-1006`)에 쓰인다. 브랜드만 바꿔서는 **릴리스 저장소가 업스트림을 가리킨 채** 남는다.
    - **해결 방식(업스트림 훅 0개)**: `build-hook.cjs`가 `config.publish` 설정(`electron-builder.cjs:1001`) **뒤에** 호출(`:1013`)되므로, 새 overlay 훅이 `config.publish`를 **덮어쓸 수 있다** → 업스트림 파일을 수정하지 않는다.
    - **확정값 (devops m301)**: `config.publish = [{ provider:'github', owner:'scottnaddle', repo:'naddle-office' }]` — **최종 이름으로.** (릴리스 저장소를 소스와 분리하기로 결정되면 그쪽 저장소명으로 교체.)
-   - **[직접확인 devops m294] owner/repo는 **최종 이름**으로 확정**: `owner='scottnaddle'`, `repo='naddle-office'`. GitHub API가 이전 이름으로 307 리다이렉트하지만 **electron-updater가 쓰는 다운로드 URL은 리다이렉트를 따라가지 않을 수 있다** → **리다이렉트에 의존하지 않는다.** 리포명이 바뀌면 **자동 업데이트가 찾는 피드 경로도 바뀐다**는 점이 여기서 확인된다.
+   - **[직접확인 devops m294] owner/repo는 최종 이름으로 확정**: `owner='scottnaddle'`, `repo='naddle-office'`. GitHub API가 이전 이름으로 307 리다이렉트하지만 **electron-updater가 쓰는 다운로드 URL은 리다이렉트를 따라가지 않을 수 있다** → **리다이렉트에 의존하지 않는다.** 리포명이 바뀌면 **자동 업데이트가 찾는 피드 경로도 바뀐다**는 점이 여기서 확인된다.
    - **[미확인] 새 결정**: 이 `repos`가 가리키는 **릴리스 저장소**는 소스 저장소와 다를 수 있다(**공개 소스 + 비공개 릴리스 분리**). 어느 쪽을 쓸지 §8 결정 항목에 추가(§8.1-21). private 릴리스 저장소를 쓰면 §6.6.3의 provider 제약(토큰 필요)이 걸린다.
    - **[직접확인 devops m306] 브랜딩 3축 분리** — 세 축은 규칙이 다르므로 **한 축만 바꿔지는 일이 없도록** 분리해 둔다.
 

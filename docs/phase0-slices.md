@@ -45,6 +45,7 @@ P0-5 Release pipeline design (devops) ─────┘
 **Goal:** Replace build-time JSON constants with a validated runtime tenant configuration.
 
 **Scope**
+
 - Define a `TenantConfig` schema covering: product/brand, policy, authentication provider selection, knowledge source, model gateway, template catalog, retention/feature flags.
 - Loader precedence: explicit environment/file override → tenant config file → safe development default.
 - Migrate the five static JSON imports identified in `docs/plan.md` §3.4 to the loader.
@@ -52,6 +53,7 @@ P0-5 Release pipeline design (devops) ─────┘
 - Secret values are referenced by name/path only; no secret values in config or logs.
 
 **Deliverables**
+
 - Versioned schema and validation (unknown keys rejected or explicitly ignored).
 - Loader with deterministic precedence and clear error messages.
 - Default/example tenant profile.
@@ -59,6 +61,7 @@ P0-5 Release pipeline design (devops) ─────┘
 - Documentation for operators: where the file lives, permissions, override variables, rollback.
 
 **Verification**
+
 - No remaining static imports of the five build-time JSON files.
 - Changing the tenant config changes endpoints/branding without rebuilding.
 - Invalid config fails closed with a readable error; no secret appears in logs.
@@ -74,6 +77,7 @@ P0-5 Release pipeline design (devops) ─────┘
 **Goal:** Make the four integration seams explicit and provider-neutral, with the current vendor implementation moved behind an adapter.
 
 **Scope**
+
 - Define interfaces and error taxonomy for:
   - `DaouClient` (identity interaction)
   - `OfficeBrokerClient` (session/token/profile)
@@ -85,6 +89,7 @@ P0-5 Release pipeline design (devops) ─────┘
 - Keep the existing login flow as the default adapter.
 
 **Deliverables**
+
 - Interface specifications with method contracts and error codes.
 - Default adapter preserving current behavior.
 - A test-only fake adapter for each interface.
@@ -92,6 +97,7 @@ P0-5 Release pipeline design (devops) ─────┘
 - A dependency rule: feature code must not import a vendor SDK/client directly.
 
 **Verification**
+
 - Existing login/session/wiki tests pass unchanged (or with only test wiring changes).
 - A fake adapter can be selected in tests without touching feature code.
 - No direct vendor import outside the adapter directory.
@@ -107,6 +113,7 @@ P0-5 Release pipeline design (devops) ─────┘
 **Goal:** Define the new overlay layer and its upstream-hook budget before product code is added.
 
 **Scope**
+
 - Define the overlay directory layout (new code, assets, build hooks, tests).
 - Define the upstream hook ledger: file, line, purpose, owner, rollback, round.
 - Define the hard cap for upstream-file modifications and the checker behavior.
@@ -114,6 +121,7 @@ P0-5 Release pipeline design (devops) ─────┘
 - Define how upstream syncs are performed and how conflicts are resolved.
 
 **Deliverables**
+
 - Overlay layout and naming rules.
 - `PATCHES.md`-style ledger template.
 - A checker (or adapted checker) that:
@@ -124,6 +132,7 @@ P0-5 Release pipeline design (devops) ─────┘
 - Documentation for adding/removing a hook.
 
 **Verification**
+
 - Baseline run passes on a clean upstream checkout.
 - A deliberately unlisted overlay file fails the check.
 - A 22nd upstream modification fails the cap.
@@ -138,6 +147,7 @@ P0-5 Release pipeline design (devops) ─────┘
 **Goal:** Define the server-side tenant boundary and the minimum audit contract without deploying or changing a server.
 
 **Scope**
+
 - Document the control-plane/data-plane boundary from `docs/plan.md` §5.1.
 - Define the `tenant.yaml` server profile: tenant ID, IdP reference, knowledge source, model gateway, template registry, retention, feature flags.
 - Define secret references and rotation metadata; never values.
@@ -146,6 +156,7 @@ P0-5 Release pipeline design (devops) ─────┘
 - Define the minimum observability contract: health, readiness, request ID, structured error code.
 
 **Deliverables**
+
 - Server tenant-config schema and example.
 - Control/data-plane responsibility table.
 - Audit event schema and retention policy.
@@ -153,6 +164,7 @@ P0-5 Release pipeline design (devops) ─────┘
 - Logging rules: no tokens, cookies, query values, or PII.
 
 **Verification**
+
 - Schemas validate the example and reject missing required fields.
 - A secret-scan of the example finds no values.
 - Audit sample contains no token/session/PII fields.
@@ -168,6 +180,7 @@ P0-5 Release pipeline design (devops) ─────┘
 **Goal:** Define the release/update model without implementing it in this phase.
 
 **Scope**
+
 - Signed update manifest: channel, version, platform/arch, SHA-256, minimum OS, notes, rollback pointer.
 - Channels/rings: stable/beta, and whether an enterprise pilot ring is needed.
 - Signing ownership, key rotation, and revocation.
@@ -176,12 +189,14 @@ P0-5 Release pipeline design (devops) ─────┘
 - Compatibility rule: server contract must support the oldest supported client; server deploys before stable channel opens.
 
 **Deliverables**
+
 - A design document owned by devops (link from this plan; do not duplicate here).
 - Manifest schema and example.
 - Release checklist and rollback runbook.
 - Decision list for unresolved items (keys, feed host, channels).
 
 **Verification**
+
 - Design reviewed by devops and the product owner.
 - Manifest example validates and contains no secrets.
 - Rollback procedure is testable on a staging artifact.
@@ -196,6 +211,7 @@ P0-5 Release pipeline design (devops) ─────┘
 **Goal:** Verify that the Phase 0 pieces work together on a clean checkout and that no existing behavior regressed.
 
 **Scope**
+
 - Fresh checkout of the branch under test; no local state.
 - Start with the default profile; then switch to a second test tenant profile.
 - Select fake adapters for identity/knowledge/model in tests.
@@ -203,6 +219,7 @@ P0-5 Release pipeline design (devops) ─────┘
 - Review documentation links and secret-scan results.
 
 **Acceptance checklist**
+
 - [ ] Default profile starts without a tenant file.
 - [ ] Second profile changes endpoint/branding without a rebuild.
 - [ ] Invalid profile fails closed with a readable error.

@@ -96,9 +96,10 @@ function applyProductNameOverrides(
   if (!name && !nameKo) return config
 
   const base = config.product
+  const resolvedNameKo = nameKo || base?.nameKo
   const product: TenantProduct = {
     name: name || base?.name || 'NaddleOffice',
-    ...(nameKo || base?.nameKo ? { nameKo: nameKo || base?.nameKo! } : {}),
+    ...(resolvedNameKo ? { nameKo: resolvedNameKo } : {}),
   }
   return validateTenantConfig({ ...config, product }, '<environment>')
 }

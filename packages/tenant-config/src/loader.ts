@@ -62,7 +62,8 @@ export function loadTenantConfig(options: TenantConfigLoaderOptions = {}): Tenan
   const exists = options.exists ?? existsSync
   const explicit = options.path?.trim() || env[TENANT_CONFIG_PATH_ENV]?.trim()
 
-  const path = explicit || defaultTenantConfigPath({ env, home: options.home, platform: options.platform })
+  const path =
+    explicit || defaultTenantConfigPath({ env, home: options.home, platform: options.platform })
   let config: TenantConfig = { schemaVersion: 1 }
 
   if (exists(path)) {
@@ -96,9 +97,10 @@ function applyProductNameOverrides(
   if (!name && !nameKo) return config
 
   const base = config.product
+  const resolvedNameKo = nameKo || base?.nameKo
   const product: TenantProduct = {
     name: name || base?.name || 'NaddleOffice',
-    ...(nameKo || base?.nameKo ? { nameKo: nameKo || base?.nameKo! } : {}),
+    ...(resolvedNameKo ? { nameKo: resolvedNameKo } : {}),
   }
   return validateTenantConfig({ ...config, product }, '<environment>')
 }

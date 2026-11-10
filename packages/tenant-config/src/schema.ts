@@ -51,7 +51,19 @@ const PRODUCT_KEYS = new Set(['name', 'nameKo'])
 const TENANT_ID_RE = /^[a-z0-9][a-z0-9._-]{0,63}$/
 const SECRET_KEY_RE = /^[a-z][a-z0-9._-]{0,63}$/i
 const SECRET_REF_RE = /^(env|file|secret|ref):[^\s]+$/
-const CONTROL_CHARS_RE = /[\u0000-\u001f\u007f]/
+
+/**
+ * Control characters are not printable: C0 (0x00-0x1f) and DEL (0x7f).
+ * Checked by code unit rather than by a regular expression, because a
+ * character class of control codes does not lint.
+ */
+function hasControlChars(value: string): boolean {
+  for (let index = 0; index < value.length; index += 1) {
+    const code = value.charCodeAt(index)
+    if (code < 0x20 || code === 0x7f) return true
+  }
+  return false
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -61,7 +73,12 @@ function fail(code: TenantConfigErrorCode, message: string, source: string): nev
   throw new TenantConfigError(code, message, source)
 }
 
-function checkKeys(value: Record<string, unknown>, allowed: Set<string>, label: string, source: string): void {
+function checkKeys(
+  value: Record<string, unknown>,
+  allowed: Set<string>,
+  label: string,
+  source: string,
+): void {
   for (const key of Object.keys(value)) {
     if (!allowed.has(key)) fail('invalid_config', `${label} has unknown key "${key}"`, source)
   }
@@ -70,7 +87,7 @@ function checkKeys(value: Record<string, unknown>, allowed: Set<string>, label: 
 function displayName(value: unknown, field: string, source: string): string {
   if (typeof value !== 'string') fail('invalid_product_name', `${field} must be a string`, source)
   const name = value.trim()
-  if (!name || name.length > 80 || CONTROL_CHARS_RE.test(name)) {
+  if (!name || name.length > 80 || hasControlChars(name)) {
     fail('invalid_product_name', `${field} must be 1-80 printable characters`, source)
   }
   return name
@@ -88,7 +105,11 @@ export function validateTenantConfig(value: unknown, source = '<memory>'): Tenan
   let tenantId: string | undefined
   if (value.tenantId !== undefined) {
     if (typeof value.tenantId !== 'string' || !TENANT_ID_RE.test(value.tenantId)) {
-      fail('invalid_config', 'tenantId must be a lowercase slug (1-64 chars: a-z 0-9 . _ -)', source)
+      fail(
+        'invalid_config',
+        'tenantId must be a lowercase slug (1-64 chars: a-z 0-9 . _ -)',
+        source,
+      )
     }
     tenantId = value.tenantId
   }
@@ -97,7 +118,8 @@ export function validateTenantConfig(value: unknown, source = '<memory>'): Tenan
   if (value.product !== undefined) {
     if (!isRecord(value.product)) fail('invalid_config', 'product must be an object', source)
     checkKeys(value.product, PRODUCT_KEYS, 'product', source)
-    if (value.product.name === undefined) fail('invalid_product_name', 'product.name is required', source)
+    if (value.product.name === undefined)
+      fail('invalid_product_name', 'product.name is required', source)
     const name = displayName(value.product.name, 'product.name', source)
     const nameKo =
       value.product.nameKo === undefined
@@ -111,7 +133,8 @@ export function validateTenantConfig(value: unknown, source = '<memory>'): Tenan
     if (!isRecord(value.secretRefs)) fail('invalid_config', 'secretRefs must be an object', source)
     const refs: Record<string, string> = {}
     for (const [key, ref] of Object.entries(value.secretRefs)) {
-      if (!SECRET_KEY_RE.test(key)) fail('invalid_secret_ref', `secretRefs key "${key}" is not a valid name`, source)
+      if (!SECRET_KEY_RE.test(key))
+        fail('invalid_secret_ref', `secretRefs key "${key}" is not a valid name`, source)
       if (typeof ref !== 'string' || ref.length > 512 || !SECRET_REF_RE.test(ref)) {
         fail(
           'invalid_secret_ref',

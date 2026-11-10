@@ -16,12 +16,14 @@
 ## 1. 목표 · 비목표
 
 ### 목표
+
 1. 이 저장소에서 **재현 가능한 릴리스 빌드**(mac·linux·windows)를 돌릴 수 있게 한다.
 2. **서명**(mac Developer ID + notarize, Windows code signing)을 넣어 MDM 배포 가능한 산출물을 만든다.
 3. **업데이트 피드**(`latest*.yml` / `beta*.yml`)를 어디에 두고 어떤 provider로 올릴지 확정해, 자동 업데이트가 조용히 실패하지 않게 한다.
 4. **서버 선배포 → beta → stable** 순서로 롤백 가능한 릴리스 절차를 문서로 고정한다.
 
 ### 비목표 (이번 문서에서 다루지 않음)
+
 - 서버(`bot`·`gateway`·nginx) 구현·설정 변경 — 서버는 이 저장소 밖이며 §7에 운영 관점만 기술한다.
 - 저장소 공개 전환(✓ 승인 대상, `docs/plan.md` §8.1-18).
 - 시크릿 등록·저장소 설정 변경·Actions 설정 변경 (모두 승인 전 금지).
@@ -32,17 +34,31 @@
 
 ### 2.1 워크플로가 하나도 없다
 
-| 항목 | 값 | 근거 |
-|---|---|---|
-| 이 저장소의 `.github/workflows/` | **0개** | `git ls-tree -r c1ad4793 \| grep workflows/` → 0건. `.github/`에는 `README.md`만 존재 |
-| 업스트림 `v0.12.11`의 워크플로 | **0개** | `git ls-tree -r v0.12.11 \| grep workflows/` → 0건 |
-| 업스트림 `main`의 워크플로 | 6개 (`ci`·`free-models`·`growth`·`linux-build`·`mac-build`·`windows-build`) | `upstream/main:.github/workflows/` |
-| 업스트림 `main`과 `v0.12.11`의 거리 | **313 커밋 · 871 파일 차이** | `git rev-list --count v0.12.11..upstream/main` = 313, `git diff --shortstat` = 871 files changed |
+| 항목                                | 값                                                                          | 근거                                                                                             |
+| ----------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| 이 저장소의 `.github/workflows/`    | **0개**                                                                     | `git ls-tree -r c1ad4793 \| grep workflows/` → 0건. `.github/`에는 `README.md`만 존재            |
+| 업스트림 `v0.12.11`의 워크플로      | **0개**                                                                     | `git ls-tree -r v0.12.11 \| grep workflows/` → 0건                                               |
+| 업스트림 `main`의 워크플로          | 6개 (`ci`·`free-models`·`growth`·`linux-build`·`mac-build`·`windows-build`) | `upstream/main:.github/workflows/`                                                               |
+| 업스트림 `main`과 `v0.12.11`의 거리 | **313 커밋 · 871 파일 차이**                                                | `git rev-list --count v0.12.11..upstream/main` = 313, `git diff --shortstat` = 871 files changed |
 
 → **이 저장소에는 릴리스 파이프라인이 "있지만 옮기지 않은" 상태가 아니라 "아예 없는" 상태입니다.** 업스트림 `main`의 워크플로를 **가져오는 것 자체가** Phase 0의 첫 작업입니다.
 → 동시에 업스트림 `main`의 워크플로는 `v0.12.11` 이후 313커밋 분량 기준의 코드를 전제로 작성되어 있으므로, **가져온 뒤 v0.12.11 코드에 맞게 대조·조정하는 단계가 반드시 필요**합니다.
 
-**대조 결과(선행 확인)** — `ci.yml`이 호출하는 루트 스크립트 13종은 전부 `v0.12.11`에 존재합니다(`licenses`·`format:check`·`check:theme-colors`·`check:skill-version`·`check:help-langs`·`check:english-comments`·`check:no-genspark`·`lint`·`typecheck`·`fixtures`·`dist:mac`·`dist:win`·`dist:linux`), Sheets 워크스페이스의 `fixtures`·`compat`도 존재합니다. → **CI 워크플로 이식의 기술적 장애물은 낮습니다** `[추정]`.
+**대조 결과(선행 확인)** — `ci.yml`이 호출하는 루트 스크립트 13종은 전부 `v0.12.11`에 존재합니다(`licenses`·`format:check`·`check:theme-colors`·`check:skill-version`·`check:help-langs`·`check:english-comments`·`check:no-genspark`·`lint`·`typecheck`·`fixtures`·`dist:mac`·`dist:win`·`dist:linux`), Sheets 워크스페이스의 `fixtures`·`compat`도 존재합니다.
+
+**→ 추가 확인: `ci.yml`의 모든 실행 명령·참조 경로가 `v0.12.11`에 존재합니다** [직접확인].
+
+- 실행 명령: `npm ci`·`npm run build:all`·`npm test`·`npm run licenses`·`npm run format:check`·`npm run check:*`(4종)·`npm run lint`·`npm run typecheck`·`npm run fixtures`·`npm run native:build -w @genoffice/sheets`·`npm run fixtures -w @genoffice/sheets`·`npm run compat -w @genoffice/sheets`·`npm run check:skill-version`·`npx playwright install chromium`·`npx playwright test --config apps/markdown/playwright.config.ts`·`xvfb-run --auto-servernum -- npm run test:e2e` — 전부 존재.
+- 참조 경로: `fixtures/generated`(존재)·`e2e/playwright.config.ts`(존재)·`apps/markdown/playwright.config.ts`(존재).
+- `@playwright/test` ^1.61.1이 `v0.12.11`과 `main` **양쪽** 루트 `package.json`에 있음(`npx playwright`가 쓸 바이너리).
+- **브랜딩 수정 필요 없음**: `ci.yml`에는 제품명·저장소명 참조가 없습니다(참조하는 건 워크스페이스 이름 `@genoffice/*`뿐이고, 그 이름은 업스트림 내부 이름 유지 결정에 따라 그대로입니다).
+- → **`ci.yml`은 수정 없이 그대로 이식할 수 있습니다.**
+
+**첫 실행 결과 (2026-11-09, PR #9 · run `42642437550`)** [직접확인]
+
+- `e2e` job: 1회차 **328개 중 321 passed / 1 failed / 1 flaky** → 실패·flaky는 모두 스펠 표시 관련(`e2e/docs-spell-suggestions.spec.ts:71`·`docs-spellcheck-reenable.spec.ts:51`). **재실행(attempt 2)에서 328개 전부 통과(40분 26초)** → 1회차 실패는 **flake**로 확정. 업스트림도 **같은 워크플로 파일**로 통과(run `42719465251`)하고 그 로그에서 같은 스펠 테스트 3개가 모두 통과합니다 → 워크플로 이식 문제가 아님을 확인.
+- `test` job: step 16 `check:no-genspark`에서 실패 → 이후 스텝 전부 skipped. **이 실패는 `main`에 이미 있던 상태**입니다(`origin/main`에서 `node tools/check-no-genspark.mjs` 실행 → 동일한 4건, exit 1). 나들오피스 PR #1(계획서)·#3(NOTICE·README)이 추가한 Apache-2.0 §4 출처 표기 4건이 게이트의 허용 목록에 없었던 것입니다 → ALLOW 추가 PR(#10)로 처리 중.
+- → **남는 미확인**: `test` job의 lint·typecheck·unit test 스텝은 **아직 한 번도 실행되지 않았습니다**(앞 게이트에서 막힘). ALLOW이 머지된 뒤에 확인해야 합니다(§8).
 
 ### 2.2 Actions는 이미 활성 — 저장소 설정 변경 불필요
 
@@ -54,53 +70,55 @@
 
 `apps/shell/electron-builder.cjs` (이 저장소 `c1ad4793` 기준):
 
-| 줄 | 값 | 비고 |
-|---|---|---|
-| `:23` | `APP_ID = 'io.github.pblsketch.ieumoffice'` | 앱 ID·프로토콜 핸들러 계열 |
-| `:24` | `PRODUCT_NAME = 'IeumOffice'` | 산출 파일명 계열 |
-| `:28` | `PACKAGED_APP_NAME = 'ieumoffice'` | per-user 캐시 폴더(`<name>-updater`) |
-| `:29` | `REPO_OWNER = 'pblsketch'` | |
-| `:30` | `REPO_NAME = 'openoffice'` | |
-| `:1003`-`:1005` | `publish: [{ provider: 'github', owner: REPO_OWNER, repo: REPO_NAME }]` | **업스트림 공개 저장소를 가리킴** |
-| `:995`-`:997` | "Auto-update feed: the releases of the public repository … the repository is public, which is why no token or feed URL has to be injected" | private 릴리스 저장소를 쓰면 이 전제가 깨짐 |
+| 줄              | 값                                                                                                                                         | 비고                                        |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------- |
+| `:23`           | `APP_ID = 'io.github.pblsketch.ieumoffice'`                                                                                                | 앱 ID·프로토콜 핸들러 계열                  |
+| `:24`           | `PRODUCT_NAME = 'IeumOffice'`                                                                                                              | 산출 파일명 계열                            |
+| `:28`           | `PACKAGED_APP_NAME = 'ieumoffice'`                                                                                                         | per-user 캐시 폴더(`<name>-updater`)        |
+| `:29`           | `REPO_OWNER = 'pblsketch'`                                                                                                                 |                                             |
+| `:30`           | `REPO_NAME = 'openoffice'`                                                                                                                 |                                             |
+| `:1003`-`:1005` | `publish: [{ provider: 'github', owner: REPO_OWNER, repo: REPO_NAME }]`                                                                    | **업스트림 공개 저장소를 가리킴**           |
+| `:995`-`:997`   | "Auto-update feed: the releases of the public repository … the repository is public, which is why no token or feed URL has to be injected" | private 릴리스 저장소를 쓰면 이 전제가 깨짐 |
 
 → **릴리스 산출물명·앱 ID·업데이트 피드 대상이 3곳 모두 업스트림 값을 가리킵니다.** 이 3축은 `docs/plan.md` §6.6.4-2·§8.1-8/10의 브랜딩 3축과 같은 결정입니다(산출 파일명 / 앱 ID·핸들러 / 표시명). **파이프라인 구현 전에 확정하지 않으면, 첫 릴리스 후 산출물명과 업데이트 경로가 영구히 박힙니다.**
 
 ### 2.4 mac 서명: 인프라는 있고, 꺼져 있는 4줄뿐
 
-| 줄 | 내용 |
-|---|---|
-| `electron-builder.cjs:737` | `hardenedRuntime: true` (기본값) |
-| `electron-builder.cjs:741` | `notarize: true` (기본값) |
+| 줄                         | 내용                                             |
+| -------------------------- | ------------------------------------------------ |
+| `electron-builder.cjs:737` | `hardenedRuntime: true` (기본값)                 |
+| `electron-builder.cjs:741` | `notarize: true` (기본값)                        |
 | `electron-builder.cjs:942` | `afterAllArtifactBuild: 'build/notarize-dmg.js'` |
-| `electron-builder.cjs:986` | `config.mac.identity = '-'` ← ad-hoc |
-| `electron-builder.cjs:987` | `config.mac.hardenedRuntime = false` ← 꺼짐 |
-| `electron-builder.cjs:988` | `config.mac.notarize = false` ← 꺼짐 |
-| `electron-builder.cjs:989` | `config.dmg.sign = false` ← 꺼짐 |
+| `electron-builder.cjs:986` | `config.mac.identity = '-'` ← ad-hoc             |
+| `electron-builder.cjs:987` | `config.mac.hardenedRuntime = false` ← 꺼짐      |
+| `electron-builder.cjs:988` | `config.mac.notarize = false` ← 꺼짐             |
+| `electron-builder.cjs:989` | `config.dmg.sign = false` ← 꺼짐                 |
 
 - 공증 실행기 `apps/shell/build/notarize-dmg.js`가 이미 **CI용 비밀값 3종**을 지원합니다: `APPLE_ID` + `APPLE_APP_SPECIFIC_PASSWORD` + `APPLE_TEAM_ID` (`:14`-`:23`). 로컬 전용으로 `APPLE_KEYCHAIN_PROFILE`도 지원(`:17`).
 - `apps/shell/build/entitlements.mac.plist`의 entitlement는 **2개뿐**(`allow-jit`, `allow-unsigned-executable-memory`).
 - **→ Developer ID 서명+공증으로 전환하는 데 필요한 코드 변경은 위 4줄(986-989)뿐이고, 이 저장소의 훅 예산은 0개 목표입니다.** [직접확인]
 
 **mac 자체 업데이트는 서명과 무관하게 동작합니다** (`docs/plan.md` §6.6.2 확정 사항, devops m292 정정):
+
 - `apps/shell/src/main/mac-update.ts:19` — "Nothing here adds or strips the quarantine flag …"
 - `mac-update.ts:47` — 차단 사유 3종: `not-an-app-bundle` · `translocated` · `read-only` (**ad-hoc 서명은 차단 목록에 없음**)
 - `mac-update.ts:147` — "Points electron-updater's Mac download at `stage` instead of **Squirrel.Mac**" (Squirrel.Mac 미사용)
 - `mac-update.ts:154` — `installMacStaging` / `updater.ts:955`·`:960` 호출부
-→ **mac 서명의 동기는 "자체 업데이트 불가"가 아니라 Gatekeeper 마찰과 기업 MDM 배포 불가입니다.**
+  → **mac 서명의 동기는 "자체 업데이트 불가"가 아니라 Gatekeeper 마찰과 기업 MDM 배포 불가입니다.**
 
 ### 2.5 Windows 서명 경로는 실제로 동작하지 않는다 ★블로커
 
-| 줄 | 내용 |
-|---|---|
-| `electron-builder.cjs:958` | `const winSignMode = process.env.GENOFFICE_WIN_SIGN_MODE` (값: `test` / `production`, 그 외 throw) |
-| `electron-builder.cjs:963` | `config.win.signtoolOptions = { … }` |
-| `electron-builder.cjs:970` | `execFileSync(process.execPath, [join(__dirname, '../../scripts/win-sign.cjs'), winSignMode, configuration.path], …)` |
-| `scripts/win-sign.cjs` | **파일 없음** — `scripts/`에는 `mcp-stdio-bridge.js`·`update-feed-utils.cjs` 2개뿐 (`git ls-tree` 확인, 업스트림 `main`에도 0건) |
+| 줄                         | 내용                                                                                                                             |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `electron-builder.cjs:958` | `const winSignMode = process.env.GENOFFICE_WIN_SIGN_MODE` (값: `test` / `production`, 그 외 throw)                               |
+| `electron-builder.cjs:963` | `config.win.signtoolOptions = { … }`                                                                                             |
+| `electron-builder.cjs:970` | `execFileSync(process.execPath, [join(__dirname, '../../scripts/win-sign.cjs'), winSignMode, configuration.path], …)`            |
+| `scripts/win-sign.cjs`     | **파일 없음** — `scripts/`에는 `mcp-stdio-bridge.js`·`update-feed-utils.cjs` 2개뿐 (`git ls-tree` 확인, 업스트림 `main`에도 0건) |
 
 **→ `GENOFFICE_WIN_SIGN_MODE=production`(또는 `test`)을 켜면 패키징 시점에 모듈을 못 찾아 죽습니다.** 주석이 약속한 "test=자체서명 PFX / production=DigiCert KeyLocker" 두 모드가 **실행 불가** 상태입니다.
 
 **installer만 서명해서는 부족합니다** — `electron-builder.cjs:945`-`:957` 주석:
+
 > Security features that judge every PE individually (Smart App Control, WDAC/AppLocker, AV heuristics) block unsigned child processes — the unsigned xlsx-sidecar.exe died with "spawn UNKNOWN" on such machines **even though the installer itself was signed**.
 
 - electron-builder가 서명하는 것: 메인 실행 파일·NSIS uninstaller·installer (`signtoolOptions.sign` 경유). 업스트림 주석은 실행 파일을 `GenOffice.exe`라고 부르지만(`:946`-`:951`), 이 저장소에서는 브랜드 3축 결정(§2.3)에 따라 제품명으로 바뀝니다.
@@ -108,6 +126,7 @@
 - → **extraResources 3종은 워크플로가 서명해야 합니다.** (주석 `:954`-`:956`이 같은 취지)
 
 **★ 서명 도입 시 반드시 뒤집어야 할 기존 규칙들** [직접확인]:
+
 - 업스트림 `windows-build.yml:144`-`:146`은 **"설치 파일이 서명되어 있지 않은지"를 강제 검사**합니다: `(Get-AuthenticodeSignature '$installer').Status` 가 `NotSigned`가 아니면 exit 1. 이유 주석은 `:7`-`:8` — "a signed release would lock every later update to that signer". → **서명을 도입하면 이 검사를 반전해야 합니다(서명됨을 검증).**
 - `windows-build.yml:48`·`mac-build.yml:46`의 `CSC_IDENTITY_AUTO_DISCOVERY: 'false'`는 "러너가 인증서를 임의로 집어오지 못하게" 막는 장치입니다("never pick up a certificate from the runner"). → 서명 시 인증서 **import**로 대체해야 합니다.
 - `docs/releasing.ko.md:111`은 `CSC_LINK`·`WIN_CSC_LINK`·`GENOFFICE_WIN_SIGN_MODE`를 **"이 저장소에서는 쓰지 않는다"**고 명시하며, 한 번 서명된 릴리스는 이후 서명 없는 버전으로 업데이트되지 않는다고 경고합니다. → **정본 문서이므로 서명 도입과 동시에 반드시 고쳐야 합니다**(§4-9).
@@ -123,12 +142,13 @@
 
 이 저장소에는 **릴리스 절차 문서가 이미 있습니다.** 파이프라인을 새로 만드는 게 아니라, 이 절차를 CI로 옮기는 쪽입니다.
 
-| 파일 | 역할 |
-|---|---|
-| `docs/releasing.ko.md` (315줄) | **정본** — 릴리스 절차(버전 올리기·설치 파일 만들기·게시·확인) |
+| 파일                                         | 역할                                                                       |
+| -------------------------------------------- | -------------------------------------------------------------------------- |
+| `docs/releasing.ko.md` (315줄)               | **정본** — 릴리스 절차(버전 올리기·설치 파일 만들기·게시·확인)             |
 | `.claude/skills/release-ieumoffice/SKILL.md` | 정본에 없는 **판단 기준·금지·승인 절차** ("문서와 어긋나면 문서를 따른다") |
 
 **정본 절차의 흐름**(이 설계가 그대로 따를 부분):
+
 1. 버전은 **`apps/shell/package.json`의 `"version"` 한 곳**에서 정합니다(루트 `package.json`의 `0.1.0`은 무관 — `releasing.ko.md` 3번).
 2. **릴리스 본문만 먼저 공개**(파일 없음) → Actions 워크플로를 `release_tag` 지정으로 실행 → 빌드·검사 통과 → 파일이 그 릴리스에 자동 첨부 (`releasing.ko.md` 4번).
 3. Windows 산출물에는 **출처 증명(attestation)**이 붙습니다 — `gh attestation verify IeumOffice-Setup-<ver>.exe --repo pblsketch/openoffice`. 워크플로 권한 `id-token: write`·`attestations: write` (업스트림 `windows-build.yml:35`-`:44`). → 이 저장소에서는 `--repo scottnaddle/naddle-office`로 바뀝니다.
@@ -148,16 +168,17 @@
 
 `apps/shell/electron-builder.cjs:113` `ensurePlatformHelpers()`가 **OS별로 다른 보조 실행 파일을 패키징 직전에 컴파일**합니다. 이 구조는 "어떤 러너에서 빌드할 수 있는가"를 결정합니다.
 
-| 산출물 | 필요한 러너 | 근거 |
-|---|---|---|
+| 산출물  | 필요한 러너           | 근거                                                                                                                                                 |
+| ------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Windows | **Windows 러너 필수** | `electron-builder.cjs:119`-`:125`·`:130`-`:134` — `process.platform === 'win32'`일 때만 `build-win.mjs`로 `win-ocr.exe`·`win-quicklook.exe`를 컴파일 |
-| macOS | **macOS 러너 필수** | 같은 함수의 darwin 분기(`:114`-`:116`)가 `compileVisionOcr()`(`:93`-`:103`)로 swiftc 컴파일 |
-| linux | linux 러너 | 헬퍼 분기 없음. `xlsx-sidecar`만 필요 |
+| macOS   | **macOS 러너 필수**   | 같은 함수의 darwin 분기(`:114`-`:116`)가 `compileVisionOcr()`(`:93`-`:103`)로 swiftc 컴파일                                                          |
+| linux   | linux 러너            | 헬퍼 분기 없음. `xlsx-sidecar`만 필요                                                                                                                |
 
 **→ Windows 빌드를 macOS·Linux 러너에서 돌리면 빌드는 성공하면서 OCR·QuickLook 헬퍼가 조용히 빠집니다** (extraResources `electron-builder.cjs:638`-`:643`에서 파일이 없으면 그것만 기능 손실). 업스트림 CI는 `windows-2025`를 쓰므로 이 함정에는 걸리지 않습니다.
 
 **사이드카 크로스 빌드 경로는 v0.12.11에 이미 있습니다**
-- `apps/sheets/native/xlsx-engine/.cargo/config.toml` 존재. 파일 주석에 명시: **"cargo discovers .cargo/config.toml from the *working directory*, not from --manifest-path"** → `apps/sheets`의 `native:build` 스크립트가 `--config native/xlsx-engine/.cargo/config.toml`을 이미 붙이고 있습니다(누락하면 MSVC CRT 정적 링크가 빠짐).
+
+- `apps/sheets/native/xlsx-engine/.cargo/config.toml` 존재. 파일 주석에 명시: **"cargo discovers .cargo/config.toml from the _working directory_, not from --manifest-path"** → `apps/sheets`의 `native:build` 스크립트가 `--config native/xlsx-engine/.cargo/config.toml`을 이미 붙이고 있습니다(누락하면 MSVC CRT 정적 링크가 빠짐).
 - 업스트림 CI는 Windows 러너에서 **호스트용(MSVC) 사이드카**를 만든 뒤 `target/x86_64-pc-windows-gnu/release/`로 **복사**합니다(업스트림 `windows-build.yml:95`-`:102`) — 즉 electron-builder가 기대하는 **경로 이름(gnu)과 실제 빌드 타깃(msvc)이 다릅니다.** mac/linux에서 크로스 빌드할 때는 **gnu 타깃을 직접 빌드**해야 합니다.
 
 ---
@@ -182,14 +203,14 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 
 ### 3.2 워크플로 목록 (이 저장소에 만들 것)
 
-| 워크플로 | 출처 | 상태 | 비고 |
-|---|---|---|---|
-| `ci.yml` | 업스트림 `main` **이식** | 검증 job 2개(`test`·`e2e`) | secrets 0건. v0.12.11 스크립트 존재 확인됨(§2.1) |
-| `mac-build.yml` | 업스트림 `main` **이식 + 수정** | arm64(+선택 x64) | IeumOffice 하드코딩 `:128`·`:135`·`:143`·`:156`·`:157`·`:183`-`:184`, Drive 비밀값 `:93`-`:94`·`:104`-`:105`·`:110`, `CSC_IDENTITY_AUTO_DISCOVERY:'false'` `:46` |
-| `linux-build.yml` | 업스트림 `main` **이식 + 수정** | AppImage/deb/rpm | ieumoffice 하드코딩 `:150`·`:152`·`:155`-`:157`·`:163`·`:179`, Drive 비밀값 `:107`-`:108`·`:128`-`:129`·`:134` |
-| `windows-build.yml` | 업스트림 `main` **이식 + 수정** | x64(선택 arm64) | IeumOffice 하드코딩 `:129`·`:133`·`:137`·`:143`·`:153`·`:172`, Drive 비밀값 `:92`-`:93`·`:107`-`:108`·`:113` |
-| `release-publish.yml` (신규) | **신규 작성** | 산출물 → 릴리스·피드 | provider 결정이 선행(§3.5) |
-| `promote-stable.yml` (신규) | **신규 작성** | beta → stable | forward-only 가드 재사용 |
+| 워크플로                     | 출처                            | 상태                       | 비고                                                                                                                                                             |
+| ---------------------------- | ------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml`                     | 업스트림 `main` **이식**        | 검증 job 2개(`test`·`e2e`) | secrets 0건. v0.12.11 스크립트 존재 확인됨(§2.1)                                                                                                                 |
+| `mac-build.yml`              | 업스트림 `main` **이식 + 수정** | arm64(+선택 x64)           | IeumOffice 하드코딩 `:128`·`:135`·`:143`·`:156`·`:157`·`:183`-`:184`, Drive 비밀값 `:93`-`:94`·`:104`-`:105`·`:110`, `CSC_IDENTITY_AUTO_DISCOVERY:'false'` `:46` |
+| `linux-build.yml`            | 업스트림 `main` **이식 + 수정** | AppImage/deb/rpm           | ieumoffice 하드코딩 `:150`·`:152`·`:155`-`:157`·`:163`·`:179`, Drive 비밀값 `:107`-`:108`·`:128`-`:129`·`:134`                                                   |
+| `windows-build.yml`          | 업스트림 `main` **이식 + 수정** | x64(선택 arm64)            | IeumOffice 하드코딩 `:129`·`:133`·`:137`·`:143`·`:153`·`:172`, Drive 비밀값 `:92`-`:93`·`:107`-`:108`·`:113`                                                     |
+| `release-publish.yml` (신규) | **신규 작성**                   | 산출물 → 릴리스·피드       | provider 결정이 선행(§3.5)                                                                                                                                       |
+| `promote-stable.yml` (신규)  | **신규 작성**                   | beta → stable              | forward-only 가드 재사용                                                                                                                                         |
 
 > 업스트림 `main` 워크플로의 라인번호는 `pblsketch/openoffice@upstream/main` 기준입니다. 이 저장소에는 워크플로가 없으므로 **이식 시 라인번호가 바뀝니다** — 이식 후 라인번호 기준으로 문서를 갱신합니다.
 > `free-models.yml`·`growth.yml`은 배포 파이프라인과 무관하므로 Phase 0 범위 밖입니다(필요 여부는 별도 판단).
@@ -197,24 +218,29 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 ### 3.3 각 워크플로의 최소 요구사항
 
 #### `ci.yml` (이식)
+
 - 트리거: `pull_request` + `push: main` + `workflow_dispatch` (업스트림 `ci.yml:10`-`:14`와 동일)
 - job: `test`(ubuntu-latest)·`e2e`(ubuntu-22.04 — **24.04는 Electron 렌더러 spawn이 막혀서 22.04 고정**, 업스트림 `ci.yml:170`-`:173` 주석)
 - 권한: `contents: read` (`ci.yml:21`)
-- **변경 지점**: 업스트림 `main`과 313커밋 차이이므로, 각 `run:` 스텝이 `v0.12.11`에서 그대로 동작하는지 스텝 단위로 확인(특히 `npm run fixtures` 재현 대조와 e2e).
-- secrets: **0건** — 이 워크플로는 승인 없이 추가·실행 가능.
+- **브랜딩 수정**: **필요 없음** (§2.1 — 제품명·저장소명 참조가 없고, 워크스페이스 이름만 씁니다).
+- **남은 확인**: 명령·경로 존재는 확인됐지만(§2.1), **실제 통과 여부는 CI 실행에서만 확인**됩니다. 특히 `npm run fixtures` 재현 대조(`git diff --exit-code -- fixtures/generated`)와 e2e(vitest·xvfb·Electron 렌더러 spawn)는 통과해야 의미가 있습니다.
+- secrets: **0건** — 이 워크플로는 승인 없이 추가·실행 가능합니다.
 
 #### `mac-build.yml` (이식 + 수정)
+
 - **필수 수정 1 — IeumOffice 하드코딩 제거**: `:128`(`apps/shell/release/$dir/IeumOffice.app`)·`:135`·`:143`·`:156`·`:157`·`:183`-`:184`가 앱 이름·버전 피드 파일명을 하드코딩합니다. 브랜드 값(§2.3)으로 치환해야 하며, **치환 값은 §5 결정 7 확정 전까지 "플레이스홀더"로 두고 실패하도록** 합니다(잘못된 이름으로 릴리스되면 업데이트 경로가 박힙니다).
 - **필수 수정 2 — 서명 전환**: `CSC_IDENTITY_AUTO_DISCOVERY: 'false'`(`:46`)는 "키체인에서 인증서를 찾지 말라"는 뜻입니다. Developer ID로 가려면 키체인에 인증서를 **import**하는 단계(또는 자동 탐색 허용)가 추가로 필요합니다 → §5 결정 3.
 - **선택**: `GENOFFICE_MAC_X64=1`로 Intel dmg 동시 생성(업스트림 `electron-builder.cjs:33`-`:38` 주석: x64/arm64 동시 배포용).
 - **게이트(설계)**: notarize 성공 여부, dmg 서명 검증, `*.app` bundle ID가 결정된 `appId`와 일치하는지, 산출 파일명이 결정된 slug와 일치하는지.
 
 #### `linux-build.yml` (이식 + 수정)
+
 - ieumoffice 하드코딩 `:150`·`:152`·`:155`-`:157`·`:163`·`:179` 제거(경로·패키지명·deb/rpm 파일명).
 - deb 의존성 확인(`:163`)·설치 후 headless export 스모크(`:255`-`:261`)는 그대로 활용 가능.
 - linux는 **패키지 서명(DEB/RPM/GPG)이 없습니다** — 업스트림은 `*.sha256` 체크섬 파일만 생성합니다(`linux-build.yml:303`·`:343`·`:372`). 무결성 검증은 체크섬 수준뿐이라 MDM 배포 제약은 §5 결정에 명시합니다.
 
 #### `windows-build.yml` (이식 + 수정)
+
 - IeumOffice 하드코딩 `:129`·`:133`·`:137`·`:143`·`:153`·`:172` 제거.
 - **서명 단계 추가(신규)**: `GENOFFICE_WIN_SIGN_MODE`를 `production`(또는 `test`)으로 넘기고, **`scripts/win-sign.cjs`를 먼저 작성**해야 합니다(§2.5). **이 스크립트가 없으면 이 워크플로는 반드시 실패해야 합니다** — "서명 없이 통과"는 §2.5 주석이 경고한 그대로 "installer는 서명됐지만 child process가 죽는" 상황을 재현합니다.
 - **extraResources 서명**: `xlsx-sidecar.exe`·`win-ocr.exe`·`win-quicklook.exe`를 **패키징 전에** 서명해야 합니다. 워크플로가 서명→electron-builder가 패키징하는 순서.
@@ -235,31 +261,33 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 - 리허설 자산은 **삭제하지 않고 `--clobber`로 교체**하는 규칙을 유지합니다(유비온 릴리스 운영 규칙과 동일).
 
 #### `release-publish.yml` (신규)
+
 - **필요 조건**: provider가 `github`가 아닌 경우(C안)에는 피드 yml을 별도 서버에 올려야 하므로 이 워크플로가 필수입니다. A안(공개 GitHub 릴리스)에서는 빌드 워크플로의 `gh release upload`로 충분하고, 이 워크플로는 **피드 검증 + promote** 역할로 축소됩니다.
 - 입력: 빌드 워크플로의 산출물(artifact) + 태그.
 - 처리: 피드 yml 생성(`latest.yml`/`latest-mac.yml`/`latest-linux.yml`/`beta*.yml`) → 업로드 → 피드 검증(버전·파일명·해시 일치).
 - **provider별 분기** (§3.5).
 
 #### `promote-stable.yml` (신규)
+
 - beta 릴리스의 산출물을 stable 피드로 승격. **forward-only**(되돌림 없음)를 `scripts/update-feed-utils.cjs`의 가드로 강제.
 
 ### 3.4 산출물 매트릭스
 
-| 대상 | 파일 | 서명 | 피드 파일 |
-|---|---|---|---|
-| mac arm64 | `.dmg` + `.zip` | Developer ID + notarize (§2.4) | `latest-mac.yml` |
-| mac x64 | `.dmg` + `.zip` | 동일 | (별도 아키텍처 표기 확인 필요) |
-| linux x64 | `.AppImage`·`.deb`·`.rpm` | 없음 | `latest-linux.yml` |
-| windows x64 | `-Setup-<ver>.exe` | code signing + **extraResources 서명** | `latest.yml` |
-| windows arm64 | `-Setup-<ver>.exe` | 동일 | (별도) |
+| 대상          | 파일                      | 서명                                   | 피드 파일                      |
+| ------------- | ------------------------- | -------------------------------------- | ------------------------------ |
+| mac arm64     | `.dmg` + `.zip`           | Developer ID + notarize (§2.4)         | `latest-mac.yml`               |
+| mac x64       | `.dmg` + `.zip`           | 동일                                   | (별도 아키텍처 표기 확인 필요) |
+| linux x64     | `.AppImage`·`.deb`·`.rpm` | 없음                                   | `latest-linux.yml`             |
+| windows x64   | `-Setup-<ver>.exe`        | code signing + **extraResources 서명** | `latest.yml`                   |
+| windows arm64 | `-Setup-<ver>.exe`        | 동일                                   | (별도)                         |
 
 ### 3.5 피드(publish) 구조 — 3안
 
-| 안 | 구성 | 장점 | 위험·조건 |
-|---|---|---|---|
-| **A. public GitHub 릴리스 저장소** | `provider: 'github'`, 별도 public 저장소 | 토큰 불필요(`updater.ts:995`-`:997` 전제 유지). 피드 파일 자동 생성 | **공개 전환 = 저장소 설정 변경 = ✓ 승인 대상.** 개발 중에도 릴리스 노트·브랜드가 노출 |
-| **B. private GitHub + 토큰** | `provider: 'github'` + 토큰 | 파일 분리 | **electron-updater의 github provider는 public 전제**(§2.3) → 토큰을 클라이언트에 배포해야 함 = 시크릿 배포 문제. **조용히 실패**(업데이트 실패를 사용자가 모름) |
-| **C. private 피드 서버(S3/generic)** | `provider: 's3'` 또는 `'generic'` + 자체 URL | 소스 저장소와 완전 분리, 공개 범위 통제 | 피드 URL이 앱에 박힘 → **URL 변경 = 기존 사용자 업데이트 경로 차단**. 자체 서버 운영 필요(이 저장소 밖) |
+| 안                                   | 구성                                         | 장점                                                                | 위험·조건                                                                                                                                                       |
+| ------------------------------------ | -------------------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **A. public GitHub 릴리스 저장소**   | `provider: 'github'`, 별도 public 저장소     | 토큰 불필요(`updater.ts:995`-`:997` 전제 유지). 피드 파일 자동 생성 | **공개 전환 = 저장소 설정 변경 = ✓ 승인 대상.** 개발 중에도 릴리스 노트·브랜드가 노출                                                                           |
+| **B. private GitHub + 토큰**         | `provider: 'github'` + 토큰                  | 파일 분리                                                           | **electron-updater의 github provider는 public 전제**(§2.3) → 토큰을 클라이언트에 배포해야 함 = 시크릿 배포 문제. **조용히 실패**(업데이트 실패를 사용자가 모름) |
+| **C. private 피드 서버(S3/generic)** | `provider: 's3'` 또는 `'generic'` + 자체 URL | 소스 저장소와 완전 분리, 공개 범위 통제                             | 피드 URL이 앱에 박힘 → **URL 변경 = 기존 사용자 업데이트 경로 차단**. 자체 서버 운영 필요(이 저장소 밖)                                                         |
 
 → **§5 결정 4에서 A/B/C 중 하나를 확정해야 Layer 2가 구현됩니다.** 기본값 제안은 **A**(공개 릴리스 저장소)이지만, 공개 전환이 계획서 §6.6.1의 공개 전 점검 5개와 연결되므로 **사람 결정을 기다립니다.** [추정]
 
@@ -267,18 +295,18 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 
 ### 3.6 시크릿 목록 (이름만 · 값 미기재 · 등록은 승인 후)
 
-| 시크릿 이름 | 용도 | 필요한가 | 상태 |
-|---|---|---|---|
-| `APPLE_ID` | 공증용 Apple ID | mac Developer ID 도입 시 **필요** | 미등록 |
-| `APPLE_APP_SPECIFIC_PASSWORD` | 공증용 앱 전용 비밀번호 | 동일 | 미등록 |
-| `APPLE_TEAM_ID` | 공증용 Team ID | 동일 | 미등록 |
-| `APPLE_CERTIFICATE_P12_BASE64` | Developer ID 인증서(임포트 방식) | 방식 선택 시 필요 | 미등록 |
-| `APPLE_CERTIFICATE_PASSWORD` | 위 P12 비밀번호 | 동일 | 미등록 |
-| `WIN_SIGN_CERT_P12_BASE64` | Windows 코드서명 인증서 | Windows 서명 시 필요 | 미등록 |
-| `WIN_SIGN_CERT_PASSWORD` | 위 P12 비밀번호 | 동일 | 미등록 |
-| `GENOFFICE_GOOGLE_CLIENT_ID` | Drive 클라이언트 | §5 결정 5 | 미등록 |
-| `GENOFFICE_GOOGLE_CLIENT_SECRET` | Drive 클라이언트 | 동일 | 미등록 |
-| `GITHUB_TOKEN` | 릴리스 생성(저장소 기본값) | github provider 시 필요 | 기본 제공 |
+| 시크릿 이름                      | 용도                             | 필요한가                          | 상태      |
+| -------------------------------- | -------------------------------- | --------------------------------- | --------- |
+| `APPLE_ID`                       | 공증용 Apple ID                  | mac Developer ID 도입 시 **필요** | 미등록    |
+| `APPLE_APP_SPECIFIC_PASSWORD`    | 공증용 앱 전용 비밀번호          | 동일                              | 미등록    |
+| `APPLE_TEAM_ID`                  | 공증용 Team ID                   | 동일                              | 미등록    |
+| `APPLE_CERTIFICATE_P12_BASE64`   | Developer ID 인증서(임포트 방식) | 방식 선택 시 필요                 | 미등록    |
+| `APPLE_CERTIFICATE_PASSWORD`     | 위 P12 비밀번호                  | 동일                              | 미등록    |
+| `WIN_SIGN_CERT_P12_BASE64`       | Windows 코드서명 인증서          | Windows 서명 시 필요              | 미등록    |
+| `WIN_SIGN_CERT_PASSWORD`         | 위 P12 비밀번호                  | 동일                              | 미등록    |
+| `GENOFFICE_GOOGLE_CLIENT_ID`     | Drive 클라이언트                 | §5 결정 5                         | 미등록    |
+| `GENOFFICE_GOOGLE_CLIENT_SECRET` | Drive 클라이언트                 | 동일                              | 미등록    |
+| `GITHUB_TOKEN`                   | 릴리스 생성(저장소 기본값)       | github provider 시 필요           | 기본 제공 |
 
 - `APPLE_KEYCHAIN_PROFILE`은 **로컬 전용**입니다(`notarize-dmg.js:17` 로컬 키체인 프로필). CI 시크릿으로 등록하지 않습니다.
 - 업스트림 워크플로는 Drive 비밀값이 **설정되어 있지 않으면 빌드가 경고 후 Drive 없이 배포**하도록 되어 있습니다(업스트림 `mac-build.yml:110`·`windows-build.yml:113`·`linux-build.yml:134`). → §5 결정 5에서 Drive를 빼면 이 비밀값 2종이 불필요해집니다.
@@ -297,13 +325,13 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 
 ### 3.8 롤백
 
-| 대상 | 롤백 방법 | 비고 |
-|---|---|---|
-| 릴리스(애플리케이션) | 이전 태그로 재빌드·재배포 (버전 낮추기는 불가 — forward-only) | 산출물 재현성 검증 필요(§8) |
-| 업데이트 피드 | `latest.yml`을 이전 버전으로 되돌리는 것은 **사용자가 이미 받은 업데이트를 되돌리지 못함.** 실질적 롤백 = 새 패치 릴리스 | 프로모션 가드와 정합 |
-| mac 서명 | Developer ID 인증서 취소/회수 시 기존 빌드가 무효 → 새 서명자 필요 → **서명자 종속**(`docs/plan.md` §8.1-14) | 키 교체 경로를 초기 설계에 포함 |
-| Windows 서명 | 동일(서명자 종속) | |
-| 서버 | `docs/plan.md` §6.6.5 및 서버 런북 참조(유비온 서버 문서는 이 저장소 대상이 아님) | 이 저장소 밖 |
+| 대상                 | 롤백 방법                                                                                                                | 비고                            |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
+| 릴리스(애플리케이션) | 이전 태그로 재빌드·재배포 (버전 낮추기는 불가 — forward-only)                                                            | 산출물 재현성 검증 필요(§8)     |
+| 업데이트 피드        | `latest.yml`을 이전 버전으로 되돌리는 것은 **사용자가 이미 받은 업데이트를 되돌리지 못함.** 실질적 롤백 = 새 패치 릴리스 | 프로모션 가드와 정합            |
+| mac 서명             | Developer ID 인증서 취소/회수 시 기존 빌드가 무효 → 새 서명자 필요 → **서명자 종속**(`docs/plan.md` §8.1-14)             | 키 교체 경로를 초기 설계에 포함 |
+| Windows 서명         | 동일(서명자 종속)                                                                                                        |                                 |
+| 서버                 | `docs/plan.md` §6.6.5 및 서버 런북 참조(유비온 서버 문서는 이 저장소 대상이 아님)                                        | 이 저장소 밖                    |
 
 ### 3.9 훅 예산과 게이트
 
@@ -315,17 +343,18 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 
 ## 4. 실행 순서 (Phase 0)
 
-| # | 작업 | 선행 조건 | 산출물 |
-|---|---|---|---|
-| 1 | §5 결정 1·2·3·4 확정 (사람) | — | 결정 기록 |
-| 2 | `ci.yml` 이식 + v0.12.11 대조 | — | `.github/workflows/ci.yml` |
-| 3 | 브랜드 3축 확정 후 빌드 워크플로 3종 이식·수정 | 결정 7 | `mac-build`·`linux-build`·`windows-build` |
-| 4 | `scripts/win-sign.cjs` 작성 | 결정 1·2 | `scripts/win-sign.cjs` |
-| 5 | `release-publish.yml`·`promote-stable.yml` 작성 | 결정 4 | 워크플로 2개 |
-| 6 | 시크릿 등록 | **승인 후** | 저장소 시크릿 |
-| 7 | **절차 문서 갱신** — `docs/releasing.ko.md`(정본)·`.claude/skills/release-ieumoffice/SKILL.md`·관련 결정 기록 | 1-4 | 문서 2종 + 결정 기록 |
-| 8 | beta 릴리스 1회 + 업데이트 실검증 | 1-7 | beta 태그·릴리스 |
-| 9 | 서버 선배포 → stable 승격 | 서버 준비 | stable 릴리스 |
+| #   | 작업                                                                                                          | 선행 조건   | 산출물                                          |
+| --- | ------------------------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------- |
+| 1   | §5 결정 1·2·3·4 확정 (사람)                                                                                   | —           | 결정 기록                                       |
+| 2   | `ci.yml` 이식 + v0.12.11 대조                                                                                 | —           | `.github/workflows/ci.yml` (완료 — PR #9)       |
+| 2b  | **기존 게이트 통과** — `check:no-genspark` ALLOW 추가                                                         | —           | `tools/check-no-genspark.mjs` (PR #10, 진행 중) |
+| 3   | 브랜드 3축 확정 후 빌드 워크플로 3종 이식·수정                                                                | 결정 7      | `mac-build`·`linux-build`·`windows-build`       |
+| 4   | `scripts/win-sign.cjs` 작성                                                                                   | 결정 1·2    | `scripts/win-sign.cjs`                          |
+| 5   | `release-publish.yml`·`promote-stable.yml` 작성                                                               | 결정 4      | 워크플로 2개                                    |
+| 6   | 시크릿 등록                                                                                                   | **승인 후** | 저장소 시크릿                                   |
+| 7   | **절차 문서 갱신** — `docs/releasing.ko.md`(정본)·`.claude/skills/release-ieumoffice/SKILL.md`·관련 결정 기록 | 1-4         | 문서 2종 + 결정 기록                            |
+| 8   | beta 릴리스 1회 + 업데이트 실검증                                                                             | 1-7         | beta 태그·릴리스                                |
+| 9   | 서버 선배포 → stable 승격                                                                                     | 서버 준비   | stable 릴리스                                   |
 
 **1번(사람 결정)이 끝나야 3·4·5번의 형태가 확정됩니다.** 그 전까지는 워크플로 이식(2번)만 진행해도 무방합니다.
 
@@ -333,20 +362,20 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 
 ## 5. 사람이 결정해야 하는 항목
 
-| # | 결정 | 근거 | 미정이면 |
-|---|---|---|---|
-| 1 | **Windows 서명 방식** — `scripts/win-sign.cjs` 직접 작성 + CSC_LINK, 또는 KeyLocker 등 | `electron-builder.cjs:958`·`:963`·`:970`, 파일 부재 | Windows production 릴리스 불가 |
-| 2 | **Windows 코드서명 인증서 종류·보유 주체·갱신 절차** | §2.5, §8.1-14 | 서명자 종속 리스크 |
-| 3 | **mac Developer ID 보유 주체 + 공증 자격 + CI 인증서 임포트 방식** (p12 import vs keychain) | `electron-builder.cjs:986`-`:989`, `notarize-dmg.js:14`-`:23` | mac MDM 배포 불가 |
-| 4 | **릴리스 피드 저장소 공개 여부 + provider(A/B/C)** | §3.5, `electron-builder.cjs:995`-`:1005` | 자동 업데이트 전부 불가 |
-| 5 | **Google Drive 클라이언트 포함 여부** | 업스트림 워크플로 `mac-build.yml:93`-`:94` 등 | 비밀값 2종 필요 여부 |
-| 6 | **win-ocr.exe·win-quicklook.exe 유지 여부** | `electron-builder.cjs:110`-`:111`·`:117`·`:128` | 빌드 대상·서명 대상 |
-| 7 | **제품명 슬러그 확정** (산출 파일명·앱 ID·핸들러 3축) | §2.3, `docs/plan.md` §8.1-8/10 | 첫 릴리스 후 되돌릴 수 없음 |
-| 8 | **mac hardened runtime entitlement 추가 필요 여부** (실기 확인) | `entitlements.mac.plist` 2개뿐 | 공증·실행 실패 |
-| 9 | **`publish` provider 덮어쓰기를 훅 1개로 쓸지, config 인자로 분리할지** | §3.5, §3.9 | 훅 예산 0 유지 여부 |
-| 10 | **enterprise ring 운영 여부** (stable/beta 2채널로 부족한지) | `updater.ts:747` `CHANNEL_FEED` | 채널 설계 확정 |
-| 11 | **mac 자체 업데이트 스테이징 경로(결정 0097) 유지 여부** | `mac-update.ts:154`, `updater.ts:955`·`:960` | 서명 후에도 그대로 써도 동작함(무해) |
-| 12 | **Windows 산출물을 Windows 러너에서만 만들지, 로컬 크로스 빌드를 지원할지** | §2.9 (`electron-builder.cjs:113`) | mac/linux 빌드는 OCR·QuickLook가 조용히 빠짐 |
+| #   | 결정                                                                                        | 근거                                                          | 미정이면                                     |
+| --- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------- |
+| 1   | **Windows 서명 방식** — `scripts/win-sign.cjs` 직접 작성 + CSC_LINK, 또는 KeyLocker 등      | `electron-builder.cjs:958`·`:963`·`:970`, 파일 부재           | Windows production 릴리스 불가               |
+| 2   | **Windows 코드서명 인증서 종류·보유 주체·갱신 절차**                                        | §2.5, §8.1-14                                                 | 서명자 종속 리스크                           |
+| 3   | **mac Developer ID 보유 주체 + 공증 자격 + CI 인증서 임포트 방식** (p12 import vs keychain) | `electron-builder.cjs:986`-`:989`, `notarize-dmg.js:14`-`:23` | mac MDM 배포 불가                            |
+| 4   | **릴리스 피드 저장소 공개 여부 + provider(A/B/C)**                                          | §3.5, `electron-builder.cjs:995`-`:1005`                      | 자동 업데이트 전부 불가                      |
+| 5   | **Google Drive 클라이언트 포함 여부**                                                       | 업스트림 워크플로 `mac-build.yml:93`-`:94` 등                 | 비밀값 2종 필요 여부                         |
+| 6   | **win-ocr.exe·win-quicklook.exe 유지 여부**                                                 | `electron-builder.cjs:110`-`:111`·`:117`·`:128`               | 빌드 대상·서명 대상                          |
+| 7   | **제품명 슬러그 확정** (산출 파일명·앱 ID·핸들러 3축)                                       | §2.3, `docs/plan.md` §8.1-8/10                                | 첫 릴리스 후 되돌릴 수 없음                  |
+| 8   | **mac hardened runtime entitlement 추가 필요 여부** (실기 확인)                             | `entitlements.mac.plist` 2개뿐                                | 공증·실행 실패                               |
+| 9   | **`publish` provider 덮어쓰기를 훅 1개로 쓸지, config 인자로 분리할지**                     | §3.5, §3.9                                                    | 훅 예산 0 유지 여부                          |
+| 10  | **enterprise ring 운영 여부** (stable/beta 2채널로 부족한지)                                | `updater.ts:747` `CHANNEL_FEED`                               | 채널 설계 확정                               |
+| 11  | **mac 자체 업데이트 스테이징 경로(결정 0097) 유지 여부**                                    | `mac-update.ts:154`, `updater.ts:955`·`:960`                  | 서명 후에도 그대로 써도 동작함(무해)         |
+| 12  | **Windows 산출물을 Windows 러너에서만 만들지, 로컬 크로스 빌드를 지원할지**                 | §2.9 (`electron-builder.cjs:113`)                             | mac/linux 빌드는 OCR·QuickLook가 조용히 빠짐 |
 
 ---
 
@@ -369,7 +398,10 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 
 ## 8. 열린 질문 · 검증 못 한 것
 
-- **[미확인]** 업스트림 `main`의 워크플로가 `v0.12.11` 코드에서 그대로 동작하는지는 **스텝 단위 대조가 필요**합니다. 이 문서에서는 스크립트 존재 여부만 확인했습니다(§2.1).
+- **[확인됨]** `ci.yml`의 모든 실행 명령·참조 경로가 `v0.12.11`에 존재하고 브랜딩 수정이 필요 없습니다(§2.1). → **이식 자체는 막히지 않습니다.**
+- **[확인됨]** `e2e` job은 실제 실행에서 통과합니다(1회차 flake → attempt 2에서 328개 전부 통과, §2.1).
+- **[미확인]** `test` job의 lint·typecheck·unit test·Sheets 호환 게이트 스텝은 **한 번도 실행되지 않았습니다** — 앞선 `check:no-genspark` 게이트가 `main`의 기존 위반을 잡아 막은 상태입니다. ALLOW 머지 후 첫 통과가 확인되어야 이 저장소의 테스트 스위트가 "green"이라고 말할 수 있습니다.
+- **[미확인]** 빌드 3종(`mac-build`·`linux-build`·`windows-build`)은 명령 목록이 `ci.yml`과 달라 별도 대조가 필요합니다(§3.2).
 - **[미확인]** `notarize-dmg.js`가 CI용으로 `APPLE_ID` 3종 방식만 지원하는 상황에서, **Developer ID 인증서를 CI에 어떻게 임포트할지**(p12 → keychain → keychain 프로필)는 실행 순서와 credential 방식에 따라 달라집니다. §5 결정 3의 세부 사항.
 - **[미확인]** `scripts/update-feed-utils.cjs`의 주석이 참조하는 `mac-release-upload.cjs`·`promote-stable.cjs`가 업스트림 어디에도 없습니다. 피드 업로드·promote는 **신규 작성 필요**입니다.
 - **[미확인]** mac/linux에서 만든 Windows 설치 파일에서 **OCR·QuickLook 헬퍼를 채우는 방법**은 정해지지 않았습니다(§2.9). 후보는 ① Windows 러너 고정(업스트림 방식) ② Windows 러너에서 만든 헬퍼를 artifact로 넘겨 받아 붙이기. 어느 쪽이든 CI 설계에 반영해야 합니다(§5 결정 12).

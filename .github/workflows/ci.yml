@@ -23,7 +23,11 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # Naddle: 45 min was not enough on this repository's runner. The job was
+    # cancelled at the limit before the unit test step could finish (run
+    # 42751508873: 45m19s and 45m15s). Raised to 90 min; the upstream value and
+    # the reason are recorded in docs/upstream-modifications.md.
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -173,7 +177,9 @@ jobs:
     runs-on: ubuntu-22.04
     # A cold font install took 24m in #124; leave room for the full serial
     # Electron suite as well as setup. Individual test timeouts stay unchanged.
-    timeout-minutes: 60
+    # Naddle: the suite used 47m17s and 44m20s here (79% of the limit), so the
+    # 60 min budget was raised to 120 min. See docs/upstream-modifications.md.
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

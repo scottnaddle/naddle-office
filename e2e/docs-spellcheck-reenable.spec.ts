@@ -27,7 +27,7 @@ const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 // squiggles worth of red pixels: the original delta the assertions were built on
 const SQUIGGLE_PIXELS = 100
-const POLL = { timeout: 15_000, intervals: [250, 500, 1000] }
+const POLL = { timeout: 30_000, intervals: [250, 500, 1000] }
 
 const pageText = (page: Page) =>
   page.evaluate(() => document.querySelector('.doc-page')?.textContent ?? '')

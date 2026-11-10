@@ -73,7 +73,12 @@ function fail(code: TenantConfigErrorCode, message: string, source: string): nev
   throw new TenantConfigError(code, message, source)
 }
 
-function checkKeys(value: Record<string, unknown>, allowed: Set<string>, label: string, source: string): void {
+function checkKeys(
+  value: Record<string, unknown>,
+  allowed: Set<string>,
+  label: string,
+  source: string,
+): void {
   for (const key of Object.keys(value)) {
     if (!allowed.has(key)) fail('invalid_config', `${label} has unknown key "${key}"`, source)
   }
@@ -100,7 +105,11 @@ export function validateTenantConfig(value: unknown, source = '<memory>'): Tenan
   let tenantId: string | undefined
   if (value.tenantId !== undefined) {
     if (typeof value.tenantId !== 'string' || !TENANT_ID_RE.test(value.tenantId)) {
-      fail('invalid_config', 'tenantId must be a lowercase slug (1-64 chars: a-z 0-9 . _ -)', source)
+      fail(
+        'invalid_config',
+        'tenantId must be a lowercase slug (1-64 chars: a-z 0-9 . _ -)',
+        source,
+      )
     }
     tenantId = value.tenantId
   }
@@ -109,7 +118,8 @@ export function validateTenantConfig(value: unknown, source = '<memory>'): Tenan
   if (value.product !== undefined) {
     if (!isRecord(value.product)) fail('invalid_config', 'product must be an object', source)
     checkKeys(value.product, PRODUCT_KEYS, 'product', source)
-    if (value.product.name === undefined) fail('invalid_product_name', 'product.name is required', source)
+    if (value.product.name === undefined)
+      fail('invalid_product_name', 'product.name is required', source)
     const name = displayName(value.product.name, 'product.name', source)
     const nameKo =
       value.product.nameKo === undefined
@@ -123,7 +133,8 @@ export function validateTenantConfig(value: unknown, source = '<memory>'): Tenan
     if (!isRecord(value.secretRefs)) fail('invalid_config', 'secretRefs must be an object', source)
     const refs: Record<string, string> = {}
     for (const [key, ref] of Object.entries(value.secretRefs)) {
-      if (!SECRET_KEY_RE.test(key)) fail('invalid_secret_ref', `secretRefs key "${key}" is not a valid name`, source)
+      if (!SECRET_KEY_RE.test(key))
+        fail('invalid_secret_ref', `secretRefs key "${key}" is not a valid name`, source)
       if (typeof ref !== 'string' || ref.length > 512 || !SECRET_REF_RE.test(ref)) {
         fail(
           'invalid_secret_ref',

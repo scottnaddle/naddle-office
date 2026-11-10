@@ -62,7 +62,8 @@ export function loadTenantConfig(options: TenantConfigLoaderOptions = {}): Tenan
   const exists = options.exists ?? existsSync
   const explicit = options.path?.trim() || env[TENANT_CONFIG_PATH_ENV]?.trim()
 
-  const path = explicit || defaultTenantConfigPath({ env, home: options.home, platform: options.platform })
+  const path =
+    explicit || defaultTenantConfigPath({ env, home: options.home, platform: options.platform })
   let config: TenantConfig = { schemaVersion: 1 }
 
   if (exists(path)) {

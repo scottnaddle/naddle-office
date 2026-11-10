@@ -49,7 +49,12 @@
 - 참조 경로: `fixtures/generated`(존재)·`e2e/playwright.config.ts`(존재)·`apps/markdown/playwright.config.ts`(존재).
 - `@playwright/test` ^1.61.1이 `v0.12.11`과 `main` **양쪽** 루트 `package.json`에 있음(`npx playwright`가 쓸 바이너리).
 - **브랜딩 수정 필요 없음**: `ci.yml`에는 제품명·저장소명 참조가 없습니다(참조하는 건 워크스페이스 이름 `@genoffice/*`뿐이고, 그 이름은 업스트림 내부 이름 유지 결정에 따라 그대로입니다).
-- → **`ci.yml`은 수정 없이 그대로 이식할 수 있습니다.** 남는 미확인은 "실제로 통과하는가"뿐이며, 이는 CI 실행에서 확인됩니다(§8).
+- → **`ci.yml`은 수정 없이 그대로 이식할 수 있습니다.**
+
+**첫 실행 결과 (2026-11-09, PR #9 · run `42642437550`)** [직접확인]
+- `e2e` job: 1회차 **328개 중 321 passed / 1 failed / 1 flaky** → 실패·flaky는 모두 스펠 표시 관련(`e2e/docs-spell-suggestions.spec.ts:71`·`docs-spellcheck-reenable.spec.ts:51`). **재실행(attempt 2)에서 328개 전부 통과(40분 26초)** → 1회차 실패는 **flake**로 확정. 업스트림도 **같은 워크플로 파일**로 통과(run `42719465251`)하고 그 로그에서 같은 스펠 테스트 3개가 모두 통과합니다 → 워크플로 이식 문제가 아님을 확인.
+- `test` job: step 16 `check:no-genspark`에서 실패 → 이후 스텝 전부 skipped. **이 실패는 `main`에 이미 있던 상태**입니다(`origin/main`에서 `node tools/check-no-genspark.mjs` 실행 → 동일한 4건, exit 1). 나들오피스 PR #1(계획서)·#3(NOTICE·README)이 추가한 Apache-2.0 §4 출처 표기 4건이 게이트의 허용 목록에 없었던 것입니다 → ALLOW 추가 PR(#10)로 처리 중.
+- → **남는 미확인**: `test` job의 lint·typecheck·unit test 스텝은 **아직 한 번도 실행되지 않았습니다**(앞 게이트에서 막힘). ALLOW이 머지된 뒤에 확인해야 합니다(§8).
 
 ### 2.2 Actions는 이미 활성 — 저장소 설정 변경 불필요
 
@@ -326,7 +331,8 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 | # | 작업 | 선행 조건 | 산출물 |
 |---|---|---|---|
 | 1 | §5 결정 1·2·3·4 확정 (사람) | — | 결정 기록 |
-| 2 | `ci.yml` 이식 + v0.12.11 대조 | — | `.github/workflows/ci.yml` |
+| 2 | `ci.yml` 이식 + v0.12.11 대조 | — | `.github/workflows/ci.yml` (완료 — PR #9) |
+| 2b | **기존 게이트 통과** — `check:no-genspark` ALLOW 추가 | — | `tools/check-no-genspark.mjs` (PR #10, 진행 중) |
 | 3 | 브랜드 3축 확정 후 빌드 워크플로 3종 이식·수정 | 결정 7 | `mac-build`·`linux-build`·`windows-build` |
 | 4 | `scripts/win-sign.cjs` 작성 | 결정 1·2 | `scripts/win-sign.cjs` |
 | 5 | `release-publish.yml`·`promote-stable.yml` 작성 | 결정 4 | 워크플로 2개 |
@@ -378,7 +384,9 @@ ci.yml                             mac-build / linux-build /       릴리스 자
 ## 8. 열린 질문 · 검증 못 한 것
 
 - **[확인됨]** `ci.yml`의 모든 실행 명령·참조 경로가 `v0.12.11`에 존재하고 브랜딩 수정이 필요 없습니다(§2.1). → **이식 자체는 막히지 않습니다.**
-- **[미확인]** `ci.yml`의 각 job이 `v0.12.11`에서 **실제로 통과하는가**는 CI 실행에서만 확인됩니다. 빌드 3종(`mac-build`·`linux-build`·`windows-build`)은 명령 목록이 `ci.yml`과 달라 별도 대조가 필요합니다(§3.2).
+- **[확인됨]** `e2e` job은 실제 실행에서 통과합니다(1회차 flake → attempt 2에서 328개 전부 통과, §2.1).
+- **[미확인]** `test` job의 lint·typecheck·unit test·Sheets 호환 게이트 스텝은 **한 번도 실행되지 않았습니다** — 앞선 `check:no-genspark` 게이트가 `main`의 기존 위반을 잡아 막은 상태입니다. ALLOW 머지 후 첫 통과가 확인되어야 이 저장소의 테스트 스위트가 "green"이라고 말할 수 있습니다.
+- **[미확인]** 빌드 3종(`mac-build`·`linux-build`·`windows-build`)은 명령 목록이 `ci.yml`과 달라 별도 대조가 필요합니다(§3.2).
 - **[미확인]** `notarize-dmg.js`가 CI용으로 `APPLE_ID` 3종 방식만 지원하는 상황에서, **Developer ID 인증서를 CI에 어떻게 임포트할지**(p12 → keychain → keychain 프로필)는 실행 순서와 credential 방식에 따라 달라집니다. §5 결정 3의 세부 사항.
 - **[미확인]** `scripts/update-feed-utils.cjs`의 주석이 참조하는 `mac-release-upload.cjs`·`promote-stable.cjs`가 업스트림 어디에도 없습니다. 피드 업로드·promote는 **신규 작성 필요**입니다.
 - **[미확인]** mac/linux에서 만든 Windows 설치 파일에서 **OCR·QuickLook 헬퍼를 채우는 방법**은 정해지지 않았습니다(§2.9). 후보는 ① Windows 러너 고정(업스트림 방식) ② Windows 러너에서 만든 헬퍼를 artifact로 넘겨 받아 붙이기. 어느 쪽이든 CI 설계에 반영해야 합니다(§5 결정 12).

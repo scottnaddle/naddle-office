@@ -1,6 +1,6 @@
 # Designing a deck from a spec
 
-The same workflow the IeumOffice app runs when it generates a presentation, written for an agent that does the thinking itself and lets the engine do the building. In the app every stage is a separate model call; here every stage is a separate file, and the CLI checks each file before the next stage may start. Work top-down; never start by placing elements.
+The same workflow the NaddleOffice app runs when it generates a presentation, written for an agent that does the thinking itself and lets the engine do the building. In the app every stage is a separate model call; here every stage is a separate file, and the CLI checks each file before the next stage may start. Work top-down; never start by placing elements.
 
 Files of one deck, in a folder of their own (`deck/`):
 
@@ -16,7 +16,7 @@ Never put more than one page in a file, and never write a page before its outlin
 
 ## 0. Check what the machine can do
 
-Run `ieumoffice capabilities --json` once. It reads IeumOffice's own settings and reports, without a network call, whether web search, image search, image generation and media analysis are available (`detail.<feature>.available`) and by which route (the free search, a key the user entered in Settings, or a subscription login the user allowed for automatic calls). Only when a feature is available may the deck use it; when one is not, work from the material you have and use typography, color blocks and shapes instead of photos. Never ask the user to configure a key just for a deck.
+Run `ieumoffice capabilities --json` once. It reads NaddleOffice's own settings and reports, without a network call, whether web search, image search, image generation and media analysis are available (`detail.<feature>.available`) and by which route (the free search, a key the user entered in Settings, or a subscription login the user allowed for automatic calls). Only when a feature is available may the deck use it; when one is not, work from the material you have and use typography, color blocks and shapes instead of photos. Never ask the user to configure a key just for a deck.
 
 ## 1. Style sheet first (one per deck)
 
@@ -32,7 +32,7 @@ Decide the design system before any content and write it to `deck/style.md`; re-
   - closing: `closing_cta`, `closing_thank_you`
 - **Overall style**: one sentence describing the design language.
 
-A built-in template is a style sheet already written in this shape: `ieumoffice guide slides templates` lists them, and `ieumoffice guide slides templates <id>` prints one that you can save as `deck/style.md` as is (its fonts ship with IeumOffice). When you use a template's style sheet, the devices it prescribes (a bar on cards, rules beside titles, a fixed frame on every page) take precedence over the anti-patterns in section 4; the rest of this guide still applies.
+A built-in template is a style sheet already written in this shape: `ieumoffice guide slides templates` lists them, and `ieumoffice guide slides templates <id>` prints one that you can save as `deck/style.md` as is (its fonts ship with NaddleOffice). When you use a template's style sheet, the devices it prescribes (a bar on cards, rules beside titles, a fixed frame on every page) take precedence over the anti-patterns in section 4; the rest of this guide still applies.
 
 ## 2. Outline, page by page
 
@@ -96,7 +96,7 @@ Canvas is 1280 × 720 px, origin top-left, integers only; nothing may cross the 
 ## 5. Build, look, audit, fix
 
 1. `ieumoffice create --type pptx --spec deck/pages --outline deck/outline.json --out deck/deck.pptx --json` (`--outline` may be left out when the file sits beside the folder). Page files are taken in name order; the build refuses to run while an outline page has no file or a page file disagrees with its entry. Read `detail.issues`, `detail.imageFailures`, `detail.outline.findings` and `detail.style.offPalette`: each names the page file.
-2. `ieumoffice slides render deck/deck.pptx --out deck/shots --json` and look at every PNG (needs IeumOffice installed). Check overflow, collisions, contrast, crop, hierarchy, whitespace.
+2. `ieumoffice slides render deck/deck.pptx --out deck/shots --json` and look at every PNG (needs NaddleOffice installed). Check overflow, collisions, contrast, crop, hierarchy, whitespace.
 3. `ieumoffice slides audit deck/deck.pptx --json` for the geometry findings the eye misses. Element ids in the findings are the ones `ieumoffice slides read` and `ieumoffice slides apply` use.
 4. Fix a page in its spec file and put it back with `ieumoffice slides replace deck/deck.pptx --slide <n> --spec deck/pages/NN.json --json` (slide n is page file n+1; the page is checked against outline entry n first); the other slides are untouched. Small nudges can also go through `ieumoffice slides apply` ops (`setTransform`, `setText`, `setTextStyle`, `setFill` …). At most two fix rounds; then report what remains.
 

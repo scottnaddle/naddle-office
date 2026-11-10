@@ -160,7 +160,7 @@ describe('Settings → Integrations', () => {
     expect(host.textContent).toContain('Pick any one of these three ways')
     // the same three prompts appear under both the CLI and the MCP part
     expect(host.querySelectorAll('.set-intg-example')).toHaveLength(6)
-    expect(host.textContent).toContain('npx skills add pblsketch/openoffice')
+    expect(host.textContent).toContain('npx skills add scottnaddle/naddle-office')
     // MCP block: the launcher itself while genoffice is not on the PATH, as a command and as JSON
     const mcp = [...host.querySelectorAll('.set-intg-mcp code')].map((c) => c.textContent)
     expect(mcp[0]).toBe(
@@ -186,7 +186,7 @@ describe('Settings → Integrations', () => {
     ).toEqual({ command: 'ieumoffice', args: ['mcp'] })
     const winDir = 'C:\\Users\\Jane Doe\\AppData\\Local\\Programs\\IeumOffice\\resources\\cli'
     const win = {
-      command: `${winDir}\\..\\..\\IeumOffice.exe`,
+      command: `${winDir}\\..\\..\\NaddleOffice.exe`,
       args: [`${winDir}\\genoffice.cjs`, 'mcp'],
       env: { ELECTRON_RUN_AS_NODE: '1' },
     }

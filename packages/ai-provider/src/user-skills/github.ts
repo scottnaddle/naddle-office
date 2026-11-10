@@ -204,7 +204,7 @@ export async function githubSkillGet(
         method: 'GET',
         redirect: 'manual',
         credentials: 'omit',
-        headers: { Accept: accept, 'User-Agent': 'IeumOffice' },
+        headers: { Accept: accept, 'User-Agent': 'NaddleOffice' },
         ...(options.signal ? { signal: options.signal } : {}),
       })
     } catch (error) {

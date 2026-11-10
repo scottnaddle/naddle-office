@@ -88,6 +88,24 @@ const ALLOW = [
     reason: 'the acknowledgement and trademark paragraphs',
   },
   {
+    path: '.github/README.md',
+    span: /github\.com\/genspark-ai\/genoffice/g,
+    reason:
+      'the link to the original work, kept as attribution under Apache-2.0 section 4: this repository README says where the product comes from',
+  },
+  {
+    path: 'NOTICE-NADDLE.md',
+    span: /github\.com\/genspark-ai\/genoffice/g,
+    reason:
+      'the attribution notice this product keeps: the link to the original work (Apache-2.0 section 4)',
+  },
+  {
+    path: 'docs/plan.md',
+    span: /github\.com\/genspark-ai\/genoffice/g,
+    reason:
+      'the licence section of this project plan, quoting the notice of the original work (Apache-2.0 section 4)',
+  },
+  {
     path: 'packages/agent-core/src/redact-range.ts',
     span: /https:\/\/genspark\.ai\/genoffice\/redaction\/2026/g,
     reason:

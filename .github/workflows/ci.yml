@@ -261,8 +261,12 @@ jobs:
           DEBUG: 'pw:browser'
         run: xvfb-run --auto-servernum -- npm run test:e2e
 
+      # Diagnostic upload only: a full artifact quota is an account limit, not a
+      # test failure. Without continue-on-error it adds a second red step and
+      # hides the real failing specs in the job summary.
       - name: Upload E2E artifacts on failure
         if: failure()
+        continue-on-error: true
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: e2e-artifacts

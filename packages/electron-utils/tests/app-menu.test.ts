@@ -267,17 +267,17 @@ describe('checkUpdatesMenuItem / manual update check wiring', () => {
   it('About dialog copy button still copies name + version', async () => {
     electronMock.showMessageBox.mockResolvedValue({ response: 1 })
     await (aboutMenuItem(en) as { click: () => Promise<void> }).click()
-    expect(electronMock.writeText).toHaveBeenCalledWith('IeumOffice 1.2.3')
+    expect(electronMock.writeText).toHaveBeenCalledWith('NaddleOffice 1.2.3')
   })
 
   it('names the product in the About entry of every language', () => {
-    expect(en.about).toBe('About IeumOffice')
-    expect(appMenuLabels('ko').about).toBe('이음오피스 정보')
-    expect(appMenuLabels('ja').about).toBe('IeumOffice について')
+    expect(en.about).toBe('About NaddleOffice')
+    expect(appMenuLabels('ko').about).toBe('나들오피스 정보')
+    expect(appMenuLabels('ja').about).toBe('NaddleOffice について')
     for (const lang of [...LANGS, 'vi']) {
       const about = appMenuLabels(lang).about
       expect(about, lang).not.toContain('GenOffice')
-      expect(about, lang).toContain(lang === 'ko' ? '이음오피스' : 'IeumOffice')
+      expect(about, lang).toContain(lang === 'ko' ? '나들오피스' : 'NaddleOffice')
     }
   })
 
@@ -288,14 +288,14 @@ describe('checkUpdatesMenuItem / manual update check wiring', () => {
       setUiLang('en')
       await about.click()
       expect(electronMock.showMessageBox.mock.calls.at(-1)![0]).toMatchObject({
-        title: 'IeumOffice',
-        message: 'IeumOffice',
+        title: 'NaddleOffice',
+        message: 'NaddleOffice',
       })
       setUiLang('ko')
       await about.click()
       expect(electronMock.showMessageBox.mock.calls.at(-1)![0]).toMatchObject({
-        title: '이음오피스',
-        message: '이음오피스',
+        title: '나들오피스',
+        message: '나들오피스',
       })
     } finally {
       setUiLang('zh')

@@ -21,7 +21,7 @@ import { run, tempDir } from './helpers'
  */
 
 const FIXTURES = join(__dirname, '../../drawio-model/tests/fixtures')
-const NO_APP = 'C:/no/such/IeumOffice.exe'
+const NO_APP = 'C:/no/such/NaddleOffice.exe'
 
 const env = (extra: Record<string, string> = {}) => ({
   ...process.env,

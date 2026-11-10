@@ -143,7 +143,7 @@ export interface AppLaunch {
 }
 
 /**
- * How to start the IeumOffice GUI: the app binary that hosts this CLI, an installed app, or the dev checkout.
+ * How to start the NaddleOffice GUI: the app binary that hosts this CLI, an installed app, or the dev checkout.
  * Only this product's own install locations are probed: an upstream GenOffice on the machine is never started.
  */
 export function appLaunch(env: NodeJS.ProcessEnv = process.env): AppLaunch | null {

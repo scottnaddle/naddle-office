@@ -42,28 +42,31 @@ P0-5 Release pipeline design (devops) ─────┘
 
 ## P0-1 — Runtime tenant configuration
 
-**Goal:** Replace build-time JSON constants with a validated runtime tenant configuration.
+**Goal:** Replace build-time product and configuration constants with a validated runtime tenant configuration.
 
 **Scope**
 
 - Define a `TenantConfig` schema covering: product/brand, policy, authentication provider selection, knowledge source, model gateway, template catalog, retention/feature flags.
 - Loader precedence: explicit environment/file override → tenant config file → safe development default.
-- Migrate the five static JSON imports identified in `docs/plan.md` §3.4 to the loader.
+- Replace the build-time constants the tenant config owns with loader-backed runtime values; the only such constant in this repository today is the product/brand identity in `packages/i18n/src/product.ts`. The five static JSON imports in `docs/plan.md` §3.4 are a ubion-office overlay premise — this repository has no static JSON imports.
 - Keep the existing configuration as an example/default profile; do not require an enterprise tenant to build.
 - Secret values are referenced by name/path only; no secret values in config or logs.
+- Deliver the result as the standalone `packages/tenant-config` core library. No application code imports it yet.
+- Wiring the loaded display name into `packages/i18n/src/product.ts` and delivering the resolved config to the renderer over IPC belong to P0-2.
 
 **Deliverables**
 
 - Versioned schema and validation (unknown keys rejected or explicitly ignored).
 - Loader with deterministic precedence and clear error messages.
 - Default/example tenant profile.
+- `packages/tenant-config` as a standalone core library, with no application import yet.
 - Tests for precedence, invalid/missing config, secret redaction, and startup with no tenant file.
 - Documentation for operators: where the file lives, permissions, override variables, rollback.
 
 **Verification**
 
-- No remaining static imports of the five build-time JSON files.
-- Changing the tenant config changes endpoints/branding without rebuilding.
+- No build-time constant remains for a value the tenant config owns. (The `docs/plan.md` §3.4 JSON import count does not apply to this repository.)
+- The loader resolves a changed tenant config at runtime, without rebuilding. (A branding change in the running app is a P0-2 outcome, once the library is wired in.)
 - Invalid config fails closed with a readable error; no secret appears in logs.
 - Existing default app build still starts and its tests pass.
 - `git diff --check`, typecheck, and the project's test suite pass.
@@ -84,6 +87,8 @@ P0-5 Release pipeline design (devops) ─────┘
   - `RelayClient` (model gateway)
   - `WikiApiClient` (knowledge source)
 - Define an adapter-selection contract driven by `TenantConfig`.
+- Select the runtime product/display name from the loaded tenant config in `packages/i18n/src/product.ts` (`PRODUCT_NAME`, `productName()`, `brandText()`).
+- Deliver the resolved tenant config to the renderer over IPC: the main process owns the tenant file, and the renderer reads the config through IPC rather than the filesystem.
 - Move the current vendor-specific implementation into an adapter without changing its behavior.
 - Define token/claims expectations: issuer, audience, subject, roles, expiry, revocation.
 - Keep the existing login flow as the default adapter.
@@ -102,6 +107,7 @@ P0-5 Release pipeline design (devops) ─────┘
 - A fake adapter can be selected in tests without touching feature code.
 - No direct vendor import outside the adapter directory.
 - Auth guards and token audiences are unchanged.
+- Changing the tenant config changes endpoints/branding in the running app without a rebuild.
 - Typecheck and test suite pass.
 
 **Prerequisite:** P0-1 (adapter selection comes from tenant config). **Estimate:** 4–6 days.

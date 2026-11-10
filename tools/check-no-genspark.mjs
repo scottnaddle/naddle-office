@@ -106,6 +106,12 @@ const ALLOW = [
       'the licence section of this project plan, quoting the notice of the original work (Apache-2.0 section 4)',
   },
   {
+    path: 'docs/upstream-modifications.md',
+    span: /github\\\.com\\\/genspark-ai\\\/genoffice/g,
+    reason:
+      'the upstream-modification ledger, recording the allowlist span of the attribution URL above',
+  },
+  {
     path: 'packages/agent-core/src/redact-range.ts',
     span: /https:\/\/genspark\.ai\/genoffice\/redaction\/2026/g,
     reason:

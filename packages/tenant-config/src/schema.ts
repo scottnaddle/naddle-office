@@ -51,7 +51,19 @@ const PRODUCT_KEYS = new Set(['name', 'nameKo'])
 const TENANT_ID_RE = /^[a-z0-9][a-z0-9._-]{0,63}$/
 const SECRET_KEY_RE = /^[a-z][a-z0-9._-]{0,63}$/i
 const SECRET_REF_RE = /^(env|file|secret|ref):[^\s]+$/
-const CONTROL_CHARS_RE = /[\u0000-\u001f\u007f]/
+
+/**
+ * Control characters are not printable: C0 (0x00-0x1f) and DEL (0x7f).
+ * Checked by code unit rather than by a regular expression, because a
+ * character class of control codes does not lint.
+ */
+function hasControlChars(value: string): boolean {
+  for (let index = 0; index < value.length; index += 1) {
+    const code = value.charCodeAt(index)
+    if (code < 0x20 || code === 0x7f) return true
+  }
+  return false
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -70,7 +82,7 @@ function checkKeys(value: Record<string, unknown>, allowed: Set<string>, label: 
 function displayName(value: unknown, field: string, source: string): string {
   if (typeof value !== 'string') fail('invalid_product_name', `${field} must be a string`, source)
   const name = value.trim()
-  if (!name || name.length > 80 || CONTROL_CHARS_RE.test(name)) {
+  if (!name || name.length > 80 || hasControlChars(name)) {
     fail('invalid_product_name', `${field} must be 1-80 printable characters`, source)
   }
   return name

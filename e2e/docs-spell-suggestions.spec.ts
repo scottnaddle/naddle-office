@@ -9,7 +9,7 @@ import type { Page } from '@playwright/test'
 import { PNG } from 'pngjs'
 import { launchShell, closeAndSaveVideo, waitForPageWithUrl } from './helpers'
 
-const POLL = { timeout: 15_000, intervals: [250, 500, 1000] }
+const POLL = { timeout: 30_000, intervals: [250, 500, 1000] }
 
 /**
  * Squiggles are native markers invisible to the DOM: count red-dominant

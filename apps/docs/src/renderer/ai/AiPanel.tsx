@@ -94,6 +94,7 @@ import {
   type DocWriteSpec,
 } from './doc-writer'
 import { EditQueueCard } from './EditQueueCard'
+import { AuthoringFlow } from './AuthoringFlow'
 import {
   buildQueueInstruction,
   buildQueueSummary,
@@ -123,6 +124,7 @@ import {
   AiComposer,
   AiScopeQuote,
   AiTypingIndicator,
+  authoringText,
   docMentionActions,
   type AiComposerDocs,
   type AiScopeQuoteData,
@@ -555,6 +557,8 @@ export function AiPanel({
   const isRtl = lang === 'ar' || lang === 'he'
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
+  /** The template authoring flow is opt-in: it starts only when its button is pressed. */
+  const [authoringOpen, setAuthoringOpen] = useState(false)
   /** messages queued while a reply runs; the pump re-runs them through runWith on settle */
   const msgQueue = useChatRunQueue<{
     attachments: AttachmentMeta[]
@@ -2120,6 +2124,25 @@ export function AiPanel({
         {/* an MCP tool waiting for the person's yes (user MCP spec 7.4) */}
         <McpPermissionCard lang={lang} />
       </div>
+
+      {!authoringOpen ? (
+        <div className="authoring-open-row">
+          <button
+            type="button"
+            className="authoring-open-btn"
+            onClick={() => setAuthoringOpen(true)}
+          >
+            {authoringText(lang, 'galleryOpen')}
+          </button>
+        </div>
+      ) : (
+        <AuthoringFlow
+          lang={lang}
+          busy={busy}
+          onGenerate={(instruction) => runWith(instruction, instruction)}
+          onClose={() => setAuthoringOpen(false)}
+        />
+      )}
 
       <div className="ai-composer">
         {sendGate.connectChoice && (

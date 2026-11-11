@@ -7,13 +7,6 @@
   },
   "cap": 90,
   "warnAt": 85,
-  "baseline": {
-    "counted": 78,
-    "modified": 78,
-    "deleted": 0,
-    "added": 6,
-    "note": "초기 기준선 78 + 여유 12 = 상한 90. M2 제품명 적용이 업스트림 테스트 기대값 갱신을 포함해 78까지 올렸다. 새 기능은 업스트림 테스트를 고치지 않고 새 테스트 파일로 작성하며, 상한 상향은 별도 승인 대상이다."
-  },
   "rules": [
     "업스트림 파일 수정·삭제·추가는 이 원장에 파일 단위로 등록한다.",
     "counted 상한 90(초기 78 + 여유 12), 85에서 경고. 상향은 별도 승인.",
@@ -964,6 +957,121 @@
       "revert": "파일과 CI 단계를 삭제한다",
       "round": "P0-3",
       "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/renderer/ai/AiPanel.tsx",
+      "kind": "modified",
+      "lines": "97, 127, 560-561, 2128-2146",
+      "purpose": "S1: opt-in \"템플릿으로 시작\" 버튼과 공통 작성 흐름 마운트. 버튼을 누르기 전에는 기존 초안·채팅·대기열 동작이 그대로다",
+      "revert": "AuthoringFlow import, authoringOpen 상태, 버튼/흐름 블록을 지우고 authoringText import를 제거한다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/index.ts",
+      "kind": "modified",
+      "lines": "588-589",
+      "purpose": "S1: 공통 작성 컴포넌트·문자열 모듈을 패키지 공개 API로 내보낸다",
+      "revert": "마지막 export * from './authoring' 줄을 지운다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/types.ts",
+      "kind": "added",
+      "lines": "1-169",
+      "purpose": "S1: 작성 흐름 상태·이벤트·브리프/템플릿 타입과 순수 reducer",
+      "revert": "파일을 삭제하고 index.ts export를 제거한다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/strings.ts",
+      "kind": "added",
+      "lines": "1-618",
+      "purpose": "S1: 새 작성 카드 문구를 21개 언어 한 파일에 모은다(기존 locale 파일 미수정)",
+      "revert": "파일을 삭제하고 index.ts export를 제거한다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/components.tsx",
+      "kind": "added",
+      "lines": "1-483",
+      "purpose": "S1: ClarifyCard·BriefCard·GenerationProgress·TemplateGallery·EditQueueCard 공통 구현",
+      "revert": "파일을 삭제하고 index.ts export를 제거한다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/authoring.css",
+      "kind": "added",
+      "lines": "1-247",
+      "purpose": "S1: 공통 카드 스타일(호스트 패널 테마 색을 상속)",
+      "revert": "파일을 삭제하고 index.ts의 css import를 제거한다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/index.ts",
+      "kind": "added",
+      "lines": "1-5",
+      "purpose": "S1: 공통 작성 모듈 진입점",
+      "revert": "파일을 삭제한다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/tests/authoring.test.ts",
+      "kind": "added",
+      "lines": "1-152",
+      "purpose": "S1: 문자열·reducer·카드 렌더 단위 테스트(모델 호출 없음)",
+      "revert": "파일을 삭제한다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/renderer/ai/AuthoringFlow.tsx",
+      "kind": "added",
+      "lines": "1-132",
+      "purpose": "S1: 문서 앱의 템플릿→질문→브리프→생성→완료 흐름 컴포넌트",
+      "revert": "파일을 삭제하고 AiPanel의 마운트를 제거한다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/renderer/ai/authoring-flow.css",
+      "kind": "added",
+      "lines": "1-28",
+      "purpose": "S1: 문서 패널의 작성 흐름 배치 스타일",
+      "revert": "파일을 삭제하고 AuthoringFlow의 css import를 제거한다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/renderer/ai/authoring/templates.ts",
+      "kind": "added",
+      "lines": "1-202",
+      "purpose": "S1: 견적서·품의서·지출결의서·회의록·업무 보고 5종 템플릿과 브리프/지시문 생성",
+      "revert": "파일과 상위 authoring 폴더를 삭제한다",
+      "round": "S1",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/tests/authoring-templates.test.ts",
+      "kind": "added",
+      "lines": "1-75",
+      "purpose": "S1: 다섯 템플릿·브리프·지시문·갤러리 첫 화면 테스트(모델 호출 없음)",
+      "revert": "파일을 삭제한다",
+      "round": "S1",
+      "owner": "api"
     }
-  ]
+  ],
+  "baseline": {
+    "counted": 78,
+    "modified": 78,
+    "deleted": 0,
+    "added": 36,
+    "note": "초기 기준선 78 + 여유 12 = 상한 90. M2 제품명 적용이 업스트림 테스트 기대값 갱신을 포함해 78까지 올렸다. S1에서 업스트림 수정 2파일(AiPanel·ui index)을 추가해 counted 80이 된다. 새 기능은 업스트림 테스트를 고치지 않고 새 테스트 파일로 작성하며, 상한 상향은 별도 승인 대상이다."
+  }
 }

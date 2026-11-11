@@ -38,6 +38,7 @@ import { atomicWriteFile } from './atomic-write'
 import { tabStripOverlay } from './title-bar-overlay'
 import { shellWindowBackground } from './window-background'
 import { installPointerSize } from './pointer-size'
+import { describeTenantError, initTenant, registerTenantIpc } from './tenant'
 import {
   applyUiScaleTo,
   applyUiScaleToAll,
@@ -9550,6 +9551,17 @@ app.whenReady().then(async () => {
     sealingKeyOnDisk(join(app.getPath('userData'), 'Local State')),
   )
   setAiSecretCodec(secretCodec)
+  // P0-2: the tenant file is main-owned; an invalid one stops startup instead
+  // of silently running with defaults (docs/phase0-slices.md).
+  let tenantSnapshot: ReturnType<typeof initTenant>
+  try {
+    tenantSnapshot = initTenant()
+  } catch (error) {
+    dialog.showErrorBox('Tenant configuration', describeTenantError(error))
+    app.exit(1)
+    return
+  }
+  registerTenantIpc(ipcMain, tenantSnapshot)
   if (revealSecretsRun) {
     app.exit(await runRevealEntry(secretCodec))
     return

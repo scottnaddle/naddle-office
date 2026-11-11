@@ -31,9 +31,29 @@ const LOCALIZED_PRODUCT_NAMES: Readonly<Record<string, string>> = {
   ko: '나들오피스',
 }
 
+type TenantProductNames = { name: string; nameKo?: string }
+
+let tenantNames: TenantProductNames | null = null
+
+/** P0-2: main injects the display name; PRODUCT_NAME still names installed files. */
+export function setTenantProductNames(names: { name: string; nameKo?: string } | null): void {
+  const name = names?.name.trim()
+  const nameKo = names?.nameKo?.trim()
+  tenantNames = name ? { name, ...(nameKo ? { nameKo } : {}) } : null
+}
+
+/** Main sets the override; renderers read the preload snapshot instead. */
+function displayedNames(): TenantProductNames | null {
+  if (tenantNames) return tenantNames
+  const injected = (globalThis as { naddleTenant?: { product?: TenantProductNames } }).naddleTenant
+  return injected?.product?.name?.trim() ? injected.product : null
+}
+
 /** The product name as shown in a UI language (a Lang or a raw locale tag). */
 export function productName(lang: string | null | undefined): string {
   const base = lang?.trim().toLowerCase().split(/[-_]/)[0] ?? ''
+  const names = displayedNames()
+  if (names) return base === 'ko' ? names.nameKo?.trim() || names.name : names.name
   return Object.hasOwn(LOCALIZED_PRODUCT_NAMES, base)
     ? LOCALIZED_PRODUCT_NAMES[base]!
     : PRODUCT_NAME

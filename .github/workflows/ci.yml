@@ -89,6 +89,11 @@ jobs:
           fi
           npm run format:check
 
+      # Read-only ledger gate: an upstream file may change only when
+      # docs/upstream-hooks.json records it, and counted changes stay <= cap.
+      - name: Check upstream hooks
+        run: npm run check:upstream
+
       - name: Check theme colors
         env:
           FORMAT_BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}

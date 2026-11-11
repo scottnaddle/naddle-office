@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test'
-import type { ElectronApplication } from '@playwright/test'
 import { launchShell, closeAndSaveVideo, waitForPageWithUrl } from './helpers'
 import { mkdtemp, writeFile, stat, readFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
@@ -10,35 +9,6 @@ import { join } from 'node:path'
  * that still belongs to its path, so a plain Save writes the file itself
  * instead of failing the parse and silently saving elsewhere.
  */
-/**
- * Playwright's ElectronApplication.evaluate can reject with "Resulting promise
- * was garbage collected" while the main process is still busy opening the
- * document. That is a transport error, not the app refusing the command, so
- * retry it before treating the save as broken.
- */
-async function sendMenuCommand(app: ElectronApplication, url: string, channel: string) {
-  const send = () =>
-    app.evaluate(
-      ({ webContents }, [u, ch]) => {
-        webContents
-          .getAllWebContents()
-          .find((w) => w.getURL().includes(u))
-          ?.send(ch, 'save')
-      },
-      [url, channel],
-    )
-  for (let attempt = 0; ; attempt += 1) {
-    try {
-      await send()
-      return
-    } catch (error) {
-      const transport = /garbage collected|Target closed|Execution context was destroyed/i
-      if (attempt >= 2 || !transport.test(String(error))) throw error
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-    }
-  }
-}
-
 const KINDS = [
   { ext: 'docx', url: '://docs/', channel: 'menu:command' },
   { ext: 'xlsx', url: '://sheets/', channel: 'menu:action' },
@@ -64,7 +34,15 @@ for (const { ext, url, channel } of KINDS) {
       })
       const editor = await waitForPageWithUrl(app, url)
       await editor.waitForTimeout(2000)
-      await sendMenuCommand(app, url, channel)
+      await app.evaluate(
+        ({ webContents }, [u, ch]) => {
+          webContents
+            .getAllWebContents()
+            .find((w) => w.getURL().includes(u))
+            ?.send(ch, 'save')
+        },
+        [url, channel],
+      )
       await expect
         .poll(async () => (await stat(filePath)).size, { timeout: 15_000 })
         .toBeGreaterThan(0)

@@ -1,0 +1,969 @@
+{
+  "base": {
+    "repo": "pblsketch/openoffice",
+    "tag": "v0.12.11",
+    "commit": "b8cb8564b06941c6ad5da174c6c9299173d0e401",
+    "importCommit": "aab77568fdb2c5b1dd61a130e11bcc4e5f4798a4"
+  },
+  "cap": 90,
+  "warnAt": 85,
+  "baseline": {
+    "counted": 78,
+    "modified": 78,
+    "deleted": 0,
+    "added": 6,
+    "note": "초기 기준선 78 + 여유 12 = 상한 90. M2 제품명 적용이 업스트림 테스트 기대값 갱신을 포함해 78까지 올렸다. 새 기능은 업스트림 테스트를 고치지 않고 새 테스트 파일로 작성하며, 상한 상향은 별도 승인 대상이다."
+  },
+  "rules": [
+    "업스트림 파일 수정·삭제·추가는 이 원장에 파일 단위로 등록한다.",
+    "counted 상한 90(초기 78 + 여유 12), 85에서 경고. 상향은 별도 승인.",
+    "새 기능 테스트는 업스트림 테스트 파일을 고치지 않고 새 테스트 파일로 둔다.",
+    "package-lock.json은 generated로 등록하되 counted에서 제외한다.",
+    "오버레이(packages/tenant-config/, packages/naddle-*/)와 거버넌스(.github/, docs/)는 counted에서 제외하되 .github/workflows/ci.yml 수정은 exempt 항목으로 기록한다."
+  ],
+  "exemptPrefixes": [".github/", "docs/"],
+  "overlayPrefixes": ["packages/tenant-config/", "packages/naddle-"],
+  "exemptPaths": ["NOTICE-NADDLE.md", "tenant.example.json"],
+  "generated": ["package-lock.json"],
+  "entries": [
+    {
+      "path": ".github/README.md",
+      "kind": "added",
+      "lines": "1-49",
+      "purpose": "나들오피스 소개·출처 README",
+      "revert": "파일을 삭제한다",
+      "round": "M2",
+      "owner": "api",
+      "exempt": true
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "kind": "added",
+      "lines": "1-277",
+      "purpose": "CI job 타임아웃 상향(45→90, 60→120)·P0-3 검사 단계 + 진단 아티팩트 업로드 continue-on-error(PR #22)",
+      "revert": "타임아웃 값·Check upstream hooks 단계·continue-on-error와 주석을 제거한다",
+      "round": "P0-3",
+      "owner": "api",
+      "exempt": true
+    },
+    {
+      "path": "NOTICE-NADDLE.md",
+      "kind": "added",
+      "lines": "1-9",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/diagram/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/epub/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/html/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/hwp/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/hwp/studio-plugin/agent-plugin.mjs",
+      "kind": "modified",
+      "lines": "501",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/hwp/tests/memo-panel.test.ts",
+      "kind": "modified",
+      "lines": "216",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/hwp/tests/untitled-copy.test.ts",
+      "kind": "modified",
+      "lines": "155",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/markdown/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/markdown/tests/ai-panel-subscription.test.ts",
+      "kind": "modified",
+      "lines": "517",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/mindmap/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/pdf/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "11",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/sheets/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/build/installer.nsh",
+      "kind": "modified",
+      "lines": "35, 63-66, 68, 132-133, 140, 146-157, 162-163, 169, 173, 226-228, 243-245",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/build/linux-after-install.sh",
+      "kind": "modified",
+      "lines": "5, 10, 24, 41-43, 59",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/build/linux-after-remove.sh",
+      "kind": "modified",
+      "lines": "13, 24, 30",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/electron-builder.cjs",
+      "kind": "modified",
+      "lines": "22-23, 28-31, 351, 712-713, 819, 826, 831, 833-834, 857, 861, 900",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/package.json",
+      "kind": "modified",
+      "lines": "3, 6, 8, 10, 40",
+      "purpose": "M2 패키지 이름/desktopName + P0-2 tenant-config 의존성",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다; P0-2 의존성 1줄을 지운다",
+      "round": "M2,P0-2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/main/default-app.ts",
+      "kind": "modified",
+      "lines": "23, 29, 35, 41, 47, 56, 62, 66",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/main/index.ts",
+      "kind": "modified",
+      "lines": "41, 9554-9564, 10031",
+      "purpose": "M2 agent-skills 경로 + P0-2 테넌트 로드·IPC 등록",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다; P0-2 연결 블록(로드·IPC·override)을 제거하고 PRODUCT_NAME 상수를 그대로 쓴다",
+      "round": "M2,P0-2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/main/tenant.ts",
+      "kind": "added",
+      "lines": "1-67",
+      "purpose": "P0-2 테넌트 로드·fail-closed·IPC 등록",
+      "revert": "파일을 삭제하고 main/index.ts의 호출을 지운다",
+      "round": "P0-2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/preload/index.ts",
+      "kind": "modified",
+      "lines": "30, 1052-1059",
+      "purpose": "P0-2 테넌트 스냅샷 노출",
+      "revert": "P0-2 연결 블록(로드·IPC·override)을 제거하고 PRODUCT_NAME 상수를 그대로 쓴다",
+      "round": "P0-2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/agent.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/doc-picker.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/generate.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/pdf-password.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/pdf-tools.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/quick-look.html",
+      "kind": "modified",
+      "lines": "10",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/src/strings.ts",
+      "kind": "modified",
+      "lines": "2603",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/update.html",
+      "kind": "modified",
+      "lines": "10, 260",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/shared/tenant-api.ts",
+      "kind": "added",
+      "lines": "1-10",
+      "purpose": "P0-2 테넌트 스냅샷 채널·타입",
+      "revert": "파일을 삭제한다",
+      "round": "P0-2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/default-app.test.ts",
+      "kind": "modified",
+      "lines": "131, 153, 165, 168",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/diagram-shell-wiring.test.ts",
+      "kind": "modified",
+      "lines": "313",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/doc-picker-wiring.test.ts",
+      "kind": "modified",
+      "lines": "42, 44-45",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/linux-cli-link-scripts.test.ts",
+      "kind": "modified",
+      "lines": "33",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/linux-kde-templates.test.ts",
+      "kind": "modified",
+      "lines": "29-31, 109, 129",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/mcp/mcp-http-surface.test.ts",
+      "kind": "modified",
+      "lines": "249, 586",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/mcp/mcp-server.test.ts",
+      "kind": "modified",
+      "lines": "67",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/mcp/open-documents-tools.test.ts",
+      "kind": "modified",
+      "lines": "421",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/odt-open-with.test.ts",
+      "kind": "modified",
+      "lines": "46, 52",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/open-with-icons.test.ts",
+      "kind": "modified",
+      "lines": "51, 60, 69, 78, 88, 105, 174, 179, 219, 221-222, 243",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/product-identity.test.ts",
+      "kind": "modified",
+      "lines": "92, 119-120, 124-125, 134-135, 141, 148-153, 160-161, 177, 192, 212, 235, 251, 293, 299, 324",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/project-memory.test.ts",
+      "kind": "modified",
+      "lines": "18, 20",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/quick-look.test.ts",
+      "kind": "modified",
+      "lines": "264",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/settings-about.test.ts",
+      "kind": "modified",
+      "lines": "128-129",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/settings-default-app.test.ts",
+      "kind": "modified",
+      "lines": "97, 106",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/settings-integrations.test.ts",
+      "kind": "modified",
+      "lines": "163, 189",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/tab-manager-unloaded.test.ts",
+      "kind": "modified",
+      "lines": "308, 775",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/tab-manager.test.ts",
+      "kind": "modified",
+      "lines": "293, 364, 380, 391, 1366, 1381, 1383-1388, 1391, 1405",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/tenant-startup.test.ts",
+      "kind": "added",
+      "lines": "1-86",
+      "purpose": "P0-2 테넌트 시작·IPC 테스트",
+      "revert": "파일을 삭제한다",
+      "round": "P0-2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/updater.test.ts",
+      "kind": "modified",
+      "lines": "243-245, 1020, 1041",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "apps/slides/src/renderer/index.html",
+      "kind": "modified",
+      "lines": "11",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "docs/phase0-slices.md",
+      "kind": "added",
+      "lines": "1-271",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "docs/plan.md",
+      "kind": "modified",
+      "lines": "3, 11, 13, 20, 27-34, 39, 50-55, 67-71, 75-80, 84-87, 93-100, 106-113, 136, 165-176, 179, 185, 199-208, 212-213, 219, 227-231, 251, 263-266, 275, 284, 291, 299-303, 305, 308-311, 315, 317, 330-336, 340-343, 353-354, 356-357, 368, 374, 381, 384, 399-409, 414, 419, 431, 442-451, 460, 464-468, 472-475, 484-488, 495, 508, 525, 528, 531, 536, 538, 544, 559-567, 576, 586",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "docs/release-decisions.md",
+      "kind": "added",
+      "lines": "1-345",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "docs/release-pipeline-design.md",
+      "kind": "added",
+      "lines": "1-417",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "docs/upstream-modifications.md",
+      "kind": "added",
+      "lines": "1-191",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "e2e/docs-spell-suggestions.spec.ts",
+      "kind": "modified",
+      "lines": "12",
+      "purpose": "네이티브 스펠체크 e2e 폴링 15s→30s(PR #12) + 교체 후 마커 폴링 60s·테스트 150s(PR #22)",
+      "revert": "POLL을 15_000으로, MARKER_POLL을 POLL로 되돌리고 timeout을 120초로 되돌린다",
+      "round": "PR#12",
+      "owner": "api"
+    },
+    {
+      "path": "e2e/docs-spellcheck-reenable.spec.ts",
+      "kind": "modified",
+      "lines": "30",
+      "purpose": "네이티브 스펠체크 e2e 폴링 15s→30s(PR #12) + 재활성 Off→On 1회 재시도·테스트 180s(PR #22)",
+      "revert": "재시도 블록을 지우고 단일 expect.poll로, timeout을 120초로 되돌린다",
+      "round": "PR#12",
+      "owner": "api"
+    },
+    {
+      "path": "package-lock.json",
+      "kind": "modified",
+      "lines": "416, 2813-2816, 16505-16513",
+      "purpose": "워크스페이스 의존성 링크(P0-1/P0-2) — generated",
+      "revert": "npm install로 재생성한다",
+      "round": "P0-1,P0-2",
+      "owner": "api",
+      "generated": true
+    },
+    {
+      "path": "package.json",
+      "kind": "modified",
+      "lines": "13, 48-49",
+      "purpose": "M2 저장소 URL + P0-3 check:upstream 스크립트",
+      "revert": "URL을 되돌리고 check:upstream 스크립트를 지운다",
+      "round": "M2,P0-3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ai-provider/src/user-skills/github.ts",
+      "kind": "modified",
+      "lines": "207",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/bin/ieumoffice",
+      "kind": "modified",
+      "lines": "2, 21, 24",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/bin/ieumoffice.cmd",
+      "kind": "modified",
+      "lines": "5",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/src/mcp-launch.ts",
+      "kind": "modified",
+      "lines": "49",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/src/resources.ts",
+      "kind": "modified",
+      "lines": "146",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/app-export.test.ts",
+      "kind": "modified",
+      "lines": "141",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/app-install-dir.test.ts",
+      "kind": "modified",
+      "lines": "7-8, 14, 16, 22-23",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/check-upstream-hooks.test.ts",
+      "kind": "added",
+      "lines": "1-162",
+      "purpose": "P0-3 원장 검사기 fixture 테스트",
+      "revert": "파일을 삭제한다",
+      "round": "P0-3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/cloud.test.ts",
+      "kind": "modified",
+      "lines": "16, 27",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/diagram.test.ts",
+      "kind": "modified",
+      "lines": "24",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/growth-log.test.ts",
+      "kind": "modified",
+      "lines": "14-17, 23, 30-31, 54",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/gui-open.test.ts",
+      "kind": "modified",
+      "lines": "34, 43, 45",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/install.test.ts",
+      "kind": "modified",
+      "lines": "112, 142, 156, 262-263, 285, 292",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/mcp-install.test.ts",
+      "kind": "modified",
+      "lines": "110, 117",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/mcp-launch.test.ts",
+      "kind": "modified",
+      "lines": "8, 10, 18, 20, 26, 41, 63-65, 126, 130",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/cli/tests/upstream-coexistence.test.ts",
+      "kind": "modified",
+      "lines": "54, 59, 61, 191, 197, 228, 427, 473, 496-497, 506-508, 521-522, 525-526, 529, 537, 543-544, 547-550, 555, 557, 561, 576, 578, 616, 652, 676-678, 680",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/electron-utils/tests/app-menu.test.ts",
+      "kind": "modified",
+      "lines": "270, 274-276, 280, 291-292, 297-298",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/electron-utils/tests/default-save-dir-blocked.test.ts",
+      "kind": "modified",
+      "lines": "42, 46, 52-53",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/electron-utils/tests/default-save-dir.test.ts",
+      "kind": "modified",
+      "lines": "102-103, 126, 128, 131-132, 138-139",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/electron-utils/tests/github-menu.test.ts",
+      "kind": "modified",
+      "lines": "18-21, 30-33, 35, 49, 52",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/i18n/src/product.ts",
+      "kind": "modified",
+      "lines": "27, 31-49, 55-56, 69-70",
+      "purpose": "M2 제품명 상수 + P0-2 테넌트 표시명 override",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다; P0-2 연결 블록(로드·IPC·override)을 제거하고 PRODUCT_NAME 상수를 그대로 쓴다",
+      "round": "M2,P0-2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/i18n/tests/product.test.ts",
+      "kind": "modified",
+      "lines": "20, 22, 27-32, 36, 43, 45, 47-48, 53, 55-57, 78, 81, 87, 89-91, 93-94, 121-123, 134, 136, 140, 146-147, 152-154",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/i18n/tests/tenant-product-name.test.ts",
+      "kind": "added",
+      "lines": "1-46",
+      "purpose": "P0-2 표시명 override 테스트",
+      "revert": "파일을 삭제한다",
+      "round": "P0-2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/odt-engine/src/assemble/export/index.ts",
+      "kind": "modified",
+      "lines": "577",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/pipelines/src/slides/guides/design.md",
+      "kind": "modified",
+      "lines": "3, 19, 35, 99",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/tenant-config/README.md",
+      "kind": "added",
+      "lines": "1-93",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/tenant-config/package.json",
+      "kind": "added",
+      "lines": "1-19",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/tenant-config/src/index.ts",
+      "kind": "added",
+      "lines": "1-32",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/tenant-config/src/integrations.ts",
+      "kind": "added",
+      "lines": "1-87",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/tenant-config/src/loader.ts",
+      "kind": "added",
+      "lines": "1-114",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/tenant-config/src/schema.ts",
+      "kind": "added",
+      "lines": "1-207",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/tenant-config/tests/integrations.test.ts",
+      "kind": "added",
+      "lines": "1-61",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/tenant-config/tests/loader.test.ts",
+      "kind": "added",
+      "lines": "1-170",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/tenant-config/tsconfig.json",
+      "kind": "added",
+      "lines": "1-4",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/tenant-config/vitest.config.ts",
+      "kind": "added",
+      "lines": "1-7",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/tests/doc-attach-button.test.ts",
+      "kind": "modified",
+      "lines": "48",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "tenant.example.json",
+      "kind": "added",
+      "lines": "1-16",
+      "purpose": "M2 NaddleOffice 제품명 적용",
+      "revert": "M2 제품명 적용 커밋을 되돌리고 원장 §5의 파일별 값을 원복한다",
+      "round": "M2",
+      "owner": "api"
+    },
+    {
+      "path": "tools/check-no-genspark.mjs",
+      "kind": "modified",
+      "lines": "90-113",
+      "purpose": "나들오피스 출처 표기 4건 ALLOW 등록",
+      "revert": "ALLOW 항목 4개를 삭제한다",
+      "round": "PR#10,PR#17",
+      "owner": "api"
+    },
+    {
+      "path": "tools/check-upstream-hooks.mjs",
+      "kind": "added",
+      "lines": "1-290",
+      "purpose": "P0-3 원장 검사기(읽기 전용)",
+      "revert": "파일과 CI 단계를 삭제한다",
+      "round": "P0-3",
+      "owner": "api"
+    }
+  ]
+}

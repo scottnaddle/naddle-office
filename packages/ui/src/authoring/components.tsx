@@ -128,8 +128,10 @@ export function BriefCard({
   onRegenerate,
   onCancel,
 }: BriefCardProps) {
-  const setField = (id: string, value: string) =>
-    onChange({ ...model, fields: model.fields?.map((f) => (f.id === id ? { ...f, value } : f)) })
+  const setField = (id: string, value: string) => {
+    const fields = model.fields?.map((field) => (field.id === id ? { ...field, value } : field))
+    onChange(fields ? { ...model, fields } : { ...model })
+  }
   const setSection = (id: string, patch: Partial<BriefSection>) =>
     onChange({
       ...model,

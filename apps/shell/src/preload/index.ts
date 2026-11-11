@@ -27,6 +27,7 @@ import {
 } from '@genoffice/electron-utils/project-folder-bridge'
 import { USER_SKILLS_BRIDGE_KEY } from '@genoffice/electron-utils/user-skills-channels'
 import type { UpdateUiState } from '../shared/update-api'
+import { TENANT_GET_SYNC_CHANNEL, type TenantSnapshot } from '../shared/tenant-api'
 import { normalizeAiPanelPrefs } from '@genoffice/ui/ai-panel-prefs'
 import type {
   AuthorNameSetting,
@@ -1048,3 +1049,11 @@ contextBridge.exposeInMainWorld('aiOfficeRecovery', recoveryListApi)
 
 // open documents dragged from the OS anywhere over Home or the tab strip
 installDropOpenBridge()
+
+// P0-2 tenant config, loaded once by main: renderer code reads the display
+// names synchronously at first paint. The snapshot never carries secret refs.
+const tenantSnapshot =
+  typeof ipcRenderer.sendSync === 'function'
+    ? (ipcRenderer.sendSync(TENANT_GET_SYNC_CHANNEL) as TenantSnapshot | null)
+    : null
+contextBridge.exposeInMainWorld('naddleTenant', tenantSnapshot ?? null)

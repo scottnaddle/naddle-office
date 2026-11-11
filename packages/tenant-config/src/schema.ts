@@ -14,10 +14,25 @@ export interface TenantProduct {
   nameKo?: string
 }
 
+/** Integration kinds this schema version knows. Unknown values fail closed. */
+export type TenantIdentityKind = 'none'
+export type TenantModelKind = 'current'
+export type TenantKnowledgeKind = 'none'
+
+export interface TenantIntegrations {
+  /** `none` = no enterprise identity provider; the app has no accounts (current behavior). */
+  identity?: TenantIdentityKind
+  /** `current` = keep the app's existing AI provider selection. */
+  model?: TenantModelKind
+  /** `none` = no knowledge source wired. */
+  knowledge?: TenantKnowledgeKind
+}
+
 export interface TenantConfig {
   schemaVersion: typeof TENANT_SCHEMA_VERSION
   tenantId?: string
   product?: TenantProduct
+  integrations?: TenantIntegrations
   /**
    * References only. Values must use one of:
    * `env:NAME`, `file:/path`, `secret:name`, `ref:name`.
@@ -33,6 +48,7 @@ export type TenantConfigErrorCode =
   | 'invalid_config'
   | 'invalid_product_name'
   | 'invalid_secret_ref'
+  | 'invalid_integration'
 
 export class TenantConfigError extends Error {
   readonly code: TenantConfigErrorCode
@@ -46,8 +62,20 @@ export class TenantConfigError extends Error {
   }
 }
 
-const TOP_LEVEL_KEYS = new Set(['schemaVersion', 'tenantId', 'product', 'secretRefs'])
+const TOP_LEVEL_KEYS = new Set([
+  'schemaVersion',
+  'tenantId',
+  'product',
+  'integrations',
+  'secretRefs',
+])
 const PRODUCT_KEYS = new Set(['name', 'nameKo'])
+const INTEGRATION_KEYS = new Set(['identity', 'model', 'knowledge'])
+const INTEGRATION_KINDS = {
+  identity: new Set(['none']),
+  model: new Set(['current']),
+  knowledge: new Set(['none']),
+} as const
 const TENANT_ID_RE = /^[a-z0-9][a-z0-9._-]{0,63}$/
 const SECRET_KEY_RE = /^[a-z][a-z0-9._-]{0,63}$/i
 const SECRET_REF_RE = /^(env|file|secret|ref):[^\s]+$/
@@ -128,6 +156,28 @@ export function validateTenantConfig(value: unknown, source = '<memory>'): Tenan
     product = { name, ...(nameKo ? { nameKo } : {}) }
   }
 
+  let integrations: TenantIntegrations | undefined
+  if (value.integrations !== undefined) {
+    if (!isRecord(value.integrations))
+      fail('invalid_config', 'integrations must be an object', source)
+    checkKeys(value.integrations, INTEGRATION_KEYS, 'integrations', source)
+    const selected: TenantIntegrations = {}
+    for (const key of INTEGRATION_KEYS) {
+      const kind = value.integrations[key]
+      if (kind === undefined) continue
+      const allowed = INTEGRATION_KINDS[key as keyof typeof INTEGRATION_KINDS]
+      if (typeof kind !== 'string' || !allowed.has(kind as never)) {
+        fail(
+          'invalid_integration',
+          `integrations.${key} must be one of: ${[...allowed].join(', ')}`,
+          source,
+        )
+      }
+      ;(selected as Record<string, string>)[key] = kind
+    }
+    integrations = selected
+  }
+
   let secretRefs: Record<string, string> | undefined
   if (value.secretRefs !== undefined) {
     if (!isRecord(value.secretRefs)) fail('invalid_config', 'secretRefs must be an object', source)
@@ -151,6 +201,7 @@ export function validateTenantConfig(value: unknown, source = '<memory>'): Tenan
     schemaVersion: TENANT_SCHEMA_VERSION,
     ...(tenantId ? { tenantId } : {}),
     ...(product ? { product } : {}),
+    ...(integrations ? { integrations } : {}),
     ...(secretRefs ? { secretRefs } : {}),
   }
 }

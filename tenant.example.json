@@ -5,6 +5,11 @@
     "name": "NaddleOffice",
     "nameKo": "나들오피스"
   },
+  "integrations": {
+    "identity": "none",
+    "model": "current",
+    "knowledge": "none"
+  },
   "secretRefs": {
     "modelGatewayKey": "env:NADDLE_MODEL_GATEWAY_KEY"
   }

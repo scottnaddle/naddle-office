@@ -48,6 +48,11 @@ Errors include the file path and are safe to show to an operator. They do not in
     "name": "NaddleOffice",
     "nameKo": "나들오피스"
   },
+  "integrations": {
+    "identity": "none",
+    "model": "current",
+    "knowledge": "none"
+  },
   "secretRefs": {
     "modelGatewayKey": "env:NADDLE_MODEL_GATEWAY_KEY"
   }
@@ -59,6 +64,11 @@ Errors include the file path and are safe to show to an operator. They do not in
 - `product.name`: required when `product` is present, 1–80 printable characters.
 - `product.nameKo`: optional; Korean display falls back to `name`.
 - `secretRefs`: optional. Values must be `env:NAME`, `file:/path`, `secret:name`, or `ref:name`. Raw values are rejected; the loader never reads them.
+- `integrations`: optional adapter selection.
+  - `identity`: `none` (no enterprise identity provider; the app keeps its current local behavior).
+  - `model`: `current` (keep the app's existing AI provider selection).
+  - `knowledge`: `none` (no knowledge source is wired).
+    Unknown keys or kinds fail closed (`invalid_config` / `invalid_integration`). Missing values mean the defaults above.
 
 Example file: [`tenant.example.json`](../../tenant.example.json).
 

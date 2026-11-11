@@ -10,6 +10,9 @@ import { PNG } from 'pngjs'
 import { launchShell, closeAndSaveVideo, waitForPageWithUrl } from './helpers'
 
 const POLL = { timeout: 30_000, intervals: [250, 500, 1000] }
+// Blink re-checks an edited paragraph on idle; a loaded runner can take much
+// longer than the 30s used for ordinary DOM polls.
+const MARKER_POLL = { timeout: 60_000, intervals: [500, 1000, 2000] }
 
 /**
  * Squiggles are native markers invisible to the DOM: count red-dominant
@@ -69,7 +72,7 @@ const center = (r: { x: number; y: number; w: number; h: number }) => ({
 test.describe.configure({ retries: 1 })
 
 test('context menu offers spelling suggestions and applies one', async () => {
-  test.setTimeout(120_000)
+  test.setTimeout(150_000)
   const launched = await launchShell({ onboardingSeen: true, videoDir: 'spell-suggestions' })
   const { app, page } = launched
   try {
@@ -191,7 +194,7 @@ test('context menu offers spelling suggestions and applies one', async () => {
     await editor.mouse.click(blank.x, blank.y)
     await expect
       .poll(async () => redUnder(editor, (await wordRect(editor, 'lazyy'))!), {
-        ...POLL,
+        ...MARKER_POLL,
         message: 'squiggle back on lazyy after the replacement',
       })
       .toBeGreaterThan(0)

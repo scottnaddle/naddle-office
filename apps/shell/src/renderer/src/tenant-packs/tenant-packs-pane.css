@@ -70,8 +70,8 @@
 }
 
 .tenant-packs-btn.is-danger {
-  border-color: #c0392b;
-  color: #c0392b;
+  border-color: var(--danger-border);
+  color: var(--danger);
 }
 
 .tenant-packs-notice {
@@ -83,8 +83,8 @@
 }
 
 .tenant-packs-notice.is-error {
-  background: color-mix(in srgb, #c0392b 12%, transparent);
-  color: #c0392b;
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 .tenant-packs-notice.is-info {
@@ -147,7 +147,7 @@
 }
 
 .tenant-packs-problems {
-  color: #c0392b;
+  color: var(--danger);
   font-size: 12px;
   margin-bottom: 8px;
 }
@@ -189,12 +189,12 @@
 }
 
 .tenant-packs-row-head .is-ok {
-  color: #1e8449;
+  color: var(--success);
   font-size: 12px;
 }
 
 .tenant-packs-row-head .is-bad {
-  color: #c0392b;
+  color: var(--danger);
   font-size: 12px;
 }
 

@@ -26,3 +26,46 @@
   font-size: 13px;
   margin-bottom: 2px;
 }
+
+.authoring-company {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+  border-radius: 8px;
+}
+
+.authoring-company .authoring-card-head {
+  margin-bottom: 8px;
+}
+
+.authoring-company-license {
+  opacity: 0.65;
+}
+
+.authoring-company-open {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.authoring-company-open label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.authoring-company-open textarea {
+  min-height: 52px;
+  resize: vertical;
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+}

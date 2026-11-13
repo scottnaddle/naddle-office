@@ -1060,6 +1060,26 @@ const tenantPacksApi: TenantPacksApi = {
     ipcRenderer.invoke(TENANT_PACKS_CHANNELS.importZip) as Promise<TenantPackActionResult>,
   importFolder: () =>
     ipcRenderer.invoke(TENANT_PACKS_CHANNELS.importFolder) as Promise<TenantPackActionResult>,
+  prepareZip: () =>
+    ipcRenderer.invoke(TENANT_PACKS_CHANNELS.prepareZip) as Promise<TenantPackActionResult>,
+  prepareFolder: () =>
+    ipcRenderer.invoke(TENANT_PACKS_CHANNELS.prepareFolder) as Promise<TenantPackActionResult>,
+  prepareGitHub: (address: string) =>
+    ipcRenderer.invoke(
+      TENANT_PACKS_CHANNELS.prepareGitHub,
+      address,
+    ) as Promise<TenantPackActionResult>,
+  confirmInstall: (token: string, attested: boolean) =>
+    ipcRenderer.invoke(
+      TENANT_PACKS_CHANNELS.confirmInstall,
+      token,
+      attested,
+    ) as Promise<TenantPackActionResult>,
+  cancelPrepare: (token: string) =>
+    ipcRenderer.invoke(
+      TENANT_PACKS_CHANNELS.cancelPrepare,
+      token,
+    ) as Promise<TenantPackActionResult>,
   list: () => ipcRenderer.invoke(TENANT_PACKS_CHANNELS.list) as Promise<TenantPackActionResult>,
   remove: (id: string) =>
     ipcRenderer.invoke(TENANT_PACKS_CHANNELS.remove, id) as Promise<TenantPackActionResult>,

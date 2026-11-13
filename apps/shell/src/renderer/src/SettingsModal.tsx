@@ -63,6 +63,8 @@ import { useSubscriptionConnection } from './subscription-client'
 import { SkillsPane } from './skills/SkillsPane'
 import { useUsableMcpServers } from './mcp/mcp-open-request'
 import { skillsText } from './i18n/strings-skills'
+import { TenantPacksPane } from './tenant-packs/TenantPacksPane'
+import { tenantPacksText } from './tenant-packs/strings'
 import {
   advancedPaneUseChoice,
   advancedProviderIds,
@@ -198,7 +200,14 @@ function CustomFontSizeInput({
 }
 
 export type SectionId =
-  'account' | 'aiModel' | 'aiMedia' | 'skills' | 'general' | 'integrations' | 'about'
+  | 'account'
+  | 'aiModel'
+  | 'aiMedia'
+  | 'skills'
+  | 'tenantPacks'
+  | 'general'
+  | 'integrations'
+  | 'about'
 
 /** a section labelled from the home dictionary, or by a feature's own dictionary */
 type SectionEntry = { id: SectionId } & (
@@ -210,6 +219,7 @@ const SECTIONS: readonly SectionEntry[] = [
   // one AI entry: 'aiMedia' stays a valid target and opens it on the Advanced media area
   { id: 'aiModel', labelKey: 'setSecAi' },
   { id: 'skills', label: (lang) => skillsText(lang, 'navLabel') },
+  { id: 'tenantPacks', label: (lang) => tenantPacksText(lang, 'navLabel') },
   { id: 'general', labelKey: 'setSecGeneral' },
   { id: 'integrations', labelKey: 'setSecIntegrations' },
   { id: 'about', labelKey: 'setSecAbout' },
@@ -264,6 +274,27 @@ function SectionIcon({ id }: { id: SectionId }) {
           strokeWidth="1.3"
           strokeLinecap="round"
           strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+  if (id === 'tenantPacks') {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect
+          x="2.5"
+          y="2.5"
+          width="11"
+          height="11"
+          rx="1.5"
+          stroke="currentColor"
+          strokeWidth="1.3"
+        />
+        <path
+          d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3"
+          stroke="currentColor"
+          strokeWidth="1.3"
+          strokeLinecap="round"
         />
       </svg>
     )
@@ -2102,6 +2133,7 @@ export function SettingsModal({
               </>
             )}
             {section === 'skills' && <SkillsPane usableMcpServers={usableMcpServers} />}
+            {section === 'tenantPacks' && <TenantPacksPane />}
             {section === 'integrations' && (
               <IntegrationsPane t={t} onStatus={(st) => onSkillUpdateDue?.(skillUpdateDue(st))} />
             )}

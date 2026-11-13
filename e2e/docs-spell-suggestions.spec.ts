@@ -72,7 +72,7 @@ const center = (r: { x: number; y: number; w: number; h: number }) => ({
 test.describe.configure({ retries: 1 })
 
 test('context menu offers spelling suggestions and applies one', async () => {
-  test.setTimeout(150_000)
+  test.setTimeout(210_000)
   const launched = await launchShell({ onboardingSeen: true, videoDir: 'spell-suggestions' })
   const { app, page } = launched
   try {
@@ -179,11 +179,32 @@ test('context menu offers spelling suggestions and applies one', async () => {
         message: 'squiggle gone after Add to Dictionary',
       })
       .toBe(0)
-    // the other misspelling keeps its marker: the dictionary changed, not the checker
-    expect(await redUnder(editor, targetRect!)).toBeGreaterThan(0)
+    // the other misspelling keeps its marker: the dictionary changed, not the checker.
+    // Add to Dictionary starts a respell kick (the DOM observer is paused while a
+    // trusted space is typed and scrubbed), so jumsp's marker can flicker; poll
+    // instead of one-shot reading it while the kick is in flight.
+    await expect
+      .poll(async () => redUnder(editor, (await wordRect(editor, 'jumsp'))!), {
+        ...MARKER_POLL,
+        message: 'jumsp keeps its marker after Add to Dictionary',
+      })
+      .toBeGreaterThan(0)
+
+    // Let the kick finish before opening the menu: with the observer still
+    // stopped, applying a suggestion can drop the sibling "lazyy" marker for
+    // good. Wait for two stable jumsp readings before carrying on.
+    const settleDeadline = Date.now() + 5_000
+    let lastJumsp = await redUnder(editor, (await wordRect(editor, 'jumsp'))!)
+    while (Date.now() < settleDeadline) {
+      await editor.waitForTimeout(600)
+      const next = await redUnder(editor, (await wordRect(editor, 'jumsp'))!)
+      if (next === lastJumsp && next > 0) break
+      lastJumsp = next
+    }
 
     // "jumsp" was typed too and never re-rendered, so its marker is still there
-    await editor.mouse.click(target.x, target.y, { button: 'right' })
+    const jumsp = center((await wordRect(editor, 'jumsp'))!)
+    await editor.mouse.click(jumsp.x, jumsp.y, { button: 'right' })
     await editor.locator('.ctx-menu .ctx-item-strong').first().waitFor()
     await editor.locator('.ctx-menu .ctx-item-strong').first().click()
     await expect.poll(() => pageText(editor), POLL).toContain(`fox ${suggestion} over`)

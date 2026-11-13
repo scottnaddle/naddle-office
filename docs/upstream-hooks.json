@@ -573,18 +573,18 @@
     {
       "path": "e2e/docs-spell-suggestions.spec.ts",
       "kind": "modified",
-      "lines": "12",
-      "purpose": "네이티브 스펠체크 e2e 폴링 15s→30s(PR #12) + 교체 후 마커 폴링 60s·테스트 150s(PR #22)",
-      "revert": "POLL을 15_000으로, MARKER_POLL을 POLL로 되돌리고 timeout을 120초로 되돌린다",
+      "lines": "12-15, 75, 182-203, 206-207, 218",
+      "purpose": "네이티브 스펠체크 e2e 폴링 15s→30s(PR #12) + 교체 후 마커 폴링 60s·테스트 150s(PR #22). PR#27 후속(run 43348845000): Add to Dictionary 뒤 jumsp 마커를 60s 폴링하고 respell kick이 끝날 때까지 기다린 다음 추천을 적용",
+      "revert": "POLL을 15_000으로, MARKER_POLL을 POLL로 되돌리고 timeout을 120초로 되돌린다. Add to Dictionary 뒤 jumsp 폴링·kick 안정화 대기를 지운다",
       "round": "PR#12",
       "owner": "api"
     },
     {
       "path": "e2e/docs-spellcheck-reenable.spec.ts",
       "kind": "modified",
-      "lines": "30",
-      "purpose": "네이티브 스펠체크 e2e 폴링 15s→30s(PR #12) + 재활성 Off→On 1회 재시도·테스트 180s(PR #22)",
-      "revert": "재시도 블록을 지우고 단일 expect.poll로, timeout을 120초로 되돌린다",
+      "lines": "30-33, 38-45, 63, 88-109, 116-145",
+      "purpose": "네이티브 스펠체크 e2e 폴링 15s→30s(PR #12) + 재활성 Off→On 1회 재시도·테스트 180s(PR #22). PR#27 후속(run 43348845000): DOM에서 실제 on/off 상태를 읽는 재시도와 60s 마커 폴링",
+      "revert": "재시도 블록을 지우고 단일 expect.poll로, timeout을 120초로 되돌린다. 상태 판독 도우미와 60s 마커 폴링을 지운다",
       "round": "PR#12",
       "owner": "api"
     },
@@ -1090,6 +1090,6 @@
     "modified": 78,
     "deleted": 0,
     "added": 36,
-    "note": "초기 기준선 78 + 여유 12 = 상한 90. M2 제품명 적용이 업스트림 테스트 기대값 갱신을 포함해 78까지 올렸다. S1에서 업스트림 수정 2파일(AiPanel·ui index)을 추가해 counted를 80으로 두었다. 이번 PR#27 e2e 수정이 업스트림 수정 2파일(spell-replace 유예, hwp-doc-check 체크박스 클릭)을 더해 counted 82가 된다. 상한 90·경고 85는 그대로다. 새 기능은 업스트림 테스트를 고치지 않고 새 테스트 파일로 작성하며, 상한 상향은 별도 승인 대상이다."
+    "note": "초기 기준선 78 + 여유 12 = 상한 90. M2 제품명 적용이 업스트림 테스트 기대값 갱신을 포함해 78까지 올렸다. S1에서 업스트림 수정 2파일(AiPanel·ui index)을 추가해 counted를 80으로 두었다. 이번 PR#27 e2e 수정이 업스트림 수정 2파일(spell-replace 유예, hwp-doc-check 체크박스 클릭)을 더해 counted 82가 된다. run 43348845000 후속은 이미 등록된 e2e 파일 2개만 다시 손보므로 counted는 82 그대로다. 상한 90·경고 85는 그대로다. 새 기능은 업스트림 테스트를 고치지 않고 새 테스트 파일로 작성하며, 상한 상향은 별도 승인 대상이다."
   }
 }

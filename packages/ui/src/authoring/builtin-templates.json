@@ -1,0 +1,541 @@
+{
+  "manifest": "naddle-template-manifest",
+  "version": 1,
+  "scope": "builtin",
+  "entries": [
+    {
+      "id": "quote",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "견적서",
+      "description": "품목·수량·단가와 유효기간을 정리한 견적 문서",
+      "category": "영업",
+      "tags": ["견적", "거래"],
+      "previewText": "₩",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "sha256": null,
+      "questions": [
+        {
+          "id": "customer",
+          "label": "받는 곳(고객 또는 발주처)",
+          "required": true,
+          "placeholder": "예: ○○ 주식회사 구매팀"
+        },
+        {
+          "id": "items",
+          "label": "견적 항목과 수량·단가",
+          "description": "한 줄에 하나씩 적어 주세요. 금액은 시스템이 합계를 정리합니다.",
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 노트북 10대 × 1,500,000원"
+        },
+        {
+          "id": "tax",
+          "label": "세금 포함 여부",
+          "options": [
+            {
+              "id": "included",
+              "label": "부가세 포함"
+            },
+            {
+              "id": "excluded",
+              "label": "부가세 별도"
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "valid",
+          "label": "견적 유효기간",
+          "placeholder": "예: 발행일로부터 30일"
+        }
+      ],
+      "sections": [
+        {
+          "id": "info",
+          "title": "견적 정보"
+        },
+        {
+          "id": "items",
+          "title": "품목 및 금액"
+        },
+        {
+          "id": "total",
+          "title": "합계 및 조건"
+        },
+        {
+          "id": "validity",
+          "title": "유효기간 및 서명"
+        }
+      ]
+    },
+    {
+      "id": "approval",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "품의서",
+      "description": "목적·내용·예산·일정을 갖춘 내부 승인 요청",
+      "category": "내부 결재",
+      "tags": ["품의", "승인"],
+      "previewText": "✓",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "sha256": null,
+      "questions": [
+        {
+          "id": "title",
+          "label": "품의 제목",
+          "required": true
+        },
+        {
+          "id": "purpose",
+          "label": "목적과 배경",
+          "multiline": true,
+          "required": true
+        },
+        {
+          "id": "amount",
+          "label": "예상 금액",
+          "placeholder": "예: 3,500,000원"
+        },
+        {
+          "id": "period",
+          "label": "기간 또는 일정",
+          "placeholder": "예: 2026-12-01 ~ 2026-12-15"
+        },
+        {
+          "id": "requester",
+          "label": "요청 부서·담당자"
+        }
+      ],
+      "sections": [
+        {
+          "id": "purpose",
+          "title": "목적 및 배경"
+        },
+        {
+          "id": "content",
+          "title": "내용"
+        },
+        {
+          "id": "budget",
+          "title": "예산"
+        },
+        {
+          "id": "schedule",
+          "title": "일정"
+        },
+        {
+          "id": "approval",
+          "title": "승인"
+        }
+      ]
+    },
+    {
+      "id": "expense",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "지출결의서",
+      "description": "지출 내역·증빙·승인을 한 장으로 정리",
+      "category": "재무",
+      "tags": ["지출", "정산"],
+      "previewText": "₩",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "sha256": null,
+      "questions": [
+        {
+          "id": "date",
+          "label": "지출 일자",
+          "placeholder": "예: 2026-11-30"
+        },
+        {
+          "id": "payee",
+          "label": "지급 대상",
+          "required": true
+        },
+        {
+          "id": "amount",
+          "label": "지출 금액",
+          "required": true
+        },
+        {
+          "id": "account",
+          "label": "계정 또는 예산 항목"
+        },
+        {
+          "id": "purpose",
+          "label": "지출 목적과 내역",
+          "multiline": true,
+          "required": true
+        }
+      ],
+      "sections": [
+        {
+          "id": "summary",
+          "title": "지출 개요"
+        },
+        {
+          "id": "detail",
+          "title": "지출 내역"
+        },
+        {
+          "id": "evidence",
+          "title": "증빙"
+        },
+        {
+          "id": "approval",
+          "title": "승인"
+        }
+      ]
+    },
+    {
+      "id": "minutes",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "회의록",
+      "description": "안건·논의·결정·후속 조치를 남기는 회의 기록",
+      "category": "협업",
+      "tags": ["회의", "기록"],
+      "previewText": "≡",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "sha256": null,
+      "questions": [
+        {
+          "id": "meeting",
+          "label": "회의 이름",
+          "required": true
+        },
+        {
+          "id": "date",
+          "label": "일시와 장소"
+        },
+        {
+          "id": "attendees",
+          "label": "참석자",
+          "multiline": true
+        },
+        {
+          "id": "agenda",
+          "label": "안건",
+          "multiline": true,
+          "required": true
+        }
+      ],
+      "sections": [
+        {
+          "id": "info",
+          "title": "회의 정보"
+        },
+        {
+          "id": "discussion",
+          "title": "논의"
+        },
+        {
+          "id": "decisions",
+          "title": "결정 사항"
+        },
+        {
+          "id": "followup",
+          "title": "후속 조치"
+        }
+      ]
+    },
+    {
+      "id": "report",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "업무 보고",
+      "description": "진행 상황·이슈·다음 단계를 정리한 업무 보고",
+      "category": "보고",
+      "tags": ["보고", "진행"],
+      "previewText": "↗",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "sha256": null,
+      "questions": [
+        {
+          "id": "period",
+          "label": "보고 기간",
+          "placeholder": "예: 2026년 11월 2주"
+        },
+        {
+          "id": "owner",
+          "label": "작성자·담당"
+        },
+        {
+          "id": "summary",
+          "label": "핵심 요약",
+          "multiline": true,
+          "required": true
+        },
+        {
+          "id": "issues",
+          "label": "이슈와 위험",
+          "multiline": true
+        },
+        {
+          "id": "next",
+          "label": "다음 단계",
+          "multiline": true
+        }
+      ],
+      "sections": [
+        {
+          "id": "summary",
+          "title": "요약"
+        },
+        {
+          "id": "progress",
+          "title": "진행 상황"
+        },
+        {
+          "id": "issues",
+          "title": "이슈 및 위험"
+        },
+        {
+          "id": "next",
+          "title": "다음 단계"
+        }
+      ]
+    },
+    {
+      "id": "coral",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Coral",
+      "description": "Flat coral, ink and cream planes with oversized condensed capitals.",
+      "scheme": "mixed",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/coral"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "blue-professional",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Blue Professional",
+      "description": "Warm cream paper with a single cobalt blue accent, quiet tinted cards and a consulting-grade calm.",
+      "scheme": "light",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/blue-professional"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "monochrome",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Monochrome",
+      "description": "Black ink on ivory paper with no color at all, hairline rules, serif titles and wide margins.",
+      "scheme": "light",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/monochrome"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "neo-grid-bold",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Neo-Grid Bold",
+      "description": "An editorial poster grid of paper, ink and neon lemon panels set in heavy capitals.",
+      "scheme": "light",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/neo-grid-bold"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "block-frame",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "BlockFrame",
+      "description": "Neo-brutalist framed cards on candy pastel grounds, lifted by solid black offset blocks.",
+      "scheme": "light",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/block-frame"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "raw-grid",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Raw Grid",
+      "description": "A neobrutalist grid of thick black rules, pastel pink and sage cells and heavy capitals.",
+      "scheme": "light",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/raw-grid"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "studio",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Studio",
+      "description": "Acid yellow on warm black, with capitals so heavy they read as solid blocks.",
+      "scheme": "dark",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/studio"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "signal",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Signal",
+      "description": "A sober briefing on navy and cream with editorial serif titles, one gold accent and hairline rules.",
+      "scheme": "mixed",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/signal"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "grove",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Grove",
+      "description": "Deep forest green and parchment with quiet serif titles, one terracotta accent and hairline rules.",
+      "scheme": "mixed",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/grove"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "editorial-tri-tone",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Editorial Tri-Tone",
+      "description": "An arts-magazine system printed in blush pink, butter and wine, with heavy grotesque headlines, pills and rounded cards.",
+      "scheme": "mixed",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/editorial-tri-tone"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "emerald-editorial",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Emerald Editorial",
+      "description": "A magazine front page in emerald, navy ink and oat paper, with heavy serif display type and double-rule ornaments.",
+      "scheme": "mixed",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/emerald-editorial"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    },
+    {
+      "id": "vellum",
+      "kind": "slide-design",
+      "version": "1.0.0",
+      "name": "Vellum",
+      "description": "A single deep periwinkle field with warm yellow serif type set centered and a small teal pin-note on every page.",
+      "scheme": "dark",
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "zarazhangrui/frontend-slides",
+        "commit": "9906a34d640d2111f724544cbc50f7f130569ae1",
+        "path": "bold-template-pack/templates/vellum"
+      },
+      "author": "Zara Zhang (design); re-authored by IeumOffice",
+      "locale": "en",
+      "sha256": null
+    }
+  ]
+}

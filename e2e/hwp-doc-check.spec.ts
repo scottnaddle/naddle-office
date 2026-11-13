@@ -37,7 +37,8 @@ test('lists the findings of a form with tables inside tables', async () => {
     await expect(panel).toBeVisible()
 
     // the switch shows the checks that are off by default, without reading the document again
-    await panel.locator('.doc-check-extra input').check()
+    await panel.locator('.doc-check-extra span').click()
+    await expect(panel.locator('.doc-check-extra input')).toBeChecked()
     await expect(panel.locator('.doc-check-finding').first()).toBeVisible()
 
     // the findings can be handed to the AI: the request waits in the input box, unsent

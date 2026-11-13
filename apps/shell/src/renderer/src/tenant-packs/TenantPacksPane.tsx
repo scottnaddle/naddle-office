@@ -343,7 +343,7 @@ export function TenantPacksPane() {
       </div>
 
       <div className="tenant-packs-installed" data-testid="tenant-packs-installed">
-        <h4>{t('title')}</h4>
+        <h4>{t('installedTitle')}</h4>
         {packs === null ? (
           <p className="tenant-packs-muted">{t('loading')}</p>
         ) : packs.length === 0 ? (

@@ -8,6 +8,7 @@ import type { Lang } from '@genoffice/i18n'
 export type TenantPacksPaneStringKey =
   | 'navLabel'
   | 'title'
+  | 'installedTitle'
   | 'intro'
   | 'importZip'
   | 'importFolder'
@@ -56,7 +57,8 @@ type Row = Record<TenantPacksPaneStringKey, string>
 
 const EN: Row = {
   navLabel: 'Company forms',
-  title: 'Company template packs',
+  title: 'Company forms',
+  installedTitle: 'Installed packs',
   intro:
     'Import forms your company has the right to use. Packs are stored only for this tenant and are not shared or uploaded.',
   importZip: 'Import zip…',
@@ -106,7 +108,8 @@ const EN: Row = {
 
 const KO: Row = {
   navLabel: '회사 양식',
-  title: '회사 양식 팩',
+  title: '회사 양식',
+  installedTitle: '설치된 팩',
   intro:
     '회사가 사용 권리를 가진 양식을 가져오세요. 팩은 이 테넌트에만 보관되며 공유하거나 업로드하지 않습니다.',
   importZip: 'zip 가져오기…',

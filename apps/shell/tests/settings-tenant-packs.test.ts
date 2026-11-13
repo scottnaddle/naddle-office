@@ -11,7 +11,9 @@ import type {
   TenantPackSummary,
   TenantPacksApi,
 } from '../src/shared/tenant-packs-api'
+import type { HomeApi } from '../src/shared/home-api'
 import { LocaleProvider } from '../src/renderer/src/locale'
+import { SettingsModal } from '../src/renderer/src/SettingsModal'
 import { TenantPacksPane } from '../src/renderer/src/tenant-packs/TenantPacksPane'
 
 const actEnvironment = globalThis as typeof globalThis & {
@@ -32,6 +34,8 @@ afterEach(() => {
   act(() => root.unmount())
   host.remove()
   delete window.aiOfficeTenantPacks
+  delete (window as unknown as { aiOfficeUserSkills?: unknown }).aiOfficeUserSkills
+  delete (window as unknown as { aiOffice?: unknown }).aiOffice
 })
 
 async function flush(): Promise<void> {
@@ -246,5 +250,49 @@ describe('Settings → Company forms', () => {
     await click(button('Import zip…'))
     expect(host.querySelector('[role="alert"]')?.textContent).toContain('path escape')
     expect(button('Import')).toBeUndefined()
+  })
+
+  it('keeps the company forms panel under Skills without a separate navigation entry', async () => {
+    window.aiOffice = {
+      getTheme: async () => 'system',
+      getDefaultSaveDir: async () => '',
+      getAutoSaveDefault: async () => ({ on: false, updatedAt: 0 }),
+      getAiPanelPrefs: async () => ({ fontSize: 'default', spellcheck: true }),
+      getUpdateChannel: async () => 'stable',
+      getAppVersion: async () => '1.0.0',
+      openHelp: vi.fn(async () => {}),
+    } as unknown as HomeApi
+    ;(window as unknown as { aiOfficeUserSkills?: unknown }).aiOfficeUserSkills = {
+      list: vi.fn(async () => []),
+      onChanged: vi.fn(() => () => undefined),
+    }
+    const bridge = api({ list: vi.fn(async () => ({ ok: true, packs: [pack] })) })
+    window.aiOfficeTenantPacks = bridge
+
+    await act(async () => {
+      root.render(
+        createElement(
+          LocaleProvider,
+          { initial: 'en' },
+          createElement(SettingsModal, { onClose: vi.fn(), target: { section: 'skills' } }),
+        ),
+      )
+      await Promise.resolve()
+    })
+    await flush()
+
+    const labels = [...host.querySelectorAll('.set-nav-item')].map((item) =>
+      item.textContent?.trim(),
+    )
+    expect(labels).toEqual(['Account', 'AI', 'Skills', 'General', 'Integrations', 'About'])
+    expect(labels).not.toContain('Company forms')
+
+    const panel = host.querySelector('[data-testid="tenant-packs-pane"]')
+    expect(panel).toBeTruthy()
+    const heading = [...panel!.querySelectorAll('h3')].find(
+      (node) => node.textContent?.trim() === 'Company forms',
+    )
+    expect(heading).toBeTruthy()
+    expect(host.textContent).toContain('Acme forms (acme-pack)')
   })
 })

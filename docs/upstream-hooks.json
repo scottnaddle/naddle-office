@@ -1430,8 +1430,8 @@
       "path": "apps/shell/src/renderer/src/SettingsModal.tsx",
       "kind": "modified",
       "lines": "-",
-      "purpose": "S4b: 설정 창에 '회사 양식' 섹션(TenantPacksPane)을 탑재 — 개인 스킬 화면은 그대로 둔다",
-      "revert": "SettingsModal의 tenantPacks 섹션·nav 항목·아이콘·TenantPacksPane 렌더를 지운다",
+      "purpose": "S4b: 스킬 섹션 안, SkillsPane 아래에 회사 양식(TenantPacksPane)을 탑재 — 별도 nav 항목은 두지 않는다",
+      "revert": "SettingsModal의 SkillsPane 아래 TenantPacksPane 렌더를 지운다",
       "round": "S4",
       "owner": "api"
     },

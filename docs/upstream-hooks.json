@@ -1083,6 +1083,42 @@
       "revert": "라벨 클릭·toBeChecked 두 줄을 원래 `await panel.locator('.doc-check-extra input').check()` 한 줄로 되돌린다",
       "round": "PR#27",
       "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/builtin-templates.json",
+      "kind": "added",
+      "lines": "1-541",
+      "purpose": "S2: 내장 템플릿 매니페스트 원장(문서 브리프 5종·슬라이드 디자인 12종 출처, form-skill 0종). builtin-skills.json 방식으로 id·버전·라이선스·출처·작성자·로캘·sha256을 한곳에 둔다",
+      "revert": "파일을 삭제하고 manifest.ts import와 templates.ts의 원장 읽기를 이전 배열로 되돌린다",
+      "round": "S2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/manifest.ts",
+      "kind": "added",
+      "lines": "1-368",
+      "purpose": "S2: 템플릿 매니페스트 스키마·검증·라이선스/출처 가드와 ieum-template → form-skill 항목 순수 변환 함수",
+      "revert": "파일을 삭제하고 authoring/index.ts의 export 줄을 지운다",
+      "round": "S2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/tests/template-manifest.test.ts",
+      "kind": "added",
+      "lines": "1-312",
+      "purpose": "S2: 매니페스트 검증·브리프 5종 불변·슬라이드 12종 순서·양식 파일 없음·라이선스 가드·NOTICE 5/7 정리 테스트(모델 호출 없음)",
+      "revert": "파일을 삭제한다",
+      "round": "S2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/pipelines/tests/template-manifest.test.ts",
+      "kind": "added",
+      "lines": "1-38",
+      "purpose": "S2: 매니페스트 slide-design 항목이 listSlideTemplates() id·순서·이름·출처와 같은지 확인",
+      "revert": "파일을 삭제한다",
+      "round": "S2",
+      "owner": "api"
     }
   ],
   "baseline": {

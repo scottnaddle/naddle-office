@@ -33,8 +33,8 @@
       "path": ".github/workflows/ci.yml",
       "kind": "added",
       "lines": "1-277",
-      "purpose": "CI job 타임아웃 상향(45→90, 60→120)과 P0-3 검사 단계",
-      "revert": "타임아웃 값과 Check upstream hooks 단계를 제거한다",
+      "purpose": "CI job 타임아웃 상향(45→90, 60→120)·P0-3 검사 단계 + 진단 아티팩트 업로드 continue-on-error(PR #22)",
+      "revert": "타임아웃 값·Check upstream hooks 단계·continue-on-error와 주석을 제거한다",
       "round": "P0-3",
       "owner": "api",
       "exempt": true
@@ -574,8 +574,8 @@
       "path": "e2e/docs-spell-suggestions.spec.ts",
       "kind": "modified",
       "lines": "12",
-      "purpose": "네이티브 스펠체크 e2e 폴링 15s→30s",
-      "revert": "POLL timeout을 15_000으로 되돌린다",
+      "purpose": "네이티브 스펠체크 e2e 폴링 15s→30s(PR #12) + 교체 후 마커 폴링 60s·테스트 150s(PR #22)",
+      "revert": "POLL을 15_000으로, MARKER_POLL을 POLL로 되돌리고 timeout을 120초로 되돌린다",
       "round": "PR#12",
       "owner": "api"
     },
@@ -583,8 +583,8 @@
       "path": "e2e/docs-spellcheck-reenable.spec.ts",
       "kind": "modified",
       "lines": "30",
-      "purpose": "네이티브 스펠체크 e2e 폴링 15s→30s",
-      "revert": "POLL timeout을 15_000으로 되돌린다",
+      "purpose": "네이티브 스펠체크 e2e 폴링 15s→30s(PR #12) + 재활성 Off→On 1회 재시도·테스트 180s(PR #22)",
+      "revert": "재시도 블록을 지우고 단일 expect.poll로, timeout을 120초로 되돌린다",
       "round": "PR#12",
       "owner": "api"
     },

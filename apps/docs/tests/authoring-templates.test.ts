@@ -10,10 +10,30 @@ import {
 } from '../src/renderer/ai/authoring/templates'
 
 const names = ['견적서', '품의서', '지출결의서', '회의록', '업무 보고']
+const ids = ['quote', 'approval', 'expense', 'minutes', 'report']
+/** The ten S3 office forms, each shipped with a self-authored .hwpx. */
+const s3Names = [
+  '기안서',
+  '구매품의서',
+  '출장신청서',
+  '출장보고서',
+  '휴가신청서',
+  '법인카드 사용내역서',
+  '업무협조전',
+  '거래명세서',
+  '발주서',
+  '공문(시행문)',
+]
 
 describe('document authoring templates', () => {
-  it('ships exactly the five approved forms', () => {
-    expect(DOCUMENT_TEMPLATES.map((template) => template.name)).toEqual(names)
+  it('keeps the five S1 forms first, in order', () => {
+    expect(DOCUMENT_TEMPLATES.slice(0, 5).map((template) => template.name)).toEqual(names)
+    expect(DOCUMENT_TEMPLATES.slice(0, 5).map((template) => template.id)).toEqual(ids)
+  })
+
+  it('adds the ten S3 office forms after them', () => {
+    expect(DOCUMENT_TEMPLATES).toHaveLength(15)
+    expect(DOCUMENT_TEMPLATES.slice(5).map((template) => template.name)).toEqual(s3Names)
   })
 
   it('every template asks questions and has an ordered section list', () => {
@@ -69,7 +89,7 @@ describe('AuthoringFlow without a model call', () => {
         onClose: () => undefined,
       }),
     )
-    for (const name of names) expect(html).toContain(name)
+    for (const name of [...names, ...s3Names]) expect(html).toContain(name)
     expect(html).toContain('템플릿으로 시작')
   })
 })

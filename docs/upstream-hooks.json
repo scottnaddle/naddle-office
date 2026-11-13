@@ -1051,7 +1051,7 @@
     {
       "path": "apps/docs/src/renderer/ai/authoring/templates.ts",
       "kind": "added",
-      "lines": "1-202",
+      "lines": "1-95",
       "purpose": "S1: 견적서·품의서·지출결의서·회의록·업무 보고 5종 템플릿과 브리프/지시문 생성",
       "revert": "파일과 상위 authoring 폴더를 삭제한다",
       "round": "S1",
@@ -1060,7 +1060,7 @@
     {
       "path": "apps/docs/tests/authoring-templates.test.ts",
       "kind": "added",
-      "lines": "1-75",
+      "lines": "1-95",
       "purpose": "S1: 다섯 템플릿·브리프·지시문·갤러리 첫 화면 테스트(모델 호출 없음)",
       "revert": "파일을 삭제한다",
       "round": "S1",
@@ -1087,7 +1087,7 @@
     {
       "path": "packages/ui/src/authoring/builtin-templates.json",
       "kind": "added",
-      "lines": "1-541",
+      "lines": "1-1207",
       "purpose": "S2: 내장 템플릿 매니페스트 원장(문서 브리프 5종·슬라이드 디자인 12종 출처, form-skill 0종). builtin-skills.json 방식으로 id·버전·라이선스·출처·작성자·로캘·sha256을 한곳에 둔다",
       "revert": "파일을 삭제하고 manifest.ts import와 templates.ts의 원장 읽기를 이전 배열로 되돌린다",
       "round": "S2",
@@ -1105,7 +1105,7 @@
     {
       "path": "packages/ui/tests/template-manifest.test.ts",
       "kind": "added",
-      "lines": "1-312",
+      "lines": "1-392",
       "purpose": "S2: 매니페스트 검증·브리프 5종 불변·슬라이드 12종 순서·양식 파일 없음·라이선스 가드·NOTICE 5/7 정리 테스트(모델 호출 없음)",
       "revert": "파일을 삭제한다",
       "round": "S2",
@@ -1118,6 +1118,114 @@
       "purpose": "S2: 매니페스트 slide-design 항목이 listSlideTemplates() id·순서·이름·출처와 같은지 확인",
       "revert": "파일을 삭제한다",
       "round": "S2",
+      "owner": "api"
+    },
+    {
+      "path": "packages/file-parse/tests/builtin-hwpx-forms.test.ts",
+      "kind": "added",
+      "lines": "1-100",
+      "purpose": "S3: 내장 HWPX 양식 10종을 저장소의 한글 읽기 함수로 열어 제목·결재란(담당·검토·승인)·합계 행·공문 구성·그림 없음을 확인",
+      "revert": "파일을 삭제한다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/scripts/generate-builtin-hwpx-forms.mjs",
+      "kind": "added",
+      "lines": "1-514",
+      "purpose": "S3: 내장 HWPX 양식 10종을 CLI의 hwp apply 연산(빈 A4 문서)으로 다시 만들고 sha256을 출력·원장에 기록하는 생성 스크립트",
+      "revert": "파일을 삭제한다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/assets/draft.hwpx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S3: 직접 작성한 기안서 양식(결재란 포함, Apache-2.0, NaddleOffice). generate-builtin-hwpx-forms.mjs가 만든 파일이며 원장 sha256과 같아야 한다",
+      "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/assets/purchase-request.hwpx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S3: 직접 작성한 구매품의서 양식(결재란 포함, Apache-2.0, NaddleOffice). generate-builtin-hwpx-forms.mjs가 만든 파일이며 원장 sha256과 같아야 한다",
+      "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/assets/trip-request.hwpx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S3: 직접 작성한 출장신청서 양식(결재란 포함, Apache-2.0, NaddleOffice). generate-builtin-hwpx-forms.mjs가 만든 파일이며 원장 sha256과 같아야 한다",
+      "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/assets/trip-report.hwpx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S3: 직접 작성한 출장보고서 양식(결재란 포함, Apache-2.0, NaddleOffice). generate-builtin-hwpx-forms.mjs가 만든 파일이며 원장 sha256과 같아야 한다",
+      "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/assets/leave-request.hwpx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S3: 직접 작성한 휴가신청서 양식(결재란 포함, Apache-2.0, NaddleOffice). generate-builtin-hwpx-forms.mjs가 만든 파일이며 원장 sha256과 같아야 한다",
+      "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/assets/corp-card.hwpx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S3: 직접 작성한 법인카드 사용내역서 양식(결재란 포함, Apache-2.0, NaddleOffice). generate-builtin-hwpx-forms.mjs가 만든 파일이며 원장 sha256과 같아야 한다",
+      "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/assets/cooperation.hwpx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S3: 직접 작성한 업무협조전 양식(결재란 포함, Apache-2.0, NaddleOffice). generate-builtin-hwpx-forms.mjs가 만든 파일이며 원장 sha256과 같아야 한다",
+      "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/assets/statement.hwpx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S3: 직접 작성한 거래명세서 양식(결재란 포함, Apache-2.0, NaddleOffice). generate-builtin-hwpx-forms.mjs가 만든 파일이며 원장 sha256과 같아야 한다",
+      "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/assets/purchase-order.hwpx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S3: 직접 작성한 발주서 양식(결재란 포함, Apache-2.0, NaddleOffice). generate-builtin-hwpx-forms.mjs가 만든 파일이며 원장 sha256과 같아야 한다",
+      "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
+      "round": "S3",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/assets/official-letter.hwpx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S3: 직접 작성한 공문(시행문) 양식(결재란 포함, Apache-2.0, NaddleOffice). generate-builtin-hwpx-forms.mjs가 만든 파일이며 원장 sha256과 같아야 한다",
+      "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
+      "round": "S3",
       "owner": "api"
     }
   ],

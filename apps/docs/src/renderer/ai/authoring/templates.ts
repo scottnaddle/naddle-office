@@ -7,10 +7,12 @@ export interface DocumentTemplate extends AuthoringTemplate {
 }
 
 /**
- * The five S-grade office forms we author ourselves. They are structured
- * briefs (sections + fields), not downloaded public forms. The data lives in
- * the builtin template manifest (`packages/ui/src/authoring/builtin-templates.json`,
- * kind `document-brief`); this module keeps the shape the docs app uses.
+ * The office forms we author ourselves: the five S1 briefs (quote, approval,
+ * expense, minutes, report) first, then the ten S3 forms that also ship a
+ * self-authored `.hwpx` with a 결재란. They are structured briefs (sections +
+ * fields), not downloaded public forms. The data lives in the builtin template
+ * manifest (`packages/ui/src/authoring/builtin-templates.json`, kind
+ * `document-brief`); this module keeps the shape the docs app uses.
  */
 export const DOCUMENT_TEMPLATES: readonly DocumentTemplate[] = builtinTemplateEntries(
   'document-brief',

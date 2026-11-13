@@ -59,16 +59,29 @@ const REJECTED_LICENSE_PATTERNS: readonly RegExp[] = [
 ]
 
 /**
- * Origins builtin entries must not come from: official vendor template
- * galleries and form marketplaces. Matched against source repo/url and author.
+ * Origins neither builtin entries nor tenant packs may come from: official
+ * vendor template galleries and form marketplaces. Matched against source
+ * repo/url, author and displayed names.
  */
-const REJECTED_BUILTIN_ORIGINS: readonly RegExp[] = [
+export const REJECTED_TEMPLATE_ORIGINS: readonly RegExp[] = [
   /microsoft|office\.com|templates\.office/i,
   /docs\.google|google\s*(docs|workspace)|workspace\.google/i,
   /hancom|한컴/i,
   /yesform|예스폼/i,
   /bizforms?|비즈폼/i,
 ]
+
+/** Whether any of the given texts names a rejected vendor or marketplace origin. */
+export function isRejectedTemplateOrigin(
+  ...values: ReadonlyArray<string | null | undefined>
+): boolean {
+  return values.some(
+    (value) =>
+      typeof value === 'string' && REJECTED_TEMPLATE_ORIGINS.some((pattern) => pattern.test(value)),
+  )
+}
+
+const REJECTED_BUILTIN_ORIGINS = REJECTED_TEMPLATE_ORIGINS
 
 export type TemplateSource =
   | { type: 'self' }

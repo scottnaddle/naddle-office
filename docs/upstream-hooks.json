@@ -1227,6 +1227,204 @@
       "revert": "파일을 삭제하고 builtin-templates.json의 해당 항목을 지운다",
       "round": "S3",
       "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/main/tenant-packs.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 메인 프로세스의 테넌트 양식 팩 IPC·네이티브 가져오기/미리보기/목록/삭제 다이얼로그(서버 없음, renderer tenant 값 무시)",
+      "revert": "파일을 삭제하고 main/index.ts의 configureTenantPacks·메뉴 항목을 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/main/tenant-packs-strings.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 테넌트 양식 팩 메뉴·다이얼로그 문구(en/ko, 그 밖의 언어는 영어)",
+      "revert": "파일을 삭제하고 tenant-packs.ts의 import를 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/shared/tenant-packs-api.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 테넌트 양식 팩 IPC 채널·결과 타입과 preload bridge 계약",
+      "revert": "파일을 삭제하고 preload/index.ts의 bridge를 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/tenant-packs-ipc.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 테넌트 양식 팩 IPC가 tenant 인자를 무시하고 메인 창이 아닌 곳의 import/remove를 거부하는지 확인",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/tests/template-manifest-tenant.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: manifest.ts가 export한 벤더/마켓플레이스 출처 거부 규칙 확인",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/package.json",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 로컬 테넌트 양식 팩 오버레이 패키지 선언(@naddle/template-packs)",
+      "revert": "파일을 삭제하고 apps/shell/package.json의 의존성과 root test/typecheck 항목을 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/README.md",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 테넌트 양식 팩 검증 순서·저장 위치·명령 안내",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/tsconfig.json",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 오버레이 패키지 타입 검사 설정",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/vitest.config.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 오버레이 패키지 node 테스트 설정",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/src/constants.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 팩 id·확장자·스크립트·매크로·크기 제한 상수",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/src/errors.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 테넌트 양식 팩 오류 코드와 메시지",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/src/tenant-key.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: tenantId→저장 키(_local 포함)와 Windows에서 쓸 수 없는 이름 fail-closed",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/src/license.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: CC0 정규화와 테넌트 라이선스·벤더 출처 정책",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/src/files.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 심볼릭 링크를 거부하는 팩 폴더 순회와 경로 허용 규칙",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/src/macros.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: OOXML/HWPX 매크로·스크립트·ActiveX·customUI·OLE·External 관계 검사",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/src/validator.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: manifest 파싱·tenant scope·pack.id·양식 sha256·라이선스·SKILL.md 상호 검증",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/src/store.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 테넌트별 template-packs 저장·index.json·원자 설치·변조 재검증·목록/삭제",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/src/engine.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: zip/폴더(TOCTOU staging)/GitHub 준비와 설치·정리",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/src/index.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 오버레이 패키지 공개 진입점",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/tests/helpers.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 테스트용 manifest·SKILL.md·양식 zip·팩 폴더 생성 도우미",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/tests/engine.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 정상 설치·manifest/레이아웃·라이선스·sha256 변조·폴더/GitHub·tenant 격리 테스트",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "packages/naddle-template-packs/tests/security.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4a: 스크립트·매크로·HWPX Scripts·External 관계·경로 탈출·심볼릭 링크 거부 테스트",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
     }
   ],
   "baseline": {

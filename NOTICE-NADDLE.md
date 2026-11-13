@@ -26,3 +26,20 @@ The upstream `NOTICE` is kept verbatim. Its "Built-in skills" section says that 
 - Form skills (`form-skill`): none are built in. This kind is reserved for organization template packs imported by the user.
 
 The manifest does not include official Microsoft, Google or Hancom templates, fonts or forms, or forms from template marketplaces. None of the S3 form files was downloaded, scraped or copied from such a source, from a government or municipal original, or from any company's internal forms.
+
+## Tenant template packs
+
+`packages/naddle-template-packs` is a NaddleOffice overlay package (Apache-2.0)
+for importing an organization's own template packs on the local PC. It runs in
+the main process only. Packs are stored per tenant under the app's user-data
+folder (`tenants/<tenantKey>/template-packs/`), not in the personal skill
+folder, and they are never uploaded, bundled with the installer, added to the
+built-in manifest or synced between machines. There is no server or remote
+catalog.
+
+A pack is validated before installation. Scripts, MCP declarations and macros
+(including macro-enabled Office files, `vbaProject.bin`, ActiveX, custom UI, OLE
+embeddings, external relationships and HWPX `Scripts/`) are refused, and a form
+file must match the sha256 the pack declares. The person importing the pack must
+confirm the tenant's right to use its forms. The package reuses the upstream
+skill import helpers without modifying them.

@@ -40,6 +40,13 @@ import { shellWindowBackground } from './window-background'
 import { installPointerSize } from './pointer-size'
 import { describeTenantError, initTenant, registerTenantIpc } from './tenant'
 import {
+  configureTenantPacks,
+  importTenantPackFolderFromMenu,
+  importTenantPackZipFromMenu,
+  showTenantPacksMenuDialog,
+} from './tenant-packs'
+import { tenantPacksText } from './tenant-packs-strings'
+import {
   applyUiScaleTo,
   applyUiScaleToAll,
   changeUiScale,
@@ -7924,6 +7931,30 @@ function registerTabsIpc(): void {
 
 // ---- home menu ----
 
+/**
+ * Tenant template pack entries shared by every File/Help menu. They open native
+ * dialogs; no renderer and no GitHub address field is involved in S4a.
+ */
+function tenantPackMenuItems(): MenuItemConstructorOptions[] {
+  const lang = currentLang()
+  return [
+    { type: 'separator' },
+    {
+      label: tenantPacksText(lang, 'menuImportZip'),
+      click: () => void importTenantPackZipFromMenu(),
+    },
+    {
+      label: tenantPacksText(lang, 'menuImportFolder'),
+      click: () => void importTenantPackFolderFromMenu(),
+    },
+    {
+      label: tenantPacksText(lang, 'menuManage'),
+      click: () => void showTenantPacksMenuDialog(),
+    },
+    { type: 'separator' },
+  ]
+}
+
 async function openFileViaDialog(): Promise<void> {
   const win = shellWindow ?? BrowserWindow.getFocusedWindow()
   if (!win) return
@@ -7964,6 +7995,7 @@ function buildHomeMenu(): void {
         { label: tm('thirdPartyNotices'), click: () => void openThirdPartyNotices() },
         { type: 'separator' },
         ...helpCheckUpdatesItems(appMenuLabels(currentLang())),
+        ...tenantPackMenuItems(),
         aboutMenuItem(appMenuLabels(currentLang())),
       ],
     },
@@ -8057,6 +8089,7 @@ function buildPdfMenu(): void {
         { label: tm('thirdPartyNotices'), click: () => void openThirdPartyNotices() },
         { type: 'separator' },
         ...helpCheckUpdatesItems(appMenuLabels(currentLang())),
+        ...tenantPackMenuItems(),
         aboutMenuItem(appMenuLabels(currentLang())),
       ],
     },
@@ -8164,6 +8197,7 @@ function buildMarkdownMenu(): void {
         { label: tm('thirdPartyNotices'), click: () => void openThirdPartyNotices() },
         { type: 'separator' },
         ...helpCheckUpdatesItems(appMenuLabels(currentLang())),
+        ...tenantPackMenuItems(),
         aboutMenuItem(appMenuLabels(currentLang())),
       ],
     },
@@ -8249,6 +8283,7 @@ function buildHwpMenu(): void {
         { label: tm('thirdPartyNotices'), click: () => void openThirdPartyNotices() },
         { type: 'separator' },
         ...helpCheckUpdatesItems(appMenuLabels(currentLang())),
+        ...tenantPackMenuItems(),
         aboutMenuItem(appMenuLabels(currentLang())),
       ],
     },
@@ -8358,6 +8393,7 @@ function buildEpubMenu(): void {
         { label: tm('thirdPartyNotices'), click: () => void openThirdPartyNotices() },
         { type: 'separator' },
         ...helpCheckUpdatesItems(appMenuLabels(currentLang())),
+        ...tenantPackMenuItems(),
         aboutMenuItem(appMenuLabels(currentLang())),
       ],
     },
@@ -8458,6 +8494,7 @@ function buildHtmlMenu(): void {
         { label: tm('thirdPartyNotices'), click: () => void openThirdPartyNotices() },
         { type: 'separator' },
         ...helpCheckUpdatesItems(appMenuLabels(currentLang())),
+        ...tenantPackMenuItems(),
         aboutMenuItem(appMenuLabels(currentLang())),
       ],
     },
@@ -8594,6 +8631,7 @@ function buildDiagramMenu(): void {
         { label: tm('thirdPartyNotices'), click: () => void openThirdPartyNotices() },
         { type: 'separator' },
         ...helpCheckUpdatesItems(appMenuLabels(currentLang())),
+        ...tenantPackMenuItems(),
         aboutMenuItem(appMenuLabels(currentLang())),
       ],
     },
@@ -8733,6 +8771,7 @@ function buildMindmapMenu(): void {
         { label: tm('thirdPartyNotices'), click: () => void openThirdPartyNotices() },
         { type: 'separator' },
         ...helpCheckUpdatesItems(appMenuLabels(currentLang())),
+        ...tenantPackMenuItems(),
         aboutMenuItem(appMenuLabels(currentLang())),
       ],
     },
@@ -9562,6 +9601,14 @@ app.whenReady().then(async () => {
     return
   }
   registerTenantIpc(ipcMain, tenantSnapshot)
+  configureTenantPacks({
+    userDataDir: () => app.getPath('userData'),
+    tenantId: tenantSnapshot.tenantId,
+    lang: currentLang,
+    parentWindow: () => shellWindow,
+    isMainWindow: (sender) =>
+      !!shellWindow && !shellWindow.isDestroyed() && sender === shellWindow.webContents,
+  })
   if (revealSecretsRun) {
     app.exit(await runRevealEntry(secretCodec))
     return

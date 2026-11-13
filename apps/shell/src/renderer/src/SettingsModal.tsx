@@ -199,13 +199,7 @@ function CustomFontSizeInput({
 }
 
 export type SectionId =
-  | 'account'
-  | 'aiModel'
-  | 'aiMedia'
-  | 'skills'
-  | 'general'
-  | 'integrations'
-  | 'about'
+  'account' | 'aiModel' | 'aiMedia' | 'skills' | 'general' | 'integrations' | 'about'
 
 /** a section labelled from the home dictionary, or by a feature's own dictionary */
 type SectionEntry = { id: SectionId } & (

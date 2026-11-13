@@ -1,0 +1,247 @@
+/* Shared authoring cards. Colours inherit the host panel theme; only spacing,
+   borders and hierarchy are fixed here so every editor looks the same. */
+.authoring-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, currentColor 3%, transparent);
+  font-size: 13px;
+  color: inherit;
+}
+
+.authoring-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.authoring-muted {
+  opacity: 0.65;
+  font-size: 12px;
+}
+
+.authoring-label {
+  font-weight: 600;
+}
+
+.authoring-input,
+.authoring-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.authoring-textarea {
+  resize: vertical;
+}
+
+.authoring-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.authoring-option,
+.authoring-direction,
+.authoring-template {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.authoring-option.is-selected,
+.authoring-direction.is-selected,
+.authoring-template.is-selected {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6 inset;
+}
+
+.authoring-option small,
+.authoring-direction small,
+.authoring-template small {
+  opacity: 0.7;
+}
+
+.authoring-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.authoring-spacer {
+  flex: 1;
+}
+
+.authoring-btn {
+  padding: 5px 10px;
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.authoring-btn.primary {
+  border-color: #3b82f6;
+  background: #3b82f6;
+  color: #fff;
+}
+
+.authoring-btn:disabled,
+.authoring-option:disabled,
+.authoring-template:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.authoring-direction-preview {
+  display: block;
+  height: 28px;
+  border-radius: 5px;
+}
+
+.authoring-directions,
+.authoring-template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.authoring-template-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  border-radius: 6px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.authoring-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+}
+
+.authoring-fields dt {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.authoring-fields dd {
+  margin: 0;
+}
+
+.authoring-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.authoring-section-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.authoring-section-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.authoring-icon {
+  width: 24px;
+  height: 24px;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.authoring-warnings {
+  margin: 0;
+  padding-inline-start: 18px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.authoring-steps,
+.authoring-queue {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.authoring-step {
+  display: flex;
+  gap: 6px;
+}
+
+.authoring-step.is-running {
+  font-weight: 600;
+}
+
+.authoring-step.is-done {
+  opacity: 0.8;
+}
+
+.authoring-step.is-error {
+  color: #dc2626;
+}
+
+.authoring-bar {
+  height: 5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  overflow: hidden;
+}
+
+.authoring-bar > span {
+  display: block;
+  height: 100%;
+  background: #3b82f6;
+  transition: width 160ms ease;
+}
+
+.authoring-queue > li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.authoring-queue-target {
+  flex: none;
+  max-width: 30%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.7;
+}

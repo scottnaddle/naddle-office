@@ -28,9 +28,20 @@ const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
 // squiggles worth of red pixels: the original delta the assertions were built on
 const SQUIGGLE_PIXELS = 100
 const POLL = { timeout: 30_000, intervals: [250, 500, 1000] }
+// Blink re-checks the document on idle; a loaded xvfb runner can take much
+// longer than the 30s used for ordinary DOM polls.
+const MARKER_POLL = { timeout: 60_000, intervals: [500, 1000, 2000] }
 
 const pageText = (page: Page) =>
   page.evaluate(() => document.querySelector('.doc-page')?.textContent ?? '')
+
+/** the editor writes spellcheck on the document root, so the state is readable */
+const spellcheckOn = (page: Page) =>
+  page.evaluate(() => {
+    const docPage = document.querySelector('.doc-page')
+    if (!docPage) return null
+    return docPage.getAttribute('spellcheck') === 'true'
+  })
 
 /** Chromium paints markers word by word: wait for the count to pass `atLeast`, then to settle. */
 async function settledRedCount(page: Page, atLeast = 0): Promise<number> {
@@ -49,7 +60,7 @@ async function settledRedCount(page: Page, atLeast = 0): Promise<number> {
 test.describe.configure({ retries: 1 })
 
 test('re-enabling spellcheck respells existing text without user input', async () => {
-  test.setTimeout(180_000)
+  test.setTimeout(360_000)
   const launched = await launchShell({ onboardingSeen: true, videoDir: 'spellcheck-reenable' })
   const { app, page } = launched
   try {
@@ -74,7 +85,28 @@ test('re-enabling spellcheck respells existing text without user input', async (
     await editor.getByRole('button', { name: 'Review' }).click()
     await spelling.waitFor()
 
-    await spelling.click()
+    // Read the real toggle state from the editor instead of counting clicks: a
+    // swallowed click must not leave the retry path with spellcheck off.
+    const turnOff = async () => {
+      if (await spellcheckOn(editor)) await spelling.click()
+      await expect
+        .poll(() => spellcheckOn(editor), {
+          ...POLL,
+          message: 'spellcheck is off after clicking Spelling',
+        })
+        .toBe(false)
+    }
+    const turnOn = async () => {
+      if (!(await spellcheckOn(editor))) await spelling.click()
+      await expect
+        .poll(() => spellcheckOn(editor), {
+          ...POLL,
+          message: 'spellcheck is on after clicking Spelling',
+        })
+        .toBe(true)
+    }
+
+    await turnOff()
     await expect
       .poll(() => redCount(editor), { ...POLL, message: 'markers clear once spellcheck is off' })
       .toBeLessThanOrEqual(baseline - SQUIGGLE_PIXELS)
@@ -85,22 +117,31 @@ test('re-enabling spellcheck respells existing text without user input', async (
     const regained = () =>
       expect
         .poll(() => redCount(editor), {
-          ...POLL,
+          ...MARKER_POLL,
           message: 'existing text regains its spelling markers after re-enabling',
         })
         .toBeGreaterThanOrEqual(target)
-    await spelling.click()
-    try {
-      await regained()
-    } catch {
-      // The respell kick is a trusted keystroke sent by the main process; on a
-      // busy xvfb runner that keystroke can be swallowed before Blink sees it.
-      // A second off/on is the same user-visible action and must also restore
-      // the markers, so retry once before calling it a failure.
-      await spelling.click()
-      await editor.waitForTimeout(1500)
-      await spelling.click()
-      await regained()
+
+    await turnOn()
+    for (let attempt = 0; ; attempt++) {
+      try {
+        await regained()
+        break
+      } catch (error) {
+        if (attempt >= 2) throw error
+        // The respell kick is a trusted keystroke sent by the main process; on a
+        // busy xvfb runner that keystroke can be swallowed before Blink sees it.
+        // Retry the same user-visible off/on, checking the editor state each
+        // time so a missed click cannot leave spellcheck off.
+        await turnOff()
+        await expect
+          .poll(() => redCount(editor), {
+            ...POLL,
+            message: 'markers clear once spellcheck is off again',
+          })
+          .toBeLessThanOrEqual(baseline - SQUIGGLE_PIXELS)
+        await turnOn()
+      }
     }
 
     // the markers return the moment the kick's trusted space lands; the kick

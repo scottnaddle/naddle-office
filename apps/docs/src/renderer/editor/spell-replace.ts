@@ -61,7 +61,7 @@ export function replaceMisspelledWord(
 }
 
 /** Blink's edit and the IPC reply travel on different pipes: time for the edit to land. */
-const BLINK_REPLACE_GRACE_MS = 150
+const BLINK_REPLACE_GRACE_MS = 1000
 
 /**
  * Blink's replaceMisspelling first: a scripted ProseMirror replacement rewrites

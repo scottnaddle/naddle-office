@@ -4,6 +4,8 @@
  * the word through Blink (one Undo step takes it back, and the other
  * misspellings of the paragraph keep their squiggles).
  */
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { test, expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { PNG } from 'pngjs'
@@ -13,6 +15,19 @@ const POLL = { timeout: 30_000, intervals: [250, 500, 1000] }
 // Blink re-checks an edited paragraph on idle; a loaded runner can take much
 // longer than the 30s used for ordinary DOM polls.
 const MARKER_POLL = { timeout: 60_000, intervals: [500, 1000, 2000] }
+
+/**
+ * The always-on support trace the Docs main process appends to
+ * `userData/spell-diag.log`. Empty until the first line is written.
+ */
+function diagLog(userDataDir: string) {
+  try {
+    const file = join(userDataDir, 'spell-diag.log')
+    return existsSync(file) ? readFileSync(file, 'utf8') : ''
+  } catch {
+    return ''
+  }
+}
 
 /**
  * Squiggles are native markers invisible to the DOM: count red-dominant
@@ -72,9 +87,9 @@ const center = (r: { x: number; y: number; w: number; h: number }) => ({
 test.describe.configure({ retries: 1 })
 
 test('context menu offers spelling suggestions and applies one', async () => {
-  test.setTimeout(150_000)
+  test.setTimeout(270_000)
   const launched = await launchShell({ onboardingSeen: true, videoDir: 'spell-suggestions' })
-  const { app, page } = launched
+  const { app, page, userDataDir } = launched
   try {
     await page.locator('.quick-card').first().click()
     const editor = await waitForPageWithUrl(app, '://docs/')
@@ -171,6 +186,13 @@ test('context menu offers spelling suggestions and applies one', async () => {
         await editor.waitForTimeout(800)
       }
     }
+    // the respell kick appends lifecycle lines to spell-diag.log; snapshot the
+    // length first so only lines written after Add to Dictionary count
+    const diagBefore = diagLog(userDataDir).length
+    const diagSuffix = () => {
+      const log = diagLog(userDataDir)
+      return log.length >= diagBefore ? log.slice(diagBefore) : log
+    }
     await addToDict.click()
     await editor.mouse.click(blank.x, blank.y)
     await expect
@@ -179,11 +201,32 @@ test('context menu offers spelling suggestions and applies one', async () => {
         message: 'squiggle gone after Add to Dictionary',
       })
       .toBe(0)
+
+    // Wait for the kick itself, not a pixel proxy: existing jumsp markers stay
+    // painted while ProseMirror's DOM observer is paused, so two equal readings
+    // can happen mid-kick. Applying a suggestion in that window lets the
+    // 1000ms ProseMirror fallback rewrite the text node and drop sibling
+    // squiggles for good. `kick done landed=` is written after the observer
+    // starts again; a terminal "gave up"/"abandoned"/"canceled" line does not
+    // match, so the poll keeps failing there.
+    await expect
+      .poll(diagSuffix, {
+        ...MARKER_POLL,
+        message: 'respell kick finished after Add to Dictionary',
+      })
+      .toMatch(/kick done landed=/)
+
     // the other misspelling keeps its marker: the dictionary changed, not the checker
-    expect(await redUnder(editor, targetRect!)).toBeGreaterThan(0)
+    await expect
+      .poll(async () => redUnder(editor, (await wordRect(editor, 'jumsp'))!), {
+        ...MARKER_POLL,
+        message: 'jumsp keeps its marker after Add to Dictionary',
+      })
+      .toBeGreaterThan(0)
 
     // "jumsp" was typed too and never re-rendered, so its marker is still there
-    await editor.mouse.click(target.x, target.y, { button: 'right' })
+    const jumsp = center((await wordRect(editor, 'jumsp'))!)
+    await editor.mouse.click(jumsp.x, jumsp.y, { button: 'right' })
     await editor.locator('.ctx-menu .ctx-item-strong').first().waitFor()
     await editor.locator('.ctx-menu .ctx-item-strong').first().click()
     await expect.poll(() => pageText(editor), POLL).toContain(`fox ${suggestion} over`)

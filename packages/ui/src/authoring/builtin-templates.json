@@ -322,6 +322,672 @@
       ]
     },
     {
+      "id": "draft",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "기안서",
+      "description": "결재 받을 안건의 목적·내용·예산을 정리한 기안 문서",
+      "category": "내부 결재",
+      "tags": ["기안", "결재"],
+      "previewText": "✎",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "formAsset": {
+        "path": "assets/draft.hwpx"
+      },
+      "sha256": "b64e685fca8a9bee5aaa1979979a43ebca5e0bc7d316e534f460d283708b0eaf",
+      "questions": [
+        {
+          "id": "title",
+          "label": "기안 제목",
+          "required": true
+        },
+        {
+          "id": "purpose",
+          "label": "기안 목적",
+          "multiline": true,
+          "required": true
+        },
+        {
+          "id": "content",
+          "label": "주요 내용",
+          "multiline": true
+        },
+        {
+          "id": "budget",
+          "label": "소요 예산과 일정",
+          "placeholder": "예: 2,000,000원, 2026-12-01 시행"
+        },
+        {
+          "id": "drafter",
+          "label": "기안 부서·기안자"
+        }
+      ],
+      "sections": [
+        {
+          "id": "info",
+          "title": "문서 정보"
+        },
+        {
+          "id": "purpose",
+          "title": "기안 목적"
+        },
+        {
+          "id": "content",
+          "title": "주요 내용"
+        },
+        {
+          "id": "budget",
+          "title": "소요 예산 및 일정"
+        },
+        {
+          "id": "effect",
+          "title": "기대 효과"
+        }
+      ]
+    },
+    {
+      "id": "purchase-request",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "구매품의서",
+      "description": "구매 품목·견적 비교·합계를 갖춘 구매 승인 요청",
+      "category": "구매",
+      "tags": ["구매", "품의"],
+      "previewText": "₩",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "formAsset": {
+        "path": "assets/purchase-request.hwpx"
+      },
+      "sha256": "3fc1666bbfdc2fe070be85987392bc3ceb26d053ab378c6ade9cd0a0b177770e",
+      "questions": [
+        {
+          "id": "purpose",
+          "label": "구매 목적",
+          "multiline": true,
+          "required": true
+        },
+        {
+          "id": "items",
+          "label": "품목과 규격·수량·단가",
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 모니터 27인치 5대 × 300,000원"
+        },
+        {
+          "id": "quotes",
+          "label": "견적 비교(업체·금액)",
+          "multiline": true
+        },
+        {
+          "id": "delivery",
+          "label": "납품 희망일과 장소"
+        },
+        {
+          "id": "requester",
+          "label": "요청 부서·요청자"
+        }
+      ],
+      "sections": [
+        {
+          "id": "info",
+          "title": "품의 정보"
+        },
+        {
+          "id": "items",
+          "title": "구매 내역 및 합계"
+        },
+        {
+          "id": "quotes",
+          "title": "견적 비교"
+        },
+        {
+          "id": "reason",
+          "title": "구매 사유 및 선정 근거"
+        }
+      ]
+    },
+    {
+      "id": "trip-request",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "출장신청서",
+      "description": "출장지·기간·목적·일정과 예상 경비를 적는 신청서",
+      "category": "근태",
+      "tags": ["출장", "신청"],
+      "previewText": "✈",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "formAsset": {
+        "path": "assets/trip-request.hwpx"
+      },
+      "sha256": "a01adf63072863dd88caeac1537ead7149d5c2c8564dc50f049df7bf5c90404b",
+      "questions": [
+        {
+          "id": "destination",
+          "label": "출장지",
+          "required": true
+        },
+        {
+          "id": "period",
+          "label": "출장 기간",
+          "required": true,
+          "placeholder": "예: 2026-12-03 ~ 2026-12-04 (1박 2일)"
+        },
+        {
+          "id": "purpose",
+          "label": "출장 목적",
+          "multiline": true,
+          "required": true
+        },
+        {
+          "id": "schedule",
+          "label": "방문 일정",
+          "multiline": true
+        },
+        {
+          "id": "cost",
+          "label": "예상 경비",
+          "multiline": true,
+          "placeholder": "예: 교통비 120,000원, 숙박비 90,000원"
+        }
+      ],
+      "sections": [
+        {
+          "id": "info",
+          "title": "출장 정보"
+        },
+        {
+          "id": "schedule",
+          "title": "출장 일정"
+        },
+        {
+          "id": "cost",
+          "title": "예상 경비 및 합계"
+        },
+        {
+          "id": "request",
+          "title": "신청"
+        }
+      ]
+    },
+    {
+      "id": "trip-report",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "출장보고서",
+      "description": "일자별 활동·성과·후속 조치와 경비 정산을 정리한 보고",
+      "category": "보고",
+      "tags": ["출장", "보고"],
+      "previewText": "↗",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "formAsset": {
+        "path": "assets/trip-report.hwpx"
+      },
+      "sha256": "00ced0ff2a342a671784b713446370db3a58cc3d1e32b49de36c5e540d14c180",
+      "questions": [
+        {
+          "id": "destination",
+          "label": "출장지와 기간",
+          "required": true
+        },
+        {
+          "id": "purpose",
+          "label": "출장 목적"
+        },
+        {
+          "id": "activities",
+          "label": "일자별 활동",
+          "multiline": true,
+          "required": true
+        },
+        {
+          "id": "results",
+          "label": "결과와 성과",
+          "multiline": true
+        },
+        {
+          "id": "followup",
+          "label": "후속 조치",
+          "multiline": true
+        },
+        {
+          "id": "cost",
+          "label": "사용 경비",
+          "multiline": true
+        }
+      ],
+      "sections": [
+        {
+          "id": "info",
+          "title": "출장 개요"
+        },
+        {
+          "id": "activities",
+          "title": "일자별 활동"
+        },
+        {
+          "id": "results",
+          "title": "출장 결과 및 성과"
+        },
+        {
+          "id": "followup",
+          "title": "후속 조치"
+        },
+        {
+          "id": "cost",
+          "title": "경비 정산 및 합계"
+        }
+      ]
+    },
+    {
+      "id": "leave-request",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "휴가신청서",
+      "description": "휴가 구분·기간·사유와 업무 대행자를 적는 신청서",
+      "category": "근태",
+      "tags": ["휴가", "신청"],
+      "previewText": "☀",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "formAsset": {
+        "path": "assets/leave-request.hwpx"
+      },
+      "sha256": "5fd2afa137ff022874ce97010b29647715dac356dda8a5c9f47392ce80aec666",
+      "questions": [
+        {
+          "id": "type",
+          "label": "휴가 구분",
+          "required": true,
+          "placeholder": "예: 연차, 반차(오전), 경조"
+        },
+        {
+          "id": "period",
+          "label": "휴가 기간",
+          "required": true,
+          "placeholder": "예: 2026-12-24 ~ 2026-12-26 (3일간)"
+        },
+        {
+          "id": "reason",
+          "label": "사유",
+          "multiline": true
+        },
+        {
+          "id": "deputy",
+          "label": "업무 대행자와 비상 연락처"
+        }
+      ],
+      "sections": [
+        {
+          "id": "info",
+          "title": "신청자 정보"
+        },
+        {
+          "id": "leave",
+          "title": "휴가 구분 및 기간"
+        },
+        {
+          "id": "reason",
+          "title": "사유"
+        },
+        {
+          "id": "handover",
+          "title": "업무 대행"
+        }
+      ]
+    },
+    {
+      "id": "corp-card",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "법인카드 사용내역서",
+      "description": "법인카드 사용 일자·가맹점·목적·금액과 합계를 정리",
+      "category": "재무",
+      "tags": ["법인카드", "정산"],
+      "previewText": "₩",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "formAsset": {
+        "path": "assets/corp-card.hwpx"
+      },
+      "sha256": "8a081dc9c2bcbb3a2302cc1031550e0979d08d272b35de664fffdabeddf96816",
+      "questions": [
+        {
+          "id": "user",
+          "label": "사용자와 소속",
+          "required": true
+        },
+        {
+          "id": "period",
+          "label": "사용 기간",
+          "placeholder": "예: 2026년 11월"
+        },
+        {
+          "id": "items",
+          "label": "사용 내역(일자·가맹점·목적·금액)",
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 11-05 ○○식당 회의 식대 84,000원"
+        },
+        {
+          "id": "account",
+          "label": "계정과목"
+        }
+      ],
+      "sections": [
+        {
+          "id": "info",
+          "title": "사용자 정보"
+        },
+        {
+          "id": "items",
+          "title": "사용 내역"
+        },
+        {
+          "id": "total",
+          "title": "합계"
+        },
+        {
+          "id": "evidence",
+          "title": "증빙"
+        }
+      ]
+    },
+    {
+      "id": "cooperation",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "업무협조전",
+      "description": "다른 부서에 협조를 요청하고 회신을 받는 문서",
+      "category": "협업",
+      "tags": ["협조", "요청"],
+      "previewText": "⇄",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "formAsset": {
+        "path": "assets/cooperation.hwpx"
+      },
+      "sha256": "841ac3dae8590886860549b4fa5149c76215a38aa2a9f218d1cb47dd609acae1",
+      "questions": [
+        {
+          "id": "title",
+          "label": "협조 제목",
+          "required": true
+        },
+        {
+          "id": "to",
+          "label": "수신 부서",
+          "required": true
+        },
+        {
+          "id": "request",
+          "label": "요청 내용",
+          "multiline": true,
+          "required": true
+        },
+        {
+          "id": "deadline",
+          "label": "기한",
+          "placeholder": "예: 2026-12-10까지"
+        },
+        {
+          "id": "contact",
+          "label": "문의처"
+        }
+      ],
+      "sections": [
+        {
+          "id": "info",
+          "title": "문서 정보"
+        },
+        {
+          "id": "background",
+          "title": "협조 요청 배경"
+        },
+        {
+          "id": "request",
+          "title": "협조 요청 내용"
+        },
+        {
+          "id": "schedule",
+          "title": "일정 및 기한"
+        },
+        {
+          "id": "reply",
+          "title": "회신"
+        }
+      ]
+    },
+    {
+      "id": "statement",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "거래명세서",
+      "description": "공급자·공급받는자와 품목별 공급가액·세액·합계를 적는 명세",
+      "category": "영업",
+      "tags": ["거래", "명세"],
+      "previewText": "≣",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "formAsset": {
+        "path": "assets/statement.hwpx"
+      },
+      "sha256": "d6ebb741637a61fe7cb80644ddc734b5369131bad0f28c20731fb09d5393f815",
+      "questions": [
+        {
+          "id": "supplier",
+          "label": "공급자",
+          "required": true
+        },
+        {
+          "id": "buyer",
+          "label": "공급받는자",
+          "required": true
+        },
+        {
+          "id": "items",
+          "label": "품목과 수량·단가",
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 복사용지 A4 20박스 × 25,000원"
+        },
+        {
+          "id": "date",
+          "label": "거래일자"
+        }
+      ],
+      "sections": [
+        {
+          "id": "parties",
+          "title": "공급자 및 공급받는자"
+        },
+        {
+          "id": "items",
+          "title": "품목 내역"
+        },
+        {
+          "id": "total",
+          "title": "합계 금액"
+        },
+        {
+          "id": "receipt",
+          "title": "인수 확인"
+        }
+      ]
+    },
+    {
+      "id": "purchase-order",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "발주서",
+      "description": "공급업체에 품목·수량·납기·결제 조건을 알리는 발주 문서",
+      "category": "구매",
+      "tags": ["발주", "구매"],
+      "previewText": "⇢",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "formAsset": {
+        "path": "assets/purchase-order.hwpx"
+      },
+      "sha256": "5b9dc4cdf58c4fd6c973c9b5edabfd580b9f40ad94e5ae76719b851c889696f0",
+      "questions": [
+        {
+          "id": "supplier",
+          "label": "공급업체",
+          "required": true
+        },
+        {
+          "id": "items",
+          "label": "품목과 규격·수량·단가",
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 사무용 의자 10개 × 120,000원"
+        },
+        {
+          "id": "delivery",
+          "label": "납기와 납품 장소",
+          "required": true
+        },
+        {
+          "id": "payment",
+          "label": "결제 조건"
+        },
+        {
+          "id": "notes",
+          "label": "특기 사항",
+          "multiline": true
+        }
+      ],
+      "sections": [
+        {
+          "id": "info",
+          "title": "발주 정보"
+        },
+        {
+          "id": "items",
+          "title": "발주 내역 및 합계"
+        },
+        {
+          "id": "terms",
+          "title": "납기 및 결제 조건"
+        },
+        {
+          "id": "notes",
+          "title": "특기 사항"
+        }
+      ]
+    },
+    {
+      "id": "official-letter",
+      "kind": "document-brief",
+      "version": "1.0.0",
+      "name": "공문(시행문)",
+      "description": "발신 기관·수신·제목·본문·발신명의를 갖춘 대외 시행문",
+      "category": "대외 문서",
+      "tags": ["공문", "시행문"],
+      "previewText": "✉",
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "formAsset": {
+        "path": "assets/official-letter.hwpx"
+      },
+      "sha256": "a721b62c189cf8e717e254a809a9be424c7d377ff8a9fd74966cdc78fc1d5acc",
+      "questions": [
+        {
+          "id": "to",
+          "label": "수신",
+          "required": true,
+          "placeholder": "예: ○○ 주식회사 대표이사 (참조: 총무팀장)"
+        },
+        {
+          "id": "title",
+          "label": "제목",
+          "required": true
+        },
+        {
+          "id": "body",
+          "label": "본문",
+          "multiline": true,
+          "required": true
+        },
+        {
+          "id": "attachments",
+          "label": "첨부",
+          "multiline": true
+        },
+        {
+          "id": "sender",
+          "label": "발신명의",
+          "placeholder": "예: ○○ 주식회사 대표이사"
+        }
+      ],
+      "sections": [
+        {
+          "id": "header",
+          "title": "발신 기관 및 문서번호"
+        },
+        {
+          "id": "addressee",
+          "title": "수신 및 제목"
+        },
+        {
+          "id": "body",
+          "title": "본문"
+        },
+        {
+          "id": "attachments",
+          "title": "첨부"
+        },
+        {
+          "id": "sender",
+          "title": "발신명의 및 담당"
+        }
+      ]
+    },
+    {
       "id": "coral",
       "kind": "slide-design",
       "version": "1.0.0",

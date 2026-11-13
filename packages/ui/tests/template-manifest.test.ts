@@ -1,4 +1,5 @@
-import { readFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
@@ -19,6 +20,23 @@ const read = (path: string) => readFileSync(join(root, path), 'utf8')
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T
 
 const SHA = 'a'.repeat(64)
+
+/** The folder the ledger lives in; form paths are relative to it. */
+const ledgerDir = 'packages/ui/src/authoring'
+
+/** The ten S3 office forms, in ledger order, each with a self-authored .hwpx. */
+const S3_FORMS: [string, string][] = [
+  ['draft', '기안서'],
+  ['purchase-request', '구매품의서'],
+  ['trip-request', '출장신청서'],
+  ['trip-report', '출장보고서'],
+  ['leave-request', '휴가신청서'],
+  ['corp-card', '법인카드 사용내역서'],
+  ['cooperation', '업무협조전'],
+  ['statement', '거래명세서'],
+  ['purchase-order', '발주서'],
+  ['official-letter', '공문(시행문)'],
+]
 
 /** Slide ids in display order, read from the catalog and the template files (no package import). */
 function slideIdsFromCatalog(): string[] {
@@ -44,15 +62,15 @@ describe('builtin template manifest', () => {
     expect(BUILTIN_TEMPLATE_MANIFEST.scope).toBe('builtin')
   })
 
-  it('has five document briefs, twelve slide designs and no form skills', () => {
-    expect(builtinTemplateEntries('document-brief')).toHaveLength(5)
+  it('has fifteen document briefs, twelve slide designs and no form skills', () => {
+    expect(builtinTemplateEntries('document-brief')).toHaveLength(15)
     expect(builtinTemplateEntries('slide-design')).toHaveLength(12)
     expect(builtinTemplateEntries('form-skill')).toHaveLength(0)
-    expect(BUILTIN_TEMPLATE_MANIFEST.entries).toHaveLength(17)
+    expect(BUILTIN_TEMPLATE_MANIFEST.entries).toHaveLength(27)
   })
 
   it('keeps the S1 briefs unchanged', () => {
-    const briefs = builtinTemplateEntries('document-brief')
+    const briefs = builtinTemplateEntries('document-brief').slice(0, 5)
     expect(briefs.map((entry) => [entry.id, entry.name])).toEqual([
       ['quote', '견적서'],
       ['approval', '품의서'],
@@ -137,11 +155,68 @@ describe('builtin template manifest', () => {
     }
   })
 
-  it('ships no form files and invents no hashes', () => {
+  it('invents no hashes: entries without a form file carry none', () => {
     for (const entry of BUILTIN_TEMPLATE_MANIFEST.entries) {
-      expect(entry.formAsset, entry.id).toBeUndefined()
-      expect(entry.sha256 ?? null, entry.id).toBeNull()
       expect(entry.license && entry.author && entry.locale && entry.source, entry.id).toBeTruthy()
+      if (entry.formAsset) continue
+      expect(entry.sha256 ?? null, entry.id).toBeNull()
+    }
+    // the S1 briefs and every slide design ship no form file
+    for (const entry of [
+      ...builtinTemplateEntries('document-brief').slice(0, 5),
+      ...builtinTemplateEntries('slide-design'),
+    ]) {
+      expect(entry.formAsset, entry.id).toBeUndefined()
+    }
+  })
+
+  it('hashes every shipped form file from its committed bytes', () => {
+    const withForm = BUILTIN_TEMPLATE_MANIFEST.entries.filter((entry) => entry.formAsset)
+    expect(withForm.map((entry) => entry.id)).toEqual(S3_FORMS.map(([id]) => id))
+    for (const entry of withForm) {
+      const path = entry.formAsset!.path
+      expect(isFormAssetPath(path), entry.id).toBe(true)
+      const file = join(root, ledgerDir, path)
+      expect(existsSync(file), file).toBe(true)
+      const digest = createHash('sha256').update(readFileSync(file)).digest('hex')
+      expect(entry.sha256, entry.id).toBe(digest)
+    }
+  })
+
+  it('lists the ten S3 office forms as self-authored Apache-2.0 briefs', () => {
+    const briefs = builtinTemplateEntries('document-brief')
+    expect(briefs.slice(5).map((entry) => [entry.id, entry.name])).toEqual(S3_FORMS)
+    for (const entry of briefs.slice(5)) {
+      expect(entry.kind, entry.id).toBe('document-brief')
+      expect(entry.version, entry.id).toBe('1.0.0')
+      expect(entry.license, entry.id).toBe('Apache-2.0')
+      expect(entry.source, entry.id).toEqual({ type: 'self' })
+      expect(entry.author, entry.id).toBe('NaddleOffice')
+      expect(entry.locale, entry.id).toBe('ko')
+      expect(entry.formAsset, entry.id).toEqual({ path: `assets/${entry.id}.hwpx` })
+      expect(entry.questions.length, entry.id).toBeGreaterThanOrEqual(3)
+      expect(
+        entry.questions.some((question) => question.required),
+        entry.id,
+      ).toBe(true)
+      expect(entry.sections.length, entry.id).toBeGreaterThanOrEqual(3)
+    }
+    // employment contracts, tax invoices and HR forms are out of scope
+    const names = BUILTIN_TEMPLATE_MANIFEST.entries.map((entry) => entry.name)
+    for (const banned of [
+      '근로계약서',
+      '세금계산서',
+      '재직증명서',
+      '경력증명서',
+      '사직서',
+      '퇴직원',
+      '인사기록카드',
+      '연봉계약서',
+    ]) {
+      expect(
+        names.some((name) => name.includes(banned)),
+        banned,
+      ).toBe(false)
     }
   })
 })
@@ -300,6 +375,11 @@ describe('notices', () => {
     expect(naddle).toContain('`administration-report`')
     expect(naddle).toContain('`administration-report-draft`')
     expect(naddle).toContain('packages/ui/src/authoring/builtin-templates.json')
+    // the S3 forms: self-authored, generated in-repo, no official form or seal copied
+    expect(naddle).toContain('packages/ui/scripts/generate-builtin-hwpx-forms.mjs')
+    expect(naddle).toContain('결재란')
+    expect(naddle).toMatch(/공문\(시행문\) is a structure-only rewrite/)
+    expect(naddle).toMatch(/no agency logo or official seal/)
     const skills = JSON.parse(read('apps/shell/resources/builtin-skills/builtin-skills.json')) as {
       name: string
     }[]

@@ -12,20 +12,29 @@ import type { Lang } from '@genoffice/i18n'
 import {
   TenantPackError,
   disposeTenantPack,
+  inspectPublicKeyPem,
   installedFormPath,
   installPreparedTenantPack,
   listTenantPacks,
   prepareTenantPackFolder,
   prepareTenantPackGitHub,
   prepareTenantPackZip,
+  readRevokedPackKeys,
   readTenantPackIndex,
+  readTrustedPackKeys,
+  registerTrustedPackKey,
   removeTenantPack,
+  removeTrustedPackKey,
+  revokePackKey,
   tenantPackMessage,
   tenantPackStoreDir,
+  type PackSignatureInfo,
+  type RevokedPackKey,
   type TenantPackListItem,
   type TenantPackOrigin,
   type TenantPackPrepared,
   type TenantPackPreview,
+  type TrustedPackKey,
 } from '@naddle/template-packs'
 import {
   TENANT_PACKS_CHANNELS as C,
@@ -33,7 +42,10 @@ import {
   type TenantPackEntryPreviewView,
   type TenantPackOriginView,
   type TenantPackPreviewView,
+  type TenantPackRevokedKeyView,
+  type TenantPackSignatureView,
   type TenantPackSummary,
+  type TenantPackTrustedKeyView,
 } from '../shared/tenant-packs-api'
 import { tenantPacksText } from './tenant-packs-strings'
 
@@ -115,6 +127,34 @@ function originText(origin: TenantPackOriginView): string {
   }
 }
 
+function signatureView(signature: PackSignatureInfo | undefined): TenantPackSignatureView {
+  if (!signature) return { status: 'unsigned' }
+  return {
+    status: signature.status,
+    ...(signature.keyId ? { keyId: signature.keyId } : {}),
+    ...(signature.keyLabel ? { keyLabel: signature.keyLabel } : {}),
+    ...(signature.signedAt ? { signedAt: signature.signedAt } : {}),
+    ...(signature.trustSource ? { trustSource: signature.trustSource } : {}),
+  }
+}
+
+function trustedKeyView(key: TrustedPackKey): TenantPackTrustedKeyView {
+  return {
+    keyId: key.keyId,
+    label: key.label,
+    ...(key.addedAt ? { addedAt: key.addedAt } : {}),
+    ...(key.notAfter ? { notAfter: key.notAfter } : {}),
+  }
+}
+
+function revokedKeyView(key: RevokedPackKey): TenantPackRevokedKeyView {
+  return {
+    keyId: key.keyId,
+    ...(key.revokedAt ? { revokedAt: key.revokedAt } : {}),
+    ...(key.reason ? { reason: key.reason } : {}),
+  }
+}
+
 function summaryOf(pack: TenantPackListItem): TenantPackSummary {
   return {
     id: pack.id,
@@ -128,6 +168,8 @@ function summaryOf(pack: TenantPackListItem): TenantPackSummary {
     formCount: pack.formCount,
     verified: pack.verified,
     problems: pack.problems,
+    signature: signatureView(pack.signatureInfo),
+    signatureStatus: pack.signatureStatus,
     entries: pack.entries.map((entry) => ({
       id: entry.id,
       kind: entry.kind,
@@ -173,12 +215,62 @@ function previewView(preview: TenantPackPreview): TenantPackPreviewView {
     problems: preview.problems,
     requiresAttestation: preview.requiresAttestation,
     replacesExisting: preview.replacesExisting,
+    signature: signatureView(preview.signature),
   }
 }
 
 async function packsResult(deps: TenantPacksIpcDeps): Promise<TenantPackActionResult> {
   const packs = await listTenantPacks(storeDir(deps))
   return { ok: true, packs: packs.map(summaryOf) }
+}
+
+async function keysResult(deps: TenantPacksIpcDeps): Promise<TenantPackActionResult> {
+  const dir = storeDir(deps)
+  const [keys, revoked] = await Promise.all([readTrustedPackKeys(dir), readRevokedPackKeys(dir)])
+  return {
+    ok: true,
+    keys: keys.map(trustedKeyView),
+    revoked: revoked.keys.map(revokedKeyView),
+  }
+}
+
+/** Pick a public-key PEM, confirm its key id, then register it for this tenant. */
+async function registerKeyWithDialog(deps: TenantPacksIpcDeps): Promise<TenantPackActionResult> {
+  const lang = deps.lang()
+  const t = (key: Parameters<typeof tenantPacksText>[1]) => tenantPacksText(lang, key)
+  const parent = deps.parentWindow()
+  const picked = await (parent
+    ? dialog.showOpenDialog(parent, {
+        title: t('keyDialogTitle'),
+        properties: ['openFile'],
+        filters: [{ name: t('keyFilterName'), extensions: ['pem', 'pub'] }],
+      })
+    : dialog.showOpenDialog({
+        title: t('keyDialogTitle'),
+        properties: ['openFile'],
+        filters: [{ name: t('keyFilterName'), extensions: ['pem', 'pub'] }],
+      }))
+  if (picked.canceled || !picked.filePaths[0]) return { ok: true, canceled: true }
+  const file = picked.filePaths[0]
+  const pem = await readFile(file, 'utf8')
+  const parsed = inspectPublicKeyPem(pem)
+  const label = basename(file, extname(file)) || undefined
+  const confirm = await showMessage(parent, {
+    type: 'question',
+    title: t('keyConfirmTitle'),
+    message: `${t('keyConfirmTitle')} ${parsed.keyId}`,
+    detail: `${t('keyConfirmMessage')}\n${parsed.keyId}${label ? `\n${label}` : ''}`,
+    buttons: [t('keyRegisterButton'), t('cancelButton')],
+    defaultId: 0,
+    cancelId: 1,
+    noLink: true,
+  })
+  if (confirm.response !== 0) return { ok: true, canceled: true }
+  await registerTrustedPackKey(storeDir(deps), {
+    publicKeyPem: parsed.publicKeyPem,
+    ...(label ? { label } : {}),
+  })
+  return await keysResult(deps)
 }
 
 async function disposeStash(token: string): Promise<void> {
@@ -273,6 +365,34 @@ async function showMessage(
   return parent ? dialog.showMessageBox(parent, options) : dialog.showMessageBox(options)
 }
 
+function signatureText(info: PackSignatureInfo | undefined, lang: Lang): string {
+  const t = (
+    key: Parameters<typeof tenantPacksText>[1],
+    params: Readonly<Record<string, string>> = {},
+  ) => tenantPacksText(lang, key, params)
+  switch (info?.status ?? 'unsigned') {
+    case 'unsigned':
+      return t('sigUnsigned')
+    case 'valid':
+      return t('sigValid', {
+        label: info?.keyLabel ?? '',
+        prefix: (info?.keyId ?? '').replace(/^ed25519:/, '').slice(0, 8),
+      })
+    case 'unknown-key':
+      return t('sigUnknown')
+    case 'revoked-key':
+      return t('sigRevoked')
+    case 'expired-key':
+      return t('sigExpired')
+    case 'missing-signature':
+      return t('sigMissing')
+    case 'trust-store-unreadable':
+      return t('sigUnreadable')
+    default:
+      return t('sigBad')
+  }
+}
+
 function packLines(pack: TenantPackListItem, lang: Lang): string[] {
   const t = (key: Parameters<typeof tenantPacksText>[1]) => tenantPacksText(lang, key)
   return [
@@ -281,6 +401,7 @@ function packLines(pack: TenantPackListItem, lang: Lang): string[] {
     `  ${t('authorLabel')}: ${pack.author}`,
     `  ${t('originLabel')}: ${originText(originView(pack.origin))}`,
     `  ${pack.formCount} ${t('formsLabel')} · ${pack.verified ? t('verifiedLabel') : t('tamperedLabel')}`,
+    `  ${t('signatureLabel')}: ${signatureText(pack.signatureInfo, lang)}`,
     ...pack.problems.map((problem) => `  ! ${problem}`),
   ]
 }
@@ -292,6 +413,7 @@ function previewDetail(preview: TenantPackPreview, lang: Lang): string {
     `${t('licenseLabel')}: ${preview.license}${preview.licenseNormalized ? ' (CC0 -> CC0-1.0)' : ''}`,
     `${t('authorLabel')}: ${preview.author || t('noneLabel')}`,
     `${t('originLabel')}: ${originText(originView(preview.origin))}`,
+    `${t('signatureLabel')}: ${signatureText(preview.signature, lang)}`,
   ]
   if (preview.replacesExisting) lines.push('', t('replaceNote'))
   for (const entry of preview.entries) {
@@ -690,6 +812,22 @@ export function registerTenantPacksIpc(deps: TenantPacksIpcDeps): void {
     const removed = await removeTenantPack(storeDir(deps), id)
     if (!removed) return { ok: false, reason: 'not-found' }
     return await packsResult(deps)
+  })
+
+  manage(C.listKeys, () => keysResult(deps))
+  manage(C.registerKey, () => registerKeyWithDialog(deps))
+  manage(C.removeKey, async (_event, args) => {
+    const keyId = args[0]
+    if (typeof keyId !== 'string') return { ok: false, reason: 'invalid' }
+    const removed = await removeTrustedPackKey(storeDir(deps), keyId)
+    if (!removed) return { ok: false, reason: 'not-found' }
+    return await keysResult(deps)
+  })
+  manage(C.revokeKey, async (_event, args) => {
+    const keyId = args[0]
+    if (typeof keyId !== 'string') return { ok: false, reason: 'invalid' }
+    await revokePackKey(storeDir(deps), keyId)
+    return await keysResult(deps)
   })
 }
 

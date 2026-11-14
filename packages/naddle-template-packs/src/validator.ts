@@ -12,7 +12,12 @@ import {
   type TemplateManifest,
   type TemplateManifestEntry,
 } from '../../ui/src/authoring/manifest'
-import { PACK_ID_PATTERN, PACK_MANIFEST_FILE, PACK_VERSION_PATTERN } from './constants'
+import {
+  PACK_ID_PATTERN,
+  PACK_MANIFEST_FILE,
+  PACK_SIGNATURE_FILE,
+  PACK_VERSION_PATTERN,
+} from './constants'
 import { TenantPackError, tenantPackMessage } from './errors'
 import {
   isPlainPackFile,
@@ -24,6 +29,12 @@ import {
 } from './files'
 import { licenseAllowedInTenant, normalizeManifestLicenses, rejectedOriginProblem } from './license'
 import { scanFilesForMacros, type ScannableFile } from './macros'
+import {
+  EMPTY_PACK_TRUST,
+  verifyPackSignature,
+  type PackSignatureInfo,
+  type PackSignatureTrust,
+} from './signature'
 
 export type TenantPackOrigin =
   | { kind: 'zip'; file: string }
@@ -66,12 +77,15 @@ export interface TenantPackPreview {
   problems: string[]
   requiresAttestation: boolean
   replacesExisting: boolean
+  signature: PackSignatureInfo
 }
 
 export interface ValidateTenantPackOptions {
   origin: TenantPackOrigin
   candidates: readonly TenantPackCandidate[]
   existingPackIds?: ReadonlySet<string> | undefined
+  /** built-in plus the current tenant's keys; omitted means no keys */
+  signatureTrust?: PackSignatureTrust | undefined
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -90,6 +104,7 @@ function emptyPreview(origin: TenantPackOrigin): TenantPackPreview {
     problems: [],
     requiresAttestation: true,
     replacesExisting: false,
+    signature: { status: 'unsigned', problems: [] },
   }
 }
 
@@ -112,7 +127,9 @@ function layoutProblems(
   }
   for (const file of files) {
     const rel = file.rel
-    if (rel === PACK_MANIFEST_FILE || isRootPackDocument(rel)) continue
+    if (rel === PACK_MANIFEST_FILE || rel === PACK_SIGNATURE_FILE || isRootPackDocument(rel)) {
+      continue
+    }
     if (rel.split('/').includes('assets')) {
       if (!formPaths.has(rel)) problems.push(`an asset is not part of any manifest entry: ${rel}`)
       continue
@@ -314,9 +331,15 @@ export async function validateTenantPack(
     }
   }
 
+  const signatureTrust = options.signatureTrust ?? EMPTY_PACK_TRUST
+  const readSignature = async (): Promise<void> => {
+    preview.signature = await verifyPackSignature(root, signatureTrust)
+  }
+
   const manifestFile = files.find((file) => file.rel === PACK_MANIFEST_FILE)
   if (!manifestFile) {
     preview.problems = ['manifest.json is missing at the pack root']
+    await readSignature()
     return preview
   }
 
@@ -325,10 +348,12 @@ export async function validateTenantPack(
     raw = JSON.parse(await readFile(manifestFile.path, 'utf8')) as unknown
   } catch {
     preview.problems = ['manifest.json is not valid JSON']
+    await readSignature()
     return preview
   }
   if (!isRecord(raw)) {
     preview.problems = ['manifest.json must be an object']
+    await readSignature()
     return preview
   }
 
@@ -373,6 +398,7 @@ export async function validateTenantPack(
 
   if (manifestProblems.length > 0 || raw.scope !== 'tenant' || !isRecord(rawPack)) {
     preview.problems = problems
+    await readSignature()
     return preview
   }
 
@@ -397,6 +423,12 @@ export async function validateTenantPack(
   )
   preview.entries = validated.entries
   problems.push(...validated.problems)
+
+  const signature = await verifyPackSignature(root, signatureTrust)
+  preview.signature = signature
+  if (signature.status !== 'unsigned' && signature.status !== 'valid') {
+    problems.push(`the pack signature is not valid (${signature.status})`)
+  }
 
   preview.problems = [...new Set(problems)]
   return preview

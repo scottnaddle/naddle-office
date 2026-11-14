@@ -52,6 +52,28 @@ export type TenantPacksPaneStringKey =
   | 'installFailed'
   | 'removeFailed'
   | 'canceled'
+  | 'signatureLabel'
+  | 'sigUnsigned'
+  | 'sigValid'
+  | 'sigBad'
+  | 'sigUnknown'
+  | 'sigRevoked'
+  | 'sigExpired'
+  | 'sigMissing'
+  | 'sigUnreadable'
+  | 'keysTitle'
+  | 'keysIntro'
+  | 'registerKey'
+  | 'keysEmpty'
+  | 'keyRemove'
+  | 'keyRevoke'
+  | 'revokedTitle'
+  | 'revokedEmpty'
+  | 'keyIdLabel'
+  | 'keyLabelLabel'
+  | 'keyRegisterFailed'
+  | 'keyRemoveFailed'
+  | 'keyRevokeFailed'
 
 type Row = Record<TenantPacksPaneStringKey, string>
 
@@ -104,6 +126,29 @@ const EN: Row = {
   installFailed: 'The pack could not be installed.',
   removeFailed: 'The pack could not be removed.',
   canceled: 'Canceled.',
+  signatureLabel: 'Signature',
+  sigUnsigned: 'Unsigned — allowed by the default policy',
+  sigValid: 'Signature verified · {label} ({prefix})',
+  sigBad: 'The signature does not match. The pack may have changed or been damaged.',
+  sigUnknown: 'The signing key is not registered. Ask an administrator to register the public key.',
+  sigRevoked: 'This pack is signed with a revoked key and cannot be used.',
+  sigExpired: 'This pack was signed with an expired key.',
+  sigMissing: 'The signature file is missing from an installed signed pack.',
+  sigUnreadable: 'The revoked-key list cannot be read, so signed packs are unavailable.',
+  keysTitle: 'Signing keys',
+  keysIntro:
+    'Register the public half of a key your company uses to sign packs. Private keys are never imported.',
+  registerKey: 'Register public key…',
+  keysEmpty: 'No signing keys are registered for this tenant.',
+  keyRemove: 'Remove',
+  keyRevoke: 'Revoke',
+  revokedTitle: 'Revoked keys',
+  revokedEmpty: 'No keys are revoked for this tenant.',
+  keyIdLabel: 'Key id',
+  keyLabelLabel: 'Label',
+  keyRegisterFailed: 'The public key could not be registered.',
+  keyRemoveFailed: 'The key could not be removed.',
+  keyRevokeFailed: 'The key could not be revoked.',
 }
 
 const KO: Row = {
@@ -155,6 +200,28 @@ const KO: Row = {
   installFailed: '팩을 설치하지 못했습니다.',
   removeFailed: '팩을 삭제하지 못했습니다.',
   canceled: '취소했습니다.',
+  signatureLabel: '서명',
+  sigUnsigned: '서명 없음 — 기본 정책에서 사용할 수 있습니다',
+  sigValid: '서명 확인됨 · {label} ({prefix})',
+  sigBad: '서명이 맞지 않습니다. 팩이 바뀌었거나 손상됐을 수 있습니다.',
+  sigUnknown: '등록되지 않은 서명 키입니다. 관리자에게 공개 키 등록을 요청하세요.',
+  sigRevoked: '폐기된 서명 키로 서명된 팩입니다. 이 팩은 사용할 수 없습니다.',
+  sigExpired: '만료된 키로 서명된 팩입니다.',
+  sigMissing: '서명된 팩에서 서명 파일이 없습니다.',
+  sigUnreadable: '폐기 키 목록을 읽을 수 없어 서명 팩을 사용할 수 없습니다.',
+  keysTitle: '서명 키',
+  keysIntro: '회사가 팩 서명에 쓰는 키의 공개 부분을 등록하세요. 개인 키는 가져오지 않습니다.',
+  registerKey: '공개 키 등록…',
+  keysEmpty: '이 테넌트에 등록된 서명 키가 없습니다.',
+  keyRemove: '삭제',
+  keyRevoke: '폐기',
+  revokedTitle: '폐기된 키',
+  revokedEmpty: '이 테넌트에 폐기된 키가 없습니다.',
+  keyIdLabel: '키 id',
+  keyLabelLabel: '이름',
+  keyRegisterFailed: '공개 키를 등록하지 못했습니다.',
+  keyRemoveFailed: '키를 삭제하지 못했습니다.',
+  keyRevokeFailed: '키를 폐기하지 못했습니다.',
 }
 
 const TABLES: Partial<Record<Lang, Row>> = { en: EN, ko: KO }

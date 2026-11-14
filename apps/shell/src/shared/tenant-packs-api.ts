@@ -14,12 +14,51 @@ export const TENANT_PACKS_CHANNELS = {
   list: 'tenant-packs:list',
   remove: 'tenant-packs:remove',
   openForm: 'tenant-packs:open-form',
+  listKeys: 'tenant-packs:list-keys',
+  registerKey: 'tenant-packs:register-key',
+  removeKey: 'tenant-packs:remove-key',
+  revokeKey: 'tenant-packs:revoke-key',
 } as const
 
 export type TenantPackOriginView =
   | { kind: 'zip'; file: string }
   | { kind: 'folder'; folder: string }
   | { kind: 'github'; repo: string; ref: string; commit: string; path: string }
+
+/** Signature state shown in the pane; no key bytes or PEM cross this type. */
+export type TenantPackSignatureStatusView =
+  | 'unsigned'
+  | 'valid'
+  | 'malformed'
+  | 'bad-signature'
+  | 'files-mismatch'
+  | 'unknown-key'
+  | 'revoked-key'
+  | 'expired-key'
+  | 'pack-mismatch'
+  | 'missing-signature'
+  | 'trust-store-unreadable'
+
+export interface TenantPackSignatureView {
+  status: TenantPackSignatureStatusView
+  keyId?: string
+  keyLabel?: string
+  signedAt?: string
+  trustSource?: 'builtin' | 'tenant'
+}
+
+export interface TenantPackTrustedKeyView {
+  keyId: string
+  label: string
+  addedAt?: string
+  notAfter?: string
+}
+
+export interface TenantPackRevokedKeyView {
+  keyId: string
+  revokedAt?: string
+  reason?: string
+}
 
 export interface TenantPackEntrySummary {
   id: string
@@ -46,6 +85,8 @@ export interface TenantPackSummary {
   verified: boolean
   problems: string[]
   entries: TenantPackEntrySummary[]
+  signature?: TenantPackSignatureView
+  signatureStatus?: TenantPackSignatureStatusView
 }
 
 export interface TenantPackEntryPreviewView {
@@ -78,6 +119,7 @@ export interface TenantPackPreviewView {
   problems: string[]
   requiresAttestation: boolean
   replacesExisting: boolean
+  signature?: TenantPackSignatureView
 }
 
 export interface TenantPackOpenFormInput {
@@ -98,6 +140,8 @@ export interface TenantPackActionResult {
   preview?: TenantPackPreviewView
   /** the new tab opened from a verified pack form */
   tabId?: string
+  keys?: TenantPackTrustedKeyView[]
+  revoked?: TenantPackRevokedKeyView[]
 }
 
 export interface TenantPacksApi {
@@ -119,6 +163,14 @@ export interface TenantPacksApi {
   list(): Promise<TenantPackActionResult>
   /** remove one pack of the current tenant */
   remove(id: string): Promise<TenantPackActionResult>
+  /** the current tenant's registered signing keys and revocations */
+  listKeys?(): Promise<TenantPackActionResult>
+  /** pick a public-key PEM and register it after a key-id confirmation */
+  registerKey?(): Promise<TenantPackActionResult>
+  /** remove one registered key from the current tenant */
+  removeKey?(keyId: string): Promise<TenantPackActionResult>
+  /** revoke a signing key for the current tenant */
+  revokeKey?(keyId: string): Promise<TenantPackActionResult>
 }
 
 /** The narrower bridge a document window gets: list and open a pack form. */

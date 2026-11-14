@@ -1083,6 +1083,14 @@ const tenantPacksApi: TenantPacksApi = {
   list: () => ipcRenderer.invoke(TENANT_PACKS_CHANNELS.list) as Promise<TenantPackActionResult>,
   remove: (id: string) =>
     ipcRenderer.invoke(TENANT_PACKS_CHANNELS.remove, id) as Promise<TenantPackActionResult>,
+  listKeys: () =>
+    ipcRenderer.invoke(TENANT_PACKS_CHANNELS.listKeys) as Promise<TenantPackActionResult>,
+  registerKey: () =>
+    ipcRenderer.invoke(TENANT_PACKS_CHANNELS.registerKey) as Promise<TenantPackActionResult>,
+  removeKey: (keyId: string) =>
+    ipcRenderer.invoke(TENANT_PACKS_CHANNELS.removeKey, keyId) as Promise<TenantPackActionResult>,
+  revokeKey: (keyId: string) =>
+    ipcRenderer.invoke(TENANT_PACKS_CHANNELS.revokeKey, keyId) as Promise<TenantPackActionResult>,
 }
 contextBridge.exposeInMainWorld('aiOfficeTenantPacks', tenantPacksApi)
 

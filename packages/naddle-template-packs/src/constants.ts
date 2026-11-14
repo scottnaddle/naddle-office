@@ -4,8 +4,32 @@ import { MAX_USER_SKILL_BYTES, MAX_USER_SKILL_FILES } from '@genoffice/ai-provid
 /** The manifest file at the pack root. */
 export const PACK_MANIFEST_FILE = 'manifest.json'
 
+/** The detached signature sidecar at the pack root. */
+export const PACK_SIGNATURE_FILE = 'manifest.sig.json'
+
 /** The tenant store's index file. */
 export const PACK_INDEX_FILE = 'index.json'
+
+/** The tenant's registered signing keys, beside the pack folders. */
+export const PACK_TRUSTED_KEYS_FILE = 'trusted-keys.json'
+
+/** The tenant's locally revoked signing keys, beside the pack folders. */
+export const PACK_REVOKED_KEYS_FILE = 'revoked-keys.json'
+
+/** The only signature sidecar format this version reads. */
+export const PACK_SIGNATURE_FORMAT = 'naddle-pack-signature'
+
+/** The only signed payload format this version reads. */
+export const PACK_SIGNATURE_PAYLOAD_FORMAT = 'naddle-pack-signature-payload'
+
+/** The only signature algorithm this version accepts. */
+export const PACK_SIGNATURE_ALG = 'ed25519'
+
+/** An Ed25519 key id: the algorithm plus the first 32 hex chars of the SPKI hash. */
+export const PACK_KEY_ID_PATTERN = /^ed25519:[0-9a-f]{32}$/
+
+/** The largest sidecar read; a pack may hold many files, so leave room. */
+export const PACK_SIGNATURE_MAX_BYTES = 256 * 1024
 
 /** The key used when no tenant is configured. `_` never starts a tenantId. */
 export const LOCAL_TENANT_KEY = '_local'

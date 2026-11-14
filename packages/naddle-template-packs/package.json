@@ -10,7 +10,10 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "sign": "tsx src/cli/sign-pack.ts sign",
+    "verify": "tsx src/cli/sign-pack.ts verify",
+    "keygen": "tsx src/cli/keygen.ts"
   },
   "dependencies": {
     "@genoffice/ai-provider": "*",
@@ -20,6 +23,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vitest": "^4.1.11"
   }

@@ -1623,6 +1623,96 @@
       "revert": "파일을 삭제한다",
       "round": "S4c",
       "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/guides.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5: 학술 발표 작성 지침 ko/en을 화면 언어에 맞춰 돌려주는 도우미",
+      "revert": "파일을 삭제하고 manifest.ts의 export 줄을 지운다",
+      "round": "S5",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/raw.d.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5: 지침 마크다운을 raw 문자열로 가져오기 위한 형식 선언",
+      "revert": "파일을 삭제한다",
+      "round": "S5",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/guides/academic/ko.md",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5: 학술 발표 슬라이드 작성 지침 한국어 개작(MIT 고지, 원문 문장 미복제)",
+      "revert": "파일을 삭제한다",
+      "round": "S5",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/guides/academic/en.md",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5: 학술 발표 슬라이드 작성 지침 영어 개작(MIT 고지, 원문 문장 미복제)",
+      "revert": "파일을 삭제한다",
+      "round": "S5",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/tests/slide-brief-manifest.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5: slide-brief 4종 원장·이중 언어·섹션 순서·금지 파일명·NOTICE 검증 테스트",
+      "revert": "파일을 삭제한다",
+      "round": "S5",
+      "owner": "api"
+    },
+    {
+      "path": "apps/slides/src/renderer/ai/authoring/templates.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5: slide-brief 원장을 화면 언어로 풀고 브리프·생성 지시문(지침 포함)을 만드는 모듈",
+      "revert": "파일과 상위 authoring 폴더를 삭제한다",
+      "round": "S5",
+      "owner": "api"
+    },
+    {
+      "path": "apps/slides/src/renderer/ai/AuthoringFlow.tsx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5: 슬라이드 전용 학술 브리프 흐름(갤러리→질문→브리프→생성, 회사 양식 없음)",
+      "revert": "파일을 삭제하고 AiPanel의 마운트를 제거한다",
+      "round": "S5",
+      "owner": "api"
+    },
+    {
+      "path": "apps/slides/src/renderer/ai/authoring-flow.css",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5: 슬라이드 패널의 학술 브리프 열기 단추와 흐름 배치 스타일",
+      "revert": "파일을 삭제하고 AuthoringFlow의 css import를 제거한다",
+      "round": "S5",
+      "owner": "api"
+    },
+    {
+      "path": "apps/slides/tests/authoring-slide-briefs.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5: 네 브리프·이중 언어 이름·섹션 순서·지침 포함 지시문·갤러리 정적 렌더 테스트(모델 호출 없음)",
+      "revert": "파일을 삭제한다",
+      "round": "S5",
+      "owner": "api"
+    },
+    {
+      "path": "apps/slides/src/renderer/ai/AiPanel.tsx",
+      "kind": "modified",
+      "lines": "-",
+      "purpose": "S5: 슬라이드 AiPanel에 학술 브리프 AuthoringFlow 탑재, opt-in 버튼, 브리프 선택 시에만 작성 지침을 사용자 지시에 주입",
+      "revert": "AuthoringFlow import, authoringOpen 상태, 열기 단추/흐름 블록을 지우고 authoringText import를 제거한다",
+      "round": "S5",
+      "owner": "api"
     }
   ],
   "baseline": {

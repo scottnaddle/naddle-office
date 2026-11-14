@@ -1202,6 +1202,944 @@
       "author": "Zara Zhang (design); re-authored by IeumOffice",
       "locale": "en",
       "sha256": null
+    },
+    {
+      "id": "academic-conference",
+      "kind": "slide-brief",
+      "version": "1.0.0",
+      "name": "학회 발표",
+      "nameI18n": {
+        "ko": "학회 발표",
+        "en": "Conference presentation"
+      },
+      "description": "10~20분 학회 발표를 위한 핵심 주장·결과 중심 브리프",
+      "descriptionI18n": {
+        "ko": "10~20분 학회 발표를 위한 핵심 주장·결과 중심 브리프",
+        "en": "A claim-and-results brief for a 10–20 minute conference talk."
+      },
+      "category": "학술 발표",
+      "categoryI18n": {
+        "ko": "학술 발표",
+        "en": "Academic presentations"
+      },
+      "tags": ["학회", "발표", "academic", "conference", "talk"],
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "Gabberflast/academic-pptx-skill",
+        "commit": "9f2b703ffe8d1449851617665ab1ffb3516d54ac",
+        "path": "content_guidelines.md"
+      },
+      "author": "Gabberflast (guidance); adapted by NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "questions": [
+        {
+          "id": "length",
+          "label": "발표 시간",
+          "labelI18n": {
+            "ko": "발표 시간",
+            "en": "Talk length"
+          },
+          "description": "고를 수 있는 시간 중 하나를 고르거나 직접 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "고를 수 있는 시간 중 하나를 고르거나 직접 적어 주세요.",
+            "en": "Pick one of the listed lengths or write your own."
+          },
+          "options": [
+            {
+              "id": "10",
+              "label": "10분",
+              "labelI18n": {
+                "ko": "10분",
+                "en": "10 minutes"
+              }
+            },
+            {
+              "id": "15",
+              "label": "15분",
+              "labelI18n": {
+                "ko": "15분",
+                "en": "15 minutes"
+              }
+            },
+            {
+              "id": "20",
+              "label": "20분",
+              "labelI18n": {
+                "ko": "20분",
+                "en": "20 minutes"
+              }
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "claim",
+          "label": "핵심 주장",
+          "labelI18n": {
+            "ko": "핵심 주장",
+            "en": "Core claim"
+          },
+          "description": "청중이 기억해야 할 한 문장",
+          "descriptionI18n": {
+            "ko": "청중이 기억해야 할 한 문장",
+            "en": "The one sentence the audience should remember."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 짧은 발표에서도 주장을 먼저 밝히면 이해가 빨라진다.",
+          "placeholderI18n": {
+            "ko": "예: 짧은 발표에서도 주장을 먼저 밝히면 이해가 빨라진다.",
+            "en": "e.g. Stating the claim first speeds up understanding even in a short talk."
+          }
+        },
+        {
+          "id": "results",
+          "label": "핵심 결과",
+          "labelI18n": {
+            "ko": "핵심 결과",
+            "en": "Key results"
+          },
+          "description": "발표에서 보여 줄 가장 중요한 결과 두세 가지",
+          "descriptionI18n": {
+            "ko": "발표에서 보여 줄 가장 중요한 결과 두세 가지",
+            "en": "The two or three most important results you will show."
+          },
+          "multiline": true,
+          "placeholder": "예: 정확도 12% 향상, 처리 시간 절반",
+          "placeholderI18n": {
+            "ko": "예: 정확도 12% 향상, 처리 시간 절반",
+            "en": "e.g. 12% higher accuracy, half the processing time"
+          }
+        },
+        {
+          "id": "venue",
+          "label": "발표 장소나 청중",
+          "labelI18n": {
+            "ko": "발표 장소나 청중",
+            "en": "Venue or audience"
+          },
+          "placeholder": "예: 국내 학회, 같은 분야 연구자",
+          "placeholderI18n": {
+            "ko": "예: 국내 학회, 같은 분야 연구자",
+            "en": "e.g. a national conference, researchers in the same field"
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "title",
+          "title": "제목",
+          "titleI18n": {
+            "ko": "제목",
+            "en": "Title"
+          }
+        },
+        {
+          "id": "motivation",
+          "title": "동기",
+          "titleI18n": {
+            "ko": "동기",
+            "en": "Motivation"
+          }
+        },
+        {
+          "id": "research-question",
+          "title": "연구 질문",
+          "titleI18n": {
+            "ko": "연구 질문",
+            "en": "Research question"
+          }
+        },
+        {
+          "id": "methods",
+          "title": "방법",
+          "titleI18n": {
+            "ko": "방법",
+            "en": "Methods"
+          }
+        },
+        {
+          "id": "results",
+          "title": "결과",
+          "titleI18n": {
+            "ko": "결과",
+            "en": "Results"
+          }
+        },
+        {
+          "id": "discussion",
+          "title": "논의",
+          "titleI18n": {
+            "ko": "논의",
+            "en": "Discussion"
+          }
+        },
+        {
+          "id": "conclusions",
+          "title": "결론",
+          "titleI18n": {
+            "ko": "결론",
+            "en": "Conclusions"
+          }
+        },
+        {
+          "id": "references",
+          "title": "참고문헌",
+          "titleI18n": {
+            "ko": "참고문헌",
+            "en": "References"
+          }
+        },
+        {
+          "id": "appendix",
+          "title": "부록",
+          "titleI18n": {
+            "ko": "부록",
+            "en": "Appendix"
+          }
+        }
+      ]
+    },
+    {
+      "id": "academic-seminar",
+      "kind": "slide-brief",
+      "version": "1.0.0",
+      "name": "세미나 발표",
+      "nameI18n": {
+        "ko": "세미나 발표",
+        "en": "Seminar presentation"
+      },
+      "description": "45분 세미나 발표를 위한 배경·논의 중심 브리프",
+      "descriptionI18n": {
+        "ko": "45분 세미나 발표를 위한 배경·논의 중심 브리프",
+        "en": "A background-and-discussion brief for a 45-minute seminar."
+      },
+      "category": "학술 발표",
+      "categoryI18n": {
+        "ko": "학술 발표",
+        "en": "Academic presentations"
+      },
+      "tags": ["세미나", "발표", "academic", "seminar"],
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "Gabberflast/academic-pptx-skill",
+        "commit": "9f2b703ffe8d1449851617665ab1ffb3516d54ac",
+        "path": "content_guidelines.md"
+      },
+      "author": "Gabberflast (guidance); adapted by NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "questions": [
+        {
+          "id": "duration",
+          "label": "발표 시간",
+          "labelI18n": {
+            "ko": "발표 시간",
+            "en": "Talk length"
+          },
+          "description": "기준은 45분입니다. 실제 시간이 다르면 직접 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "기준은 45분입니다. 실제 시간이 다르면 직접 적어 주세요.",
+            "en": "The default is 45 minutes. Write your own length if it differs."
+          },
+          "options": [
+            {
+              "id": "30",
+              "label": "30분",
+              "labelI18n": {
+                "ko": "30분",
+                "en": "30 minutes"
+              }
+            },
+            {
+              "id": "45",
+              "label": "45분",
+              "labelI18n": {
+                "ko": "45분",
+                "en": "45 minutes"
+              }
+            },
+            {
+              "id": "60",
+              "label": "60분",
+              "labelI18n": {
+                "ko": "60분",
+                "en": "60 minutes"
+              }
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "claim",
+          "label": "핵심 주장",
+          "labelI18n": {
+            "ko": "핵심 주장",
+            "en": "Core claim"
+          },
+          "description": "세미나 전체를 관통하는 한 문장",
+          "descriptionI18n": {
+            "ko": "세미나 전체를 관통하는 한 문장",
+            "en": "The one sentence that runs through the whole seminar."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 이 방법은 기존 기준보다 적은 자료로도 같은 결론에 이른다.",
+          "placeholderI18n": {
+            "ko": "예: 이 방법은 기존 기준보다 적은 자료로도 같은 결론에 이른다.",
+            "en": "e.g. This method reaches the same conclusion with less data than the current standard."
+          }
+        },
+        {
+          "id": "background",
+          "label": "청중의 배경",
+          "labelI18n": {
+            "ko": "청중의 배경",
+            "en": "Audience background"
+          },
+          "description": "어디까지 설명해야 하는지 정하는 데 씁니다.",
+          "descriptionI18n": {
+            "ko": "어디까지 설명해야 하는지 정하는 데 씁니다.",
+            "en": "Used to decide how much background to explain."
+          },
+          "multiline": true,
+          "placeholder": "예: 같은 분야 연구자와 대학원생",
+          "placeholderI18n": {
+            "ko": "예: 같은 분야 연구자와 대학원생",
+            "en": "e.g. researchers and graduate students in the field"
+          }
+        },
+        {
+          "id": "discussion",
+          "label": "논의할 질문",
+          "labelI18n": {
+            "ko": "논의할 질문",
+            "en": "Questions to discuss"
+          },
+          "description": "발표 뒤에 청중과 나누고 싶은 질문",
+          "descriptionI18n": {
+            "ko": "발표 뒤에 청중과 나누고 싶은 질문",
+            "en": "Questions you want to discuss with the audience afterwards."
+          },
+          "multiline": true,
+          "placeholder": "예: 이 결과를 다른 자료에 적용할 수 있을까?",
+          "placeholderI18n": {
+            "ko": "예: 이 결과를 다른 자료에 적용할 수 있을까?",
+            "en": "e.g. Could this result apply to other datasets?"
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "title",
+          "title": "제목",
+          "titleI18n": {
+            "ko": "제목",
+            "en": "Title"
+          }
+        },
+        {
+          "id": "motivation",
+          "title": "동기",
+          "titleI18n": {
+            "ko": "동기",
+            "en": "Motivation"
+          }
+        },
+        {
+          "id": "research-question",
+          "title": "연구 질문",
+          "titleI18n": {
+            "ko": "연구 질문",
+            "en": "Research question"
+          }
+        },
+        {
+          "id": "methods",
+          "title": "방법",
+          "titleI18n": {
+            "ko": "방법",
+            "en": "Methods"
+          }
+        },
+        {
+          "id": "results",
+          "title": "결과",
+          "titleI18n": {
+            "ko": "결과",
+            "en": "Results"
+          }
+        },
+        {
+          "id": "discussion",
+          "title": "논의",
+          "titleI18n": {
+            "ko": "논의",
+            "en": "Discussion"
+          }
+        },
+        {
+          "id": "conclusions",
+          "title": "결론",
+          "titleI18n": {
+            "ko": "결론",
+            "en": "Conclusions"
+          }
+        },
+        {
+          "id": "references",
+          "title": "참고문헌",
+          "titleI18n": {
+            "ko": "참고문헌",
+            "en": "References"
+          }
+        },
+        {
+          "id": "appendix",
+          "title": "부록",
+          "titleI18n": {
+            "ko": "부록",
+            "en": "Appendix"
+          }
+        }
+      ]
+    },
+    {
+      "id": "thesis-defense",
+      "kind": "slide-brief",
+      "version": "1.0.0",
+      "name": "학위논문 심사",
+      "nameI18n": {
+        "ko": "학위논문 심사",
+        "en": "Thesis defense"
+      },
+      "description": "석사·박사 학위논문 심사를 위한 연구 질문·기여·예상 질문 브리프",
+      "descriptionI18n": {
+        "ko": "석사·박사 학위논문 심사를 위한 연구 질문·기여·예상 질문 브리프",
+        "en": "A research-question, contribution and committee-question brief for a master's or doctoral defense."
+      },
+      "category": "학술 발표",
+      "categoryI18n": {
+        "ko": "학술 발표",
+        "en": "Academic presentations"
+      },
+      "tags": ["학위논문", "심사", "academic", "thesis", "defense"],
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "Gabberflast/academic-pptx-skill",
+        "commit": "9f2b703ffe8d1449851617665ab1ffb3516d54ac",
+        "path": "content_guidelines.md"
+      },
+      "author": "Gabberflast (guidance); adapted by NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "questions": [
+        {
+          "id": "degree",
+          "label": "학위 과정",
+          "labelI18n": {
+            "ko": "학위 과정",
+            "en": "Degree level"
+          },
+          "options": [
+            {
+              "id": "master",
+              "label": "석사",
+              "labelI18n": {
+                "ko": "석사",
+                "en": "Master's"
+              }
+            },
+            {
+              "id": "doctoral",
+              "label": "박사",
+              "labelI18n": {
+                "ko": "박사",
+                "en": "Doctoral"
+              }
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "length",
+          "label": "발표 시간",
+          "labelI18n": {
+            "ko": "발표 시간",
+            "en": "Talk length"
+          },
+          "description": "석사는 20~30분, 박사는 30~45분을 기준으로 잡습니다.",
+          "descriptionI18n": {
+            "ko": "석사는 20~30분, 박사는 30~45분을 기준으로 잡습니다.",
+            "en": "Master's talks usually run 20–30 minutes and doctoral talks 30–45."
+          },
+          "options": [
+            {
+              "id": "20",
+              "label": "20분",
+              "labelI18n": {
+                "ko": "20분",
+                "en": "20 minutes"
+              }
+            },
+            {
+              "id": "30",
+              "label": "30분",
+              "labelI18n": {
+                "ko": "30분",
+                "en": "30 minutes"
+              }
+            },
+            {
+              "id": "45",
+              "label": "45분",
+              "labelI18n": {
+                "ko": "45분",
+                "en": "45 minutes"
+              }
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "research-question",
+          "label": "연구 질문",
+          "labelI18n": {
+            "ko": "연구 질문",
+            "en": "Research question"
+          },
+          "description": "논문이 답하려는 질문 하나",
+          "descriptionI18n": {
+            "ko": "논문이 답하려는 질문 하나",
+            "en": "The single question the thesis answers."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 어떤 조건에서 이 방법이 더 정확한가?",
+          "placeholderI18n": {
+            "ko": "예: 어떤 조건에서 이 방법이 더 정확한가?",
+            "en": "e.g. Under which conditions is this method more accurate?"
+          }
+        },
+        {
+          "id": "contributions",
+          "label": "주장하는 기여",
+          "labelI18n": {
+            "ko": "주장하는 기여",
+            "en": "Claimed contributions"
+          },
+          "description": "학계에 더했다고 주장하는 것",
+          "descriptionI18n": {
+            "ko": "학계에 더했다고 주장하는 것",
+            "en": "What you claim to add to the field."
+          },
+          "multiline": true,
+          "placeholder": "예: 새 측정 지표, 재현 가능한 실험 절차",
+          "placeholderI18n": {
+            "ko": "예: 새 측정 지표, 재현 가능한 실험 절차",
+            "en": "e.g. a new measure, a reproducible experiment procedure"
+          }
+        },
+        {
+          "id": "committee",
+          "label": "심사위원이 물을 만한 질문",
+          "labelI18n": {
+            "ko": "심사위원이 물을 만한 질문",
+            "en": "Likely committee questions"
+          },
+          "description": "미리 답을 준비할 질문",
+          "descriptionI18n": {
+            "ko": "미리 답을 준비할 질문",
+            "en": "Questions to prepare answers for in advance."
+          },
+          "multiline": true,
+          "placeholder": "예: 표본이 작은데 결과를 일반화할 수 있나?",
+          "placeholderI18n": {
+            "ko": "예: 표본이 작은데 결과를 일반화할 수 있나?",
+            "en": "e.g. Can the result generalize from such a small sample?"
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "title",
+          "title": "제목",
+          "titleI18n": {
+            "ko": "제목",
+            "en": "Title"
+          }
+        },
+        {
+          "id": "motivation",
+          "title": "동기",
+          "titleI18n": {
+            "ko": "동기",
+            "en": "Motivation"
+          }
+        },
+        {
+          "id": "research-question",
+          "title": "연구 질문",
+          "titleI18n": {
+            "ko": "연구 질문",
+            "en": "Research question"
+          }
+        },
+        {
+          "id": "related-work",
+          "title": "관련 연구",
+          "titleI18n": {
+            "ko": "관련 연구",
+            "en": "Related work"
+          }
+        },
+        {
+          "id": "methods",
+          "title": "방법",
+          "titleI18n": {
+            "ko": "방법",
+            "en": "Methods"
+          }
+        },
+        {
+          "id": "results",
+          "title": "결과",
+          "titleI18n": {
+            "ko": "결과",
+            "en": "Results"
+          }
+        },
+        {
+          "id": "discussion",
+          "title": "논의",
+          "titleI18n": {
+            "ko": "논의",
+            "en": "Discussion"
+          }
+        },
+        {
+          "id": "contributions",
+          "title": "기여",
+          "titleI18n": {
+            "ko": "기여",
+            "en": "Contributions"
+          }
+        },
+        {
+          "id": "conclusions",
+          "title": "결론",
+          "titleI18n": {
+            "ko": "결론",
+            "en": "Conclusions"
+          }
+        },
+        {
+          "id": "references",
+          "title": "참고문헌",
+          "titleI18n": {
+            "ko": "참고문헌",
+            "en": "References"
+          }
+        },
+        {
+          "id": "appendix",
+          "title": "부록",
+          "titleI18n": {
+            "ko": "부록",
+            "en": "Appendix"
+          }
+        }
+      ]
+    },
+    {
+      "id": "grant-briefing",
+      "kind": "slide-brief",
+      "version": "1.0.0",
+      "name": "연구비 브리핑",
+      "nameI18n": {
+        "ko": "연구비 브리핑",
+        "en": "Grant briefing"
+      },
+      "description": "연구비 공모 브리핑을 위한 문제·계획·성과 중심 브리프",
+      "descriptionI18n": {
+        "ko": "연구비 공모 브리핑을 위한 문제·계획·성과 중심 브리프",
+        "en": "A problem, plan and outcomes brief for a research grant briefing."
+      },
+      "category": "학술 발표",
+      "categoryI18n": {
+        "ko": "학술 발표",
+        "en": "Academic presentations"
+      },
+      "tags": ["연구비", "공모", "academic", "grant", "briefing"],
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "Gabberflast/academic-pptx-skill",
+        "commit": "9f2b703ffe8d1449851617665ab1ffb3516d54ac",
+        "path": "content_guidelines.md"
+      },
+      "author": "Gabberflast (guidance); adapted by NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "questions": [
+        {
+          "id": "funder",
+          "label": "지원 기관이나 공모 사업",
+          "labelI18n": {
+            "ko": "지원 기관이나 공모 사업",
+            "en": "Funder or program"
+          },
+          "required": true,
+          "placeholder": "예: 한국연구재단, 신진연구 지원 사업",
+          "placeholderI18n": {
+            "ko": "예: 한국연구재단, 신진연구 지원 사업",
+            "en": "e.g. a national research foundation, early-career grant program"
+          }
+        },
+        {
+          "id": "need",
+          "label": "문제와 필요성",
+          "labelI18n": {
+            "ko": "문제와 필요성",
+            "en": "Problem and need"
+          },
+          "description": "왜 지금 이 연구가 필요한지",
+          "descriptionI18n": {
+            "ko": "왜 지금 이 연구가 필요한지",
+            "en": "Why this research is needed now."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 기존 진단은 늦고 비싸서 조기 발견이 어렵다.",
+          "placeholderI18n": {
+            "ko": "예: 기존 진단은 늦고 비싸서 조기 발견이 어렵다.",
+            "en": "e.g. Current diagnosis is late and costly, so early detection is hard."
+          }
+        },
+        {
+          "id": "plan",
+          "label": "연구 계획",
+          "labelI18n": {
+            "ko": "연구 계획",
+            "en": "Research plan"
+          },
+          "description": "어떤 순서로 무엇을 할지",
+          "descriptionI18n": {
+            "ko": "어떤 순서로 무엇을 할지",
+            "en": "What you will do, and in what order."
+          },
+          "multiline": true,
+          "placeholder": "예: 1년 차 자료 수집, 2년 차 검증 실험",
+          "placeholderI18n": {
+            "ko": "예: 1년 차 자료 수집, 2년 차 검증 실험",
+            "en": "e.g. year one data collection, year two validation experiments"
+          }
+        },
+        {
+          "id": "outcomes",
+          "label": "기대 성과",
+          "labelI18n": {
+            "ko": "기대 성과",
+            "en": "Expected outcomes"
+          },
+          "description": "연구가 끝나면 무엇이 달라지는지",
+          "descriptionI18n": {
+            "ko": "연구가 끝나면 무엇이 달라지는지",
+            "en": "What changes when the project ends."
+          },
+          "multiline": true,
+          "placeholder": "예: 조기 진단 지표, 공개 데이터셋",
+          "placeholderI18n": {
+            "ko": "예: 조기 진단 지표, 공개 데이터셋",
+            "en": "e.g. an early-detection measure, a public dataset"
+          }
+        },
+        {
+          "id": "length",
+          "label": "브리핑 길이",
+          "labelI18n": {
+            "ko": "브리핑 길이",
+            "en": "Briefing length"
+          },
+          "description": "10~15분은 본문 8~14장, 20분은 12~18장을 기준으로 합니다.",
+          "descriptionI18n": {
+            "ko": "10~15분은 본문 8~14장, 20분은 12~18장을 기준으로 합니다.",
+            "en": "A 10–15 minute briefing usually has 8–14 body slides; 20 minutes usually has 12–18."
+          },
+          "options": [
+            {
+              "id": "10",
+              "label": "10분",
+              "labelI18n": {
+                "ko": "10분",
+                "en": "10 minutes"
+              }
+            },
+            {
+              "id": "15",
+              "label": "15분",
+              "labelI18n": {
+                "ko": "15분",
+                "en": "15 minutes"
+              }
+            },
+            {
+              "id": "20",
+              "label": "20분",
+              "labelI18n": {
+                "ko": "20분",
+                "en": "20 minutes"
+              }
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "budget",
+          "label": "예산 규모(선택)",
+          "labelI18n": {
+            "ko": "예산 규모(선택)",
+            "en": "Budget band (optional)"
+          },
+          "description": "대략적인 규모만 알려 주세요.",
+          "descriptionI18n": {
+            "ko": "대략적인 규모만 알려 주세요.",
+            "en": "A rough band is enough."
+          },
+          "options": [
+            {
+              "id": "under-100m",
+              "label": "1억 원 미만",
+              "labelI18n": {
+                "ko": "1억 원 미만",
+                "en": "Under 100 million KRW"
+              }
+            },
+            {
+              "id": "100-500m",
+              "label": "1억~5억 원",
+              "labelI18n": {
+                "ko": "1억~5억 원",
+                "en": "100–500 million KRW"
+              }
+            },
+            {
+              "id": "over-500m",
+              "label": "5억 원 이상",
+              "labelI18n": {
+                "ko": "5억 원 이상",
+                "en": "Over 500 million KRW"
+              }
+            }
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "title",
+          "title": "제목",
+          "titleI18n": {
+            "ko": "제목",
+            "en": "Title"
+          }
+        },
+        {
+          "id": "motivation",
+          "title": "동기",
+          "titleI18n": {
+            "ko": "동기",
+            "en": "Motivation"
+          }
+        },
+        {
+          "id": "aims",
+          "title": "목표",
+          "titleI18n": {
+            "ko": "목표",
+            "en": "Aims"
+          }
+        },
+        {
+          "id": "methods",
+          "title": "방법",
+          "titleI18n": {
+            "ko": "방법",
+            "en": "Methods"
+          }
+        },
+        {
+          "id": "work-plan",
+          "title": "수행 계획",
+          "titleI18n": {
+            "ko": "수행 계획",
+            "en": "Work plan"
+          }
+        },
+        {
+          "id": "team",
+          "title": "연구팀",
+          "titleI18n": {
+            "ko": "연구팀",
+            "en": "Team"
+          }
+        },
+        {
+          "id": "impact",
+          "title": "기대 효과",
+          "titleI18n": {
+            "ko": "기대 효과",
+            "en": "Impact"
+          }
+        },
+        {
+          "id": "budget",
+          "title": "예산",
+          "titleI18n": {
+            "ko": "예산",
+            "en": "Budget"
+          }
+        },
+        {
+          "id": "risks",
+          "title": "위험과 대응",
+          "titleI18n": {
+            "ko": "위험과 대응",
+            "en": "Risks and mitigation"
+          }
+        },
+        {
+          "id": "conclusions",
+          "title": "결론",
+          "titleI18n": {
+            "ko": "결론",
+            "en": "Conclusions"
+          }
+        },
+        {
+          "id": "references",
+          "title": "참고문헌",
+          "titleI18n": {
+            "ko": "참고문헌",
+            "en": "References"
+          }
+        },
+        {
+          "id": "appendix",
+          "title": "부록",
+          "titleI18n": {
+            "ko": "부록",
+            "en": "Appendix"
+          }
+        }
+      ]
     }
   ]
 }

@@ -17,6 +17,9 @@
  *   origin.
  * - `form-skill`: a user/tenant skill folder (SKILL.md) that may carry a form
  *   file through `metadata.ieum-template`. The builtin ledger has none yet.
+ * - `slide-brief`: a structured presentation brief (questions + ordered
+ *   sections) for an academic deck. It carries Korean and English copy and no
+ *   form file; the slide authoring flow reads it at runtime.
  *
  * Pure module: no file system, no network. Safe to import in the renderer.
  */
@@ -26,7 +29,12 @@ import builtinTemplatesJson from './builtin-templates.json'
 export const TEMPLATE_MANIFEST_ID = 'naddle-template-manifest'
 export const TEMPLATE_MANIFEST_VERSION = 1
 
-export const TEMPLATE_MANIFEST_KINDS = ['document-brief', 'slide-design', 'form-skill'] as const
+export const TEMPLATE_MANIFEST_KINDS = [
+  'document-brief',
+  'slide-design',
+  'form-skill',
+  'slide-brief',
+] as const
 export type TemplateManifestKind = (typeof TEMPLATE_MANIFEST_KINDS)[number]
 
 /** Where a manifest comes from. Builtin entries ship in the installer; tenant entries are imported by an organization. */
@@ -134,7 +142,54 @@ export interface FormSkillEntry extends TemplateManifestEntryBase {
   skillPath: string
 }
 
-export type TemplateManifestEntry = DocumentBriefEntry | SlideDesignEntry | FormSkillEntry
+/** Copy carried in both languages a slide brief supports. */
+export interface LocalizedText {
+  ko: string
+  en: string
+}
+
+export interface SlideBriefQuestionOption {
+  id: string
+  label: string
+  description?: string
+  labelI18n: LocalizedText
+  descriptionI18n?: LocalizedText
+}
+
+export interface SlideBriefQuestion {
+  id: string
+  label: string
+  description?: string
+  options?: SlideBriefQuestionOption[]
+  multiline?: boolean
+  placeholder?: string
+  required?: boolean
+  labelI18n: LocalizedText
+  descriptionI18n?: LocalizedText
+  placeholderI18n?: LocalizedText
+}
+
+export interface SlideBriefSection {
+  id: string
+  title: string
+  detail?: string
+  meta?: string
+  locked?: boolean
+  titleI18n: LocalizedText
+}
+
+export interface SlideBriefEntry extends TemplateManifestEntryBase {
+  kind: 'slide-brief'
+  locales: readonly ['ko', 'en']
+  nameI18n: LocalizedText
+  descriptionI18n?: LocalizedText
+  categoryI18n?: LocalizedText
+  questions: SlideBriefQuestion[]
+  sections: SlideBriefSection[]
+}
+
+export type TemplateManifestEntry =
+  DocumentBriefEntry | SlideDesignEntry | FormSkillEntry | SlideBriefEntry
 
 export interface TemplateManifest {
   manifest: typeof TEMPLATE_MANIFEST_ID
@@ -228,6 +283,75 @@ function briefProblems(entry: Record<string, unknown>, required: boolean): strin
   return problems
 }
 
+function localizedTextProblems(name: string, value: unknown): string[] {
+  if (!isRecord(value) || !isText(value.ko) || !isText(value.en)) {
+    return [`${name} must have non-empty ko and en text`]
+  }
+  return []
+}
+
+function slideBriefProblems(entry: Record<string, unknown>): string[] {
+  const problems: string[] = []
+  const locales = entry.locales
+  if (!Array.isArray(locales) || !locales.includes('ko') || !locales.includes('en')) {
+    problems.push('locales must include ko and en')
+  }
+  problems.push(...localizedTextProblems('nameI18n', entry.nameI18n))
+  if (entry.description !== undefined) {
+    problems.push(...localizedTextProblems('descriptionI18n', entry.descriptionI18n))
+  }
+  if (entry.category !== undefined) {
+    problems.push(...localizedTextProblems('categoryI18n', entry.categoryI18n))
+  }
+  if (Array.isArray(entry.questions)) {
+    for (const question of entry.questions) {
+      if (!isRecord(question)) continue
+      const id = isText(question.id) ? question.id : '?'
+      problems.push(...localizedTextProblems(`question ${id} labelI18n`, question.labelI18n))
+      if (question.description !== undefined) {
+        problems.push(
+          ...localizedTextProblems(`question ${id} descriptionI18n`, question.descriptionI18n),
+        )
+      }
+      if (question.placeholder !== undefined) {
+        problems.push(
+          ...localizedTextProblems(`question ${id} placeholderI18n`, question.placeholderI18n),
+        )
+      }
+      if (Array.isArray(question.options)) {
+        for (const option of question.options) {
+          if (!isRecord(option)) continue
+          const optionId = isText(option.id) ? option.id : '?'
+          problems.push(
+            ...localizedTextProblems(
+              `question ${id} option ${optionId} labelI18n`,
+              option.labelI18n,
+            ),
+          )
+          if (option.description !== undefined) {
+            problems.push(
+              ...localizedTextProblems(
+                `question ${id} option ${optionId} descriptionI18n`,
+                option.descriptionI18n,
+              ),
+            )
+          }
+        }
+      }
+    }
+  }
+  if (Array.isArray(entry.sections)) {
+    for (const section of entry.sections) {
+      if (!isRecord(section)) continue
+      const id = isText(section.id) ? section.id : '?'
+      problems.push(...localizedTextProblems(`section ${id} titleI18n`, section.titleI18n))
+    }
+  }
+  if (entry.scheme !== undefined) problems.push('slide-brief must not set scheme')
+  if (entry.formAsset !== undefined) problems.push('slide-brief must not set formAsset')
+  return problems
+}
+
 /** Every problem with one entry, as short English messages. Empty when the entry is valid. */
 export function templateEntryProblems(entry: unknown, scope: TemplateManifestScope): string[] {
   if (!isRecord(entry)) return ['entry must be an object']
@@ -274,8 +398,10 @@ export function templateEntryProblems(entry: unknown, scope: TemplateManifestSco
     problems.push('sha256 must be absent or null without formAsset')
   }
 
-  if (kind === 'document-brief') problems.push(...briefProblems(entry, true))
+  if (kind === 'document-brief' || kind === 'slide-brief')
+    problems.push(...briefProblems(entry, true))
   else problems.push(...briefProblems(entry, false))
+  if (kind === 'slide-brief') problems.push(...slideBriefProblems(entry))
   if (kind === 'slide-design' && !['light', 'dark', 'mixed'].includes(entry.scheme as string)) {
     problems.push('scheme must be light, dark or mixed')
   }
@@ -325,6 +451,73 @@ export function builtinTemplateEntries<K extends TemplateManifestKind>(
   return BUILTIN_TEMPLATE_MANIFEST.entries.filter(
     (entry): entry is Extract<TemplateManifestEntry, { kind: K }> => entry.kind === kind,
   )
+}
+
+/** The copy language a slide brief resolves to: Korean for `ko`/`ko-*`, English otherwise. */
+export type SlideBriefLanguage = 'ko' | 'en'
+
+export function slideBriefLanguage(lang: string | null | undefined): SlideBriefLanguage {
+  const base = (lang ?? 'en').toLowerCase()
+  return base === 'ko' || base.startsWith('ko-') ? 'ko' : 'en'
+}
+
+/** A slide brief with its copy resolved to one UI language. */
+export interface ResolvedSlideBrief {
+  id: string
+  name: string
+  description?: string
+  category?: string
+  tags?: string[]
+  questions: AuthoringQuestion[]
+  sections: BriefSection[]
+}
+
+/** Resolves a ledger entry's names, questions and sections into the active UI language. */
+export function resolveSlideBrief(
+  entry: SlideBriefEntry,
+  lang: string | null | undefined,
+): ResolvedSlideBrief {
+  const language = slideBriefLanguage(lang)
+  const pick = (value: LocalizedText | undefined): string | undefined => value?.[language]
+  const description = pick(entry.descriptionI18n) ?? entry.description
+  const category = pick(entry.categoryI18n) ?? entry.category
+  return {
+    id: entry.id,
+    name: pick(entry.nameI18n) ?? entry.name,
+    ...(description !== undefined ? { description } : {}),
+    ...(category !== undefined ? { category } : {}),
+    ...(entry.tags ? { tags: [...entry.tags] } : {}),
+    questions: entry.questions.map((question) => ({
+      id: question.id,
+      label: pick(question.labelI18n) ?? question.label,
+      ...(question.description !== undefined
+        ? { description: pick(question.descriptionI18n) ?? question.description }
+        : {}),
+      ...(question.multiline !== undefined ? { multiline: question.multiline } : {}),
+      ...(question.placeholder !== undefined
+        ? { placeholder: pick(question.placeholderI18n) ?? question.placeholder }
+        : {}),
+      ...(question.required !== undefined ? { required: question.required } : {}),
+      ...(question.options
+        ? {
+            options: question.options.map((option) => ({
+              id: option.id,
+              label: pick(option.labelI18n) ?? option.label,
+              ...(option.description !== undefined
+                ? { description: pick(option.descriptionI18n) ?? option.description }
+                : {}),
+            })),
+          }
+        : {}),
+    })),
+    sections: entry.sections.map((section) => ({
+      id: section.id,
+      title: pick(section.titleI18n) ?? section.title,
+      ...(section.detail !== undefined ? { detail: section.detail } : {}),
+      ...(section.meta !== undefined ? { meta: section.meta } : {}),
+      ...(section.locked !== undefined ? { locked: section.locked } : {}),
+    })),
+  }
 }
 
 /** What a form skill looks like before it is turned into a manifest entry. */

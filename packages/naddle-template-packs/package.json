@@ -1,0 +1,26 @@
+{
+  "name": "@naddle/template-packs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local tenant template packs for NaddleOffice: validation, macro scanning, tenant-keyed storage and import (main/Node only)",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@genoffice/ai-provider": "*",
+    "@genoffice/ui": "*",
+    "@genoffice/zip-gate": "*",
+    "jszip": "^3.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}

@@ -28,6 +28,11 @@ import {
 import { USER_SKILLS_BRIDGE_KEY } from '@genoffice/electron-utils/user-skills-channels'
 import type { UpdateUiState } from '../shared/update-api'
 import { TENANT_GET_SYNC_CHANNEL, type TenantSnapshot } from '../shared/tenant-api'
+import {
+  TENANT_PACKS_CHANNELS,
+  type TenantPacksApi,
+  type TenantPackActionResult,
+} from '../shared/tenant-packs-api'
 import { normalizeAiPanelPrefs } from '@genoffice/ui/ai-panel-prefs'
 import type {
   AuthorNameSetting,
@@ -1046,6 +1051,20 @@ const recoveryListApi: RecoveryListApi = {
     ipcRenderer.invoke(RECOVERY_LIST_CHANNELS.submit, result) as Promise<void>,
 }
 contextBridge.exposeInMainWorld('aiOfficeRecovery', recoveryListApi)
+
+// Tenant template packs (S4a): the app menu opens the native dialogs in main.
+// This bridge is intentionally narrow and carries no tenant value; main files
+// every pack under its own tenant snapshot.
+const tenantPacksApi: TenantPacksApi = {
+  importZip: () =>
+    ipcRenderer.invoke(TENANT_PACKS_CHANNELS.importZip) as Promise<TenantPackActionResult>,
+  importFolder: () =>
+    ipcRenderer.invoke(TENANT_PACKS_CHANNELS.importFolder) as Promise<TenantPackActionResult>,
+  list: () => ipcRenderer.invoke(TENANT_PACKS_CHANNELS.list) as Promise<TenantPackActionResult>,
+  remove: (id: string) =>
+    ipcRenderer.invoke(TENANT_PACKS_CHANNELS.remove, id) as Promise<TenantPackActionResult>,
+}
+contextBridge.exposeInMainWorld('aiOfficeTenantPacks', tenantPacksApi)
 
 // open documents dragged from the OS anywhere over Home or the tab strip
 installDropOpenBridge()

@@ -1,0 +1,211 @@
+.tenant-packs {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.tenant-packs-intro,
+.tenant-packs-muted,
+.tenant-packs-hint {
+  color: color-mix(in srgb, currentColor 62%, transparent);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.tenant-packs-import,
+.tenant-packs-github,
+.tenant-packs-actions,
+.tenant-packs-confirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tenant-packs-github {
+  align-items: flex-end;
+}
+
+.tenant-packs-github label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 260px;
+  font-size: 12px;
+}
+
+.tenant-packs-github input {
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+}
+
+.tenant-packs-hint {
+  flex-basis: 100%;
+}
+
+.tenant-packs-btn {
+  padding: 5px 10px;
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.tenant-packs-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.tenant-packs-btn.is-primary {
+  border-color: color-mix(in srgb, currentColor 45%, transparent);
+  font-weight: 600;
+}
+
+.tenant-packs-btn.is-danger {
+  border-color: var(--danger-border);
+  color: var(--danger);
+}
+
+.tenant-packs-notice {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.tenant-packs-notice.is-error {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.tenant-packs-notice.is-info {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.tenant-packs-preview,
+.tenant-packs-installed {
+  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.tenant-packs-preview h4,
+.tenant-packs-installed h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+.tenant-packs-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 2px 12px;
+  margin: 0 0 10px;
+  font-size: 12px;
+}
+
+.tenant-packs-facts dt {
+  opacity: 0.65;
+}
+
+.tenant-packs-facts dd {
+  margin: 0;
+}
+
+.tenant-packs-note {
+  font-size: 12px;
+  margin: 0 0 8px;
+}
+
+.tenant-packs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.tenant-packs-table th,
+.tenant-packs-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 6px;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.tenant-packs-table ul,
+.tenant-packs-problems {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.tenant-packs-problems {
+  color: var(--danger);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.tenant-packs-attest {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.tenant-packs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tenant-packs-list > li {
+  border-top: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  padding-top: 8px;
+}
+
+.tenant-packs-list > li:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.tenant-packs-row-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+
+.tenant-packs-row-head .is-ok {
+  color: var(--success);
+  font-size: 12px;
+}
+
+.tenant-packs-row-head .is-bad {
+  color: var(--danger);
+  font-size: 12px;
+}
+
+.tenant-packs-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  color: color-mix(in srgb, currentColor 62%, transparent);
+  font-size: 12px;
+  margin-bottom: 6px;
+}

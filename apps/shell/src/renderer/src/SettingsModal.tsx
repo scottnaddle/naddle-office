@@ -63,6 +63,7 @@ import { useSubscriptionConnection } from './subscription-client'
 import { SkillsPane } from './skills/SkillsPane'
 import { useUsableMcpServers } from './mcp/mcp-open-request'
 import { skillsText } from './i18n/strings-skills'
+import { TenantPacksPane } from './tenant-packs/TenantPacksPane'
 import {
   advancedPaneUseChoice,
   advancedProviderIds,
@@ -2101,7 +2102,12 @@ export function SettingsModal({
                 <ResultStoreField />
               </>
             )}
-            {section === 'skills' && <SkillsPane usableMcpServers={usableMcpServers} />}
+            {section === 'skills' && (
+              <>
+                <SkillsPane usableMcpServers={usableMcpServers} />
+                <TenantPacksPane />
+              </>
+            )}
             {section === 'integrations' && (
               <IntegrationsPane t={t} onStatus={(st) => onSkillUpdateDue?.(skillUpdateDue(st))} />
             )}

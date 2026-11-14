@@ -17,6 +17,12 @@ import { VIEW_IMAGE_CHANNEL } from '../shared/ipc'
 import { subscriptionLaunchResultOf, subscriptionStatusMapOf } from '../shared/subscription-api'
 import type { SubscriptionApi } from '../shared/subscription-api'
 import type { AiPanelPrefs } from '@genoffice/ui'
+import {
+  TENANT_PACKS_GALLERY_CHANNELS,
+  type TenantPackActionResult,
+  type TenantPackGalleryApi,
+  type TenantPackOpenFormInput,
+} from '../shared/tenant-packs-api'
 import type {
   AiChatRequest,
   AiSettings,
@@ -405,6 +411,19 @@ contextBridge.exposeInMainWorld('projectApi', projectApi)
 // project folders (decision 0088): main identifies this window, the bridge forwards ids only
 contextBridge.exposeInMainWorld(PROJECT_FOLDER_BRIDGE_KEY, projectFolderBridge(ipcRenderer))
 contextBridge.exposeInMainWorld('aiOfficeSubscription', subscriptionApi)
+// Company template packs for this editor's authoring gallery (S4b): list the
+// current tenant's packs and open a verified form in a new tab. No tenant value
+// or pack folder path crosses this bridge; the shell re-checks the form hash.
+const tenantPackGalleryApi: TenantPackGalleryApi = {
+  list: () =>
+    ipcRenderer.invoke(TENANT_PACKS_GALLERY_CHANNELS.list) as Promise<TenantPackActionResult>,
+  openForm: (input: TenantPackOpenFormInput) =>
+    ipcRenderer.invoke(
+      TENANT_PACKS_GALLERY_CHANNELS.openForm,
+      input,
+    ) as Promise<TenantPackActionResult>,
+}
+contextBridge.exposeInMainWorld('aiOfficeTenantPacks', tenantPackGalleryApi)
 // The shell's split panes: which pane this view is, and focus requests for it
 contextBridge.exposeInMainWorld('aiOfficeSplit', splitPaneBridge(ipcRenderer))
 

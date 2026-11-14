@@ -1425,6 +1425,96 @@
       "revert": "파일을 삭제한다",
       "round": "S4",
       "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/src/SettingsModal.tsx",
+      "kind": "modified",
+      "lines": "-",
+      "purpose": "S4b: 스킬 섹션 안, SkillsPane 아래에 회사 양식(TenantPacksPane)을 탑재 — 별도 nav 항목은 두지 않는다",
+      "revert": "SettingsModal의 SkillsPane 아래 TenantPacksPane 렌더를 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/preload/index.ts",
+      "kind": "modified",
+      "lines": "-",
+      "purpose": "S4b: 문서 창에 회사 양식 갤러리 bridge(list·openForm)를 노출 — tenant 값과 팩 경로는 넘기지 않는다",
+      "revert": "문서 preload의 TENANT_PACKS_GALLERY_CHANNELS import와 tenantPackGalleryApi 노출을 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/src/tenant-packs/TenantPacksPane.tsx",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4b: 설정의 회사 양식 팩 화면 — zip/폴더/GitHub 준비, 미리보기 표, 권리 확인, 설치, 목록/삭제",
+      "revert": "파일을 삭제하고 SettingsModal의 탑재를 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/src/tenant-packs/strings.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4b: 회사 양식 팩 화면 문구(en/ko, 그 밖의 언어는 영어)",
+      "revert": "파일을 삭제하고 TenantPacksPane의 import를 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/renderer/src/tenant-packs/tenant-packs-pane.css",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4b: 회사 양식 팩 화면 스타일(업스트림 settings.css는 고치지 않는다)",
+      "revert": "파일을 삭제하고 TenantPacksPane의 css import를 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/settings-tenant-packs.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4b: 회사 양식 팩 화면의 미리보기 표·권리 확인 전 설치 비활성·오류 시 설치 불가·GitHub 입력·목록/삭제 테스트",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/shared/tenant-packs-api.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4b: 문서 창 갤러리 bridge의 채널·타입(현재 테넌트 팩 목록과 검증된 양식 열기)",
+      "revert": "파일을 삭제하고 문서 preload와 renderer d.ts의 import를 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/renderer/tenant-packs.d.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4b: 문서 renderer의 window.aiOfficeTenantPacks 타입(업스트림 env.d.ts는 고치지 않는다)",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/renderer/ai/authoring/company-templates.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4b: 회사 양식 카드 만들기(검증된 form-skill만, 변조 팩은 비활성)와 화면 문구(en/ko)",
+      "revert": "파일을 삭제하고 AuthoringFlow의 import와 회사 양식 그룹을 지운다",
+      "round": "S4",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/tests/authoring-company-forms.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S4b: 작성 갤러리의 회사 양식 그룹 — builtin 유지·빈 상태·변조 카드 비활성·openForm 호출·onGenerate 우회 없음",
+      "revert": "파일을 삭제한다",
+      "round": "S4",
+      "owner": "api"
     }
   ],
   "baseline": {

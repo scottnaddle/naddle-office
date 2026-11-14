@@ -21,6 +21,7 @@ import {
   ipcMain,
   nativeImage,
   nativeTheme,
+  net,
   screen,
   safeStorage,
   powerMonitor,
@@ -9608,6 +9609,20 @@ app.whenReady().then(async () => {
     parentWindow: () => shellWindow,
     isMainWindow: (sender) =>
       !!shellWindow && !shellWindow.isDestroyed() && sender === shellWindow.webContents,
+    // the same network layer as the app's other main-process reads (system proxy)
+    fetch: (url, init) => net.fetch(url, init),
+    // a verified form becomes a new untitled tab; text only, no skill chips are
+    // registered, so the pack's SKILL.md never enters the personal skill store
+    openFormCopy: async (input) => {
+      const opened = await templateTabs.openCopy({
+        bytes: input.bytes,
+        fileName: input.fileName,
+        title: input.title,
+        text: input.text ?? '',
+        chips: [],
+      })
+      return opened.ok ? { ok: true, tabId: opened.tabId } : { ok: false, reason: opened.reason }
+    },
   })
   if (revealSecretsRun) {
     app.exit(await runRevealEntry(secretCodec))

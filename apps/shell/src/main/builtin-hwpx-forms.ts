@@ -81,10 +81,7 @@ export function builtinHwpxFormEntry(id: string): BuiltinHwpxFormEntry | undefin
  * directly under `assets/` is accepted: no absolute paths, no `..`, no nested
  * folders, no backslashes.
  */
-export function resolveBuiltinHwpxFormPath(
-  host: BuiltinHwpxFormsHost,
-  assetPath: string,
-): string {
+export function resolveBuiltinHwpxFormPath(host: BuiltinHwpxFormsHost, assetPath: string): string {
   if (!assetPath.startsWith(FORM_ASSET_FOLDER)) {
     throw new Error(`builtin form path must stay under assets/: ${assetPath}`)
   }

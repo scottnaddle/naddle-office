@@ -165,7 +165,8 @@ const ja: Dict = {
   slideBriefHint: 'Confirm or edit before the slides are generated.',
   slideBriefCategory: 'Academic presentations',
   galleryEmpty: '利用できるテンプレートがありません。',
-  formOpenFailed: 'フォームを開けませんでした。フォームのファイルが見つからないか、変更されています。',
+  formOpenFailed:
+    'フォームを開けませんでした。フォームのファイルが見つからないか、変更されています。',
   galleryPick: 'このテンプレートを使う',
   clarifyTitle: 'いくつか確認します',
   clarifySkip: 'スキップ',
@@ -196,7 +197,8 @@ const fr: Dict = {
   slideBriefHint: 'Confirm or edit before the slides are generated.',
   slideBriefCategory: 'Academic presentations',
   galleryEmpty: 'Aucun modèle disponible.',
-  formOpenFailed: 'Le formulaire n’a pas pu être ouvert. Son fichier est peut-être manquant ou modifié.',
+  formOpenFailed:
+    'Le formulaire n’a pas pu être ouvert. Son fichier est peut-être manquant ou modifié.',
   galleryPick: 'Utiliser ce modèle',
   clarifyTitle: 'Quelques questions',
   clarifySkip: 'Passer',
@@ -227,7 +229,8 @@ const de: Dict = {
   slideBriefHint: 'Confirm or edit before the slides are generated.',
   slideBriefCategory: 'Academic presentations',
   galleryEmpty: 'Keine Vorlagen verfügbar.',
-  formOpenFailed: 'Das Formular konnte nicht geöffnet werden. Seine Datei fehlt möglicherweise oder wurde geändert.',
+  formOpenFailed:
+    'Das Formular konnte nicht geöffnet werden. Seine Datei fehlt möglicherweise oder wurde geändert.',
   galleryPick: 'Diese Vorlage verwenden',
   clarifyTitle: 'Ein paar Fragen',
   clarifySkip: 'Überspringen',
@@ -258,7 +261,8 @@ const es: Dict = {
   slideBriefHint: 'Confirm or edit before the slides are generated.',
   slideBriefCategory: 'Academic presentations',
   galleryEmpty: 'No hay plantillas disponibles.',
-  formOpenFailed: 'No se pudo abrir el formulario. Es posible que falte el archivo o que haya cambiado.',
+  formOpenFailed:
+    'No se pudo abrir el formulario. Es posible que falte el archivo o que haya cambiado.',
   galleryPick: 'Usar esta plantilla',
   clarifyTitle: 'Unas preguntas',
   clarifySkip: 'Omitir',
@@ -289,7 +293,8 @@ const pt: Dict = {
   slideBriefHint: 'Confirm or edit before the slides are generated.',
   slideBriefCategory: 'Academic presentations',
   galleryEmpty: 'Nenhum modelo disponível.',
-  formOpenFailed: 'Não foi possível abrir o formulário. O arquivo pode estar ausente ou ter sido alterado.',
+  formOpenFailed:
+    'Não foi possível abrir o formulário. O arquivo pode estar ausente ou ter sido alterado.',
   galleryPick: 'Usar este modelo',
   clarifyTitle: 'Algumas perguntas',
   clarifySkip: 'Pular',
@@ -320,7 +325,8 @@ const it: Dict = {
   slideBriefHint: 'Confirm or edit before the slides are generated.',
   slideBriefCategory: 'Academic presentations',
   galleryEmpty: 'Nessun modello disponibile.',
-  formOpenFailed: 'Impossibile aprire il modulo. Il file potrebbe mancare o essere stato modificato.',
+  formOpenFailed:
+    'Impossibile aprire il modulo. Il file potrebbe mancare o essere stato modificato.',
   galleryPick: 'Usa questo modello',
   clarifyTitle: 'Qualche domanda',
   clarifySkip: 'Salta',
@@ -351,7 +357,8 @@ const nl: Dict = {
   slideBriefHint: 'Confirm or edit before the slides are generated.',
   slideBriefCategory: 'Academic presentations',
   galleryEmpty: 'Geen sjablonen beschikbaar.',
-  formOpenFailed: 'Het formulier kon niet worden geopend. Het bestand ontbreekt mogelijk of is gewijzigd.',
+  formOpenFailed:
+    'Het formulier kon niet worden geopend. Het bestand ontbreekt mogelijk of is gewijzigd.',
   galleryPick: 'Dit sjabloon gebruiken',
   clarifyTitle: 'Een paar vragen',
   clarifySkip: 'Overslaan',

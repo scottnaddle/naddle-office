@@ -10,10 +10,9 @@
 const { execFileSync } = require('node:child_process')
 const { existsSync, readFileSync, readdirSync, rmSync } = require('node:fs')
 const { join } = require('node:path')
-const {
-  BUILTIN_HWPX_FORMS_DIR_NAME,
-  assertBuiltinHwpxForms,
-} = require(join(__dirname, 'build/assert-builtin-hwpx-forms.cjs'))
+const { BUILTIN_HWPX_FORMS_DIR_NAME, assertBuiltinHwpxForms } = require(
+  join(__dirname, 'build/assert-builtin-hwpx-forms.cjs'),
+)
 
 // Product identity of the installed app. PRODUCT_NAME must equal PRODUCT_NAME
 // in packages/i18n/src/product.ts and "productName" in ./package.json, and the

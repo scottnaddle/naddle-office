@@ -4,10 +4,7 @@
  * only a ledger id, so no path or document bytes cross the bridge.
  */
 import { ipcMain } from 'electron'
-import {
-  BUILTIN_FORMS_CHANNELS,
-  type BuiltinFormActionResult,
-} from '../shared/builtin-forms-api'
+import { BUILTIN_FORMS_CHANNELS, type BuiltinFormActionResult } from '../shared/builtin-forms-api'
 import {
   builtinHwpxFormEntry,
   readBuiltinHwpxForm,

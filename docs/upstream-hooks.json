@@ -14,21 +14,10 @@
     "package-lock.json은 generated로 등록하되 counted에서 제외한다.",
     "오버레이(packages/tenant-config/, packages/naddle-*/)와 거버넌스(.github/, docs/)는 counted에서 제외하되 .github/workflows/ci.yml 수정은 exempt 항목으로 기록한다."
   ],
-  "exemptPrefixes": [
-    ".github/",
-    "docs/"
-  ],
-  "overlayPrefixes": [
-    "packages/tenant-config/",
-    "packages/naddle-"
-  ],
-  "exemptPaths": [
-    "NOTICE-NADDLE.md",
-    "tenant.example.json"
-  ],
-  "generated": [
-    "package-lock.json"
-  ],
+  "exemptPrefixes": [".github/", "docs/"],
+  "overlayPrefixes": ["packages/tenant-config/", "packages/naddle-"],
+  "exemptPaths": ["NOTICE-NADDLE.md", "tenant.example.json"],
+  "generated": ["package-lock.json"],
   "entries": [
     {
       "path": ".github/README.md",

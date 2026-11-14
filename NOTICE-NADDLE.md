@@ -24,6 +24,27 @@ The upstream `NOTICE` is kept verbatim. Its "Built-in skills" section says that 
   - 공문(시행문) is a structure-only rewrite of a generic official letter (발신 기관명, 분류기호·문서번호, 시행일자, 수신, 제목, 본문, 끝, 발신명의, 붙임·담당). No official form file was copied, including statutory annex forms, and it has no agency logo or official seal (관인).
 - Slide designs (`slide-design`): the twelve designs that the upstream `NOTICE` already credits to frontend-slides (https://github.com/zarazhangrui/frontend-slides, MIT License, Copyright (c) 2025 Zara Zhang, read at commit 9906a34d640d2111f724544cbc50f7f130569ae1). The manifest only records their provenance; the attribution in the upstream `NOTICE` still applies.
 - Form skills (`form-skill`): none are built in. This kind is reserved for organization template packs imported by the user.
+- Academic slide briefs (`slide-brief`): four briefs for conference presentations, seminars, thesis defenses and grant briefings. Their guidance is adapted from academic-pptx-skill (https://github.com/Gabberflast/academic-pptx-skill, MIT License, Copyright (c) 2026 Gabberflast), read at commit `9f2b703ffe8d1449851617665ab1ffb3516d54ac`. We consulted SKILL.md, content_guidelines.md and the structure rules in slide_patterns.md, then wrote a NaddleOffice adaptation in Korean and English in our own words; we did not copy the upstream wording. The four ledger entries and `packages/ui/src/authoring/guides/academic/ko.md` and `en.md` carry that adaptation. The upstream root LICENSE is MIT, but the frontmatter of SKILL.md at that commit labels the skill license as Proprietary, so those two statements conflict. No upstream files are bundled with this repository or the installer.
+
+  The full MIT permission and disclaimer notice for that material follows:
+
+  > Permission is hereby granted, free of charge, to any person obtaining a copy
+  > of this software and associated documentation files (the "Software"), to deal
+  > in the Software without restriction, including without limitation the rights
+  > to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  > copies of the Software, and to permit persons to whom the Software is
+  > furnished to do so, subject to the following conditions:
+  >
+  > The above copyright notice and this permission notice shall be included in all
+  > copies or substantial portions of the Software.
+  >
+  > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  > IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  > FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  > AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  > LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  > OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  > SOFTWARE.
 
 The manifest does not include official Microsoft, Google or Hancom templates, fonts or forms, or forms from template marketplaces. None of the S3 form files was downloaded, scraped or copied from such a source, from a government or municipal original, or from any company's internal forms.
 

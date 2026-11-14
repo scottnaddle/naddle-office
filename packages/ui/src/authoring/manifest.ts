@@ -479,11 +479,13 @@ export function resolveSlideBrief(
 ): ResolvedSlideBrief {
   const language = slideBriefLanguage(lang)
   const pick = (value: LocalizedText | undefined): string | undefined => value?.[language]
+  const description = pick(entry.descriptionI18n) ?? entry.description
+  const category = pick(entry.categoryI18n) ?? entry.category
   return {
     id: entry.id,
     name: pick(entry.nameI18n) ?? entry.name,
-    description: pick(entry.descriptionI18n) ?? entry.description,
-    category: pick(entry.categoryI18n) ?? entry.category,
+    ...(description !== undefined ? { description } : {}),
+    ...(category !== undefined ? { category } : {}),
     ...(entry.tags ? { tags: [...entry.tags] } : {}),
     questions: entry.questions.map((question) => ({
       id: question.id,
@@ -570,5 +572,3 @@ export function formSkillManifestEntry(input: FormSkillInput): FormSkillEntry {
   }
   return entry
 }
-
-export * from './guides'

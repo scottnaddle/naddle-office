@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import ledger from '../src/authoring/builtin-templates.json'
 import {
-  academicSlideGuide,
   builtinTemplateEntries,
   parseTemplateManifest,
   resolveSlideBrief,
@@ -12,6 +11,7 @@ import {
   templateEntryProblems,
   templateManifestProblems,
 } from '../src/authoring/manifest'
+import { academicSlideGuide } from '../src/authoring/guides'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const read = (path: string) => readFileSync(join(root, path), 'utf8')

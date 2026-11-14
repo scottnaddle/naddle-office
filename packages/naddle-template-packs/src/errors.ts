@@ -10,6 +10,12 @@ export type TenantPackErrorCode =
   | 'too-large'
   | 'not-found'
   | 'failed'
+  | 'bad-signature'
+  | 'unknown-key'
+  | 'revoked-key'
+  | 'expired-key'
+  | 'trust-store-unreadable'
+  | 'bad-key'
 
 export class TenantPackError extends Error {
   readonly code: TenantPackErrorCode

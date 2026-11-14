@@ -13,6 +13,27 @@ export type TenantPackOriginView =
   | { kind: 'folder'; folder: string }
   | { kind: 'github'; repo: string; ref: string; commit: string; path: string }
 
+export type TenantPackSignatureStatusView =
+  | 'unsigned'
+  | 'valid'
+  | 'malformed'
+  | 'bad-signature'
+  | 'files-mismatch'
+  | 'unknown-key'
+  | 'revoked-key'
+  | 'expired-key'
+  | 'pack-mismatch'
+  | 'missing-signature'
+  | 'trust-store-unreadable'
+
+export interface TenantPackSignatureView {
+  status: TenantPackSignatureStatusView
+  keyId?: string
+  keyLabel?: string
+  signedAt?: string
+  trustSource?: 'builtin' | 'tenant'
+}
+
 export interface TenantPackEntrySummary {
   id: string
   kind: string
@@ -37,6 +58,8 @@ export interface TenantPackSummary {
   verified: boolean
   problems: string[]
   entries: TenantPackEntrySummary[]
+  signature?: TenantPackSignatureView
+  signatureStatus?: TenantPackSignatureStatusView
 }
 
 export interface TenantPackOpenFormInput {

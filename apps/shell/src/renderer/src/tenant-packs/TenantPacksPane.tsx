@@ -3,7 +3,10 @@ import type {
   TenantPackActionResult,
   TenantPackOriginView,
   TenantPackPreviewView,
+  TenantPackRevokedKeyView,
+  TenantPackSignatureView,
   TenantPackSummary,
+  TenantPackTrustedKeyView,
   TenantPacksApi,
 } from '../../../shared/tenant-packs-api'
 import { useI18n } from '../locale'
@@ -51,6 +54,33 @@ function api(): TenantPacksApi | undefined {
 export function TenantPacksPane() {
   const { lang } = useI18n()
   const t = useCallback<Text>((key, params) => tenantPacksText(lang, key, params), [lang])
+  const signatureText = useCallback(
+    (signature: TenantPackSignatureView | undefined): string => {
+      const status = signature?.status ?? 'unsigned'
+      switch (status) {
+        case 'unsigned':
+          return t('sigUnsigned')
+        case 'valid':
+          return t('sigValid', {
+            label: signature?.keyLabel ?? '—',
+            prefix: (signature?.keyId ?? '').replace(/^ed25519:/, '').slice(0, 8),
+          })
+        case 'unknown-key':
+          return t('sigUnknown')
+        case 'revoked-key':
+          return t('sigRevoked')
+        case 'expired-key':
+          return t('sigExpired')
+        case 'missing-signature':
+          return t('sigMissing')
+        case 'trust-store-unreadable':
+          return t('sigUnreadable')
+        default:
+          return t('sigBad')
+      }
+    },
+    [t],
+  )
   const [packs, setPacks] = useState<TenantPackSummary[] | null>(null)
   const [preview, setPreview] = useState<TenantPackPreviewView | null>(null)
   const [token, setToken] = useState<string | null>(null)
@@ -59,6 +89,15 @@ export function TenantPacksPane() {
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState<Notice | null>(null)
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null)
+  const [keys, setKeys] = useState<TenantPackTrustedKeyView[]>([])
+  const [revoked, setRevoked] = useState<TenantPackRevokedKeyView[]>([])
+
+  const applyKeys = useCallback((result: TenantPackActionResult | null) => {
+    if (!result?.ok) return false
+    setKeys(result.keys ?? [])
+    setRevoked(result.revoked ?? [])
+    return true
+  }, [])
 
   const refresh = useCallback(async () => {
     const bridge = api()
@@ -72,7 +111,10 @@ export function TenantPacksPane() {
       setPacks([])
       setNotice({ kind: 'error', text: result?.error ?? t('prepareFailed') })
     }
-  }, [t])
+    if (bridge.listKeys) {
+      applyKeys(await bridge.listKeys().catch(() => null))
+    }
+  }, [applyKeys, t])
 
   useEffect(() => {
     void refresh()
@@ -171,6 +213,47 @@ export function TenantPacksPane() {
     [refresh, t],
   )
 
+  const runKeyAction = useCallback(
+    async (
+      action: ((bridge: TenantPacksApi) => Promise<TenantPackActionResult>) | null,
+      failureText: string,
+    ) => {
+      const bridge = api()
+      if (!bridge || busy) return
+      setBusy(true)
+      setNotice(null)
+      try {
+        if (!action) return
+        const result = await action(bridge)
+        if (result.canceled) return
+        if (!result.ok) {
+          setNotice({ kind: 'error', text: result.error ?? failureText })
+          return
+        }
+        applyKeys(result)
+        await refresh()
+      } catch {
+        setNotice({ kind: 'error', text: failureText })
+      } finally {
+        setBusy(false)
+      }
+    },
+    [applyKeys, busy, refresh],
+  )
+
+  const registerKey = useCallback(
+    () => runKeyAction((bridge) => bridge.registerKey!(), t('keyRegisterFailed')),
+    [runKeyAction, t],
+  )
+  const removeKey = useCallback(
+    (keyId: string) => runKeyAction((bridge) => bridge.removeKey!(keyId), t('keyRemoveFailed')),
+    [runKeyAction, t],
+  )
+  const revokeKey = useCallback(
+    (keyId: string) => runKeyAction((bridge) => bridge.revokeKey!(keyId), t('keyRevokeFailed')),
+    [runKeyAction, t],
+  )
+
   const hasProblems = (preview?.problems.length ?? 0) > 0
   const canInstall = !!preview && !!token && !hasProblems && attested && !busy
 
@@ -260,6 +343,10 @@ export function TenantPacksPane() {
               <dd>{preview.author || '—'}</dd>
               <dt>{t('originLabel')}</dt>
               <dd>{originLabel(preview.origin)}</dd>
+              <dt>{t('signatureLabel')}</dt>
+              <dd data-testid="tenant-packs-preview-signature">
+                {signatureText(preview.signature)}
+              </dd>
             </dl>
             {preview.replacesExisting && <p className="tenant-packs-note">{t('replaceNote')}</p>}
             <table className="tenant-packs-table" data-testid="tenant-packs-entry-table">
@@ -376,6 +463,9 @@ export function TenantPacksPane() {
                     {t('originLabel')} {originLabel(pack.origin)}
                   </span>
                   <span>{t('formsCount', { count: pack.formCount })}</span>
+                  <span data-testid={`tenant-packs-signature-${pack.id}`}>
+                    {t('signatureLabel')} {signatureText(pack.signature)}
+                  </span>
                 </div>
                 {pack.problems.length > 0 && (
                   <ul className="tenant-packs-problems">
@@ -414,6 +504,66 @@ export function TenantPacksPane() {
                     {t('remove')}
                   </button>
                 )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="tenant-packs-keys" data-testid="tenant-packs-keys">
+        <h4>{t('keysTitle')}</h4>
+        <p className="tenant-packs-hint">{t('keysIntro')}</p>
+        <button
+          type="button"
+          className="tenant-packs-btn"
+          disabled={busy || !api()?.registerKey}
+          onClick={() => void registerKey()}
+        >
+          {t('registerKey')}
+        </button>
+        {keys.length === 0 ? (
+          <p className="tenant-packs-muted">{t('keysEmpty')}</p>
+        ) : (
+          <ul className="tenant-packs-key-list">
+            {keys.map((key) => (
+              <li key={key.keyId} data-key-id={key.keyId}>
+                <div className="tenant-packs-row-head">
+                  <strong>{key.label}</strong>
+                  <code title={key.keyId}>
+                    {t('keyIdLabel')} {key.keyId.slice(0, 20)}
+                  </code>
+                </div>
+                <div className="tenant-packs-key-actions">
+                  <button
+                    type="button"
+                    className="tenant-packs-btn is-danger"
+                    disabled={busy}
+                    onClick={() => void revokeKey(key.keyId)}
+                  >
+                    {t('keyRevoke')}
+                  </button>
+                  <button
+                    type="button"
+                    className="tenant-packs-btn"
+                    disabled={busy}
+                    onClick={() => void removeKey(key.keyId)}
+                  >
+                    {t('keyRemove')}
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+        <h4>{t('revokedTitle')}</h4>
+        {revoked.length === 0 ? (
+          <p className="tenant-packs-muted">{t('revokedEmpty')}</p>
+        ) : (
+          <ul className="tenant-packs-key-list">
+            {revoked.map((key) => (
+              <li key={key.keyId} data-key-id={key.keyId}>
+                <code title={key.keyId}>{key.keyId}</code>
+                {key.reason ? <span>{key.reason}</span> : null}
               </li>
             ))}
           </ul>

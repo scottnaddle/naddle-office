@@ -48,6 +48,20 @@ export type TenantPacksStringKey =
   | 'verifiedLabel'
   | 'tamperedLabel'
   | 'noneLabel'
+  | 'signatureLabel'
+  | 'sigUnsigned'
+  | 'sigValid'
+  | 'sigBad'
+  | 'sigUnknown'
+  | 'sigRevoked'
+  | 'sigExpired'
+  | 'sigMissing'
+  | 'sigUnreadable'
+  | 'keyDialogTitle'
+  | 'keyFilterName'
+  | 'keyConfirmTitle'
+  | 'keyConfirmMessage'
+  | 'keyRegisterButton'
 
 type Row = Record<TenantPacksStringKey, string>
 
@@ -94,6 +108,20 @@ const EN: Row = {
   verifiedLabel: 'forms verified',
   tamperedLabel: 'forms changed or missing',
   noneLabel: 'none',
+  signatureLabel: 'Signature',
+  sigUnsigned: 'unsigned (allowed by the default policy)',
+  sigValid: 'verified · {label} ({prefix})',
+  sigBad: 'the signature does not match',
+  sigUnknown: 'signed with an unregistered key',
+  sigRevoked: 'signed with a revoked key',
+  sigExpired: 'signed with an expired key',
+  sigMissing: 'the signature is missing from an installed signed pack',
+  sigUnreadable: 'the revoked-key list cannot be read',
+  keyDialogTitle: 'Choose a public key (PEM)',
+  keyFilterName: 'Public key',
+  keyConfirmTitle: 'Register this signing key?',
+  keyConfirmMessage: 'Only a public key can be registered. Check the key id with the pack author.',
+  keyRegisterButton: 'Register',
 }
 
 const KO: Row = {
@@ -139,6 +167,20 @@ const KO: Row = {
   verifiedLabel: '양식 검증됨',
   tamperedLabel: '양식이 바뀌었거나 없음',
   noneLabel: '없음',
+  signatureLabel: '서명',
+  sigUnsigned: '서명 없음(기본 정책에서 허용)',
+  sigValid: '서명 확인됨 · {label} ({prefix})',
+  sigBad: '서명이 맞지 않습니다',
+  sigUnknown: '등록되지 않은 키로 서명됨',
+  sigRevoked: '폐기된 키로 서명됨',
+  sigExpired: '만료된 키로 서명됨',
+  sigMissing: '서명 팩에서 서명 파일이 없음',
+  sigUnreadable: '폐기 키 목록을 읽을 수 없음',
+  keyDialogTitle: '공개 키(PEM) 선택',
+  keyFilterName: '공개 키',
+  keyConfirmTitle: '이 서명 키를 등록할까요?',
+  keyConfirmMessage: '공개 키만 등록할 수 있습니다. 팩 작성자와 키 id를 확인하세요.',
+  keyRegisterButton: '등록',
 }
 
 const TABLES: Partial<Record<Lang, Row>> = { en: EN, ko: KO }

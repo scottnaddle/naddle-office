@@ -209,3 +209,48 @@
   font-size: 12px;
   margin-bottom: 6px;
 }
+
+.tenant-packs-keys {
+  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tenant-packs-keys h4 {
+  margin: 0;
+  font-size: 13px;
+}
+
+.tenant-packs-key-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tenant-packs-key-list > li {
+  border-top: 1px solid color-mix(in srgb, currentColor 10%, transparent);
+  padding-top: 6px;
+  font-size: 12px;
+}
+
+.tenant-packs-key-list > li:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.tenant-packs-key-list code {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.tenant-packs-key-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}

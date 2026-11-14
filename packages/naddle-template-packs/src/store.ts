@@ -7,10 +7,18 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { copyFile, mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
-import { PACK_ID_PATTERN, PACK_INDEX_FILE } from './constants'
+import { PACK_ID_PATTERN, PACK_INDEX_FILE, PACK_KEY_ID_PATTERN } from './constants'
 import { TenantPackError } from './errors'
 import { PACK_FOLDER_LIMITS } from './constants'
 import { walkPackFiles } from './files'
+import {
+  verifyPackSignature,
+  type PackSignatureInfo,
+  type PackSignatureStatus,
+  type PackSignatureTrust,
+  type PackTrustSource,
+} from './signature'
+import { loadSignatureTrust } from './trust'
 import type { TenantPackOrigin, TenantPackPreview } from './validator'
 
 export interface TenantPackIndexEntry {
@@ -24,6 +32,14 @@ export interface TenantPackIndexEntry {
   sha256?: string
 }
 
+export interface TenantPackSignatureRecord {
+  alg: 'ed25519'
+  keyId: string
+  signedAt: string
+  payloadSha256: string
+  trustSource: PackTrustSource
+}
+
 export interface TenantPackIndexRecord {
   id: string
   name: string
@@ -34,6 +50,8 @@ export interface TenantPackIndexRecord {
   origin: TenantPackOrigin
   installedAt: string
   entries: TenantPackIndexEntry[]
+  /** absent for an unsigned pack; `corrupt` fails closed instead of downgrading */
+  signature?: TenantPackSignatureRecord | 'corrupt'
 }
 
 export interface TenantPackIndexFile {
@@ -45,6 +63,8 @@ export interface TenantPackListItem extends TenantPackIndexRecord {
   formCount: number
   verified: boolean
   problems: string[]
+  signatureStatus: PackSignatureStatus
+  signatureInfo: PackSignatureInfo
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -68,6 +88,65 @@ function packPathOf(storeDir: string, packId: string): string {
   return path
 }
 
+function signatureRecordOf(value: unknown): TenantPackSignatureRecord | 'corrupt' | undefined {
+  if (value === undefined) return undefined
+  if (!isRecord(value)) return 'corrupt'
+  if (
+    value.alg !== 'ed25519' ||
+    typeof value.keyId !== 'string' ||
+    !PACK_KEY_ID_PATTERN.test(value.keyId) ||
+    typeof value.signedAt !== 'string' ||
+    typeof value.payloadSha256 !== 'string' ||
+    !/^[0-9a-f]{64}$/.test(value.payloadSha256) ||
+    (value.trustSource !== 'builtin' && value.trustSource !== 'tenant')
+  ) {
+    return 'corrupt'
+  }
+  return {
+    alg: 'ed25519',
+    keyId: value.keyId,
+    signedAt: value.signedAt,
+    payloadSha256: value.payloadSha256,
+    trustSource: value.trustSource,
+  }
+}
+
+function signatureRecordOfInfo(info: PackSignatureInfo): TenantPackSignatureRecord | undefined {
+  if (
+    info.status !== 'valid' ||
+    info.keyId === undefined ||
+    info.signedAt === undefined ||
+    info.payloadSha256 === undefined ||
+    info.trustSource === undefined
+  ) {
+    return undefined
+  }
+  return {
+    alg: 'ed25519',
+    keyId: info.keyId,
+    signedAt: info.signedAt,
+    payloadSha256: info.payloadSha256,
+    trustSource: info.trustSource,
+  }
+}
+
+function signatureErrorCode(
+  status: PackSignatureStatus,
+): 'bad-signature' | 'unknown-key' | 'revoked-key' | 'expired-key' | 'trust-store-unreadable' {
+  switch (status) {
+    case 'unknown-key':
+      return 'unknown-key'
+    case 'revoked-key':
+      return 'revoked-key'
+    case 'expired-key':
+      return 'expired-key'
+    case 'trust-store-unreadable':
+      return 'trust-store-unreadable'
+    default:
+      return 'bad-signature'
+  }
+}
+
 function recordOf(value: unknown): TenantPackIndexRecord | undefined {
   if (!isRecord(value)) return undefined
   const id = value.id
@@ -76,6 +155,7 @@ function recordOf(value: unknown): TenantPackIndexRecord | undefined {
   if (typeof value.license !== 'string' || typeof value.author !== 'string') return undefined
   if (typeof value.installedAt !== 'string') return undefined
   if (!isRecord(value.origin) || typeof value.origin.kind !== 'string') return undefined
+  const signature = signatureRecordOf(value.signature)
   const entries = Array.isArray(value.entries) ? value.entries : []
   const cleanEntries: TenantPackIndexEntry[] = []
   for (const entry of entries) {
@@ -104,6 +184,7 @@ function recordOf(value: unknown): TenantPackIndexRecord | undefined {
     origin: value.origin as TenantPackOrigin,
     installedAt: value.installedAt,
     entries: cleanEntries,
+    ...(signature !== undefined ? { signature } : {}),
   }
 }
 
@@ -144,6 +225,8 @@ export interface InstallTenantPackOptions {
   attested: boolean
   now?: (() => Date) | undefined
   random?: (() => string) | undefined
+  /** trust keys for the staging re-check; omitted reads the tenant's store */
+  signatureTrust?: PackSignatureTrust | undefined
 }
 
 /**
@@ -184,6 +267,24 @@ export async function installTenantPack(
       await copyFile(file.path, target)
     }
 
+    // Re-verify on the exact bytes that will be installed, so a change between
+    // preview and confirmation (or a trust change) fails closed.
+    const trust = options.signatureTrust ?? (await loadSignatureTrust(storeDir))
+    const signature = await verifyPackSignature(staging, trust)
+    if (signature.status !== 'unsigned' && signature.status !== 'valid') {
+      throw new TenantPackError(
+        signatureErrorCode(signature.status),
+        `The pack signature is not valid (${signature.status})`,
+      )
+    }
+    if (preview.signature.status === 'valid' && signature.status !== 'valid') {
+      throw new TenantPackError(
+        'bad-signature',
+        'The pack signature disappeared before installation',
+      )
+    }
+    const signatureRecord = signatureRecordOfInfo(signature)
+
     let movedOld = false
     if ((await stat(packPath).catch(() => undefined)) !== undefined) {
       await rename(packPath, old)
@@ -215,6 +316,7 @@ export async function installTenantPack(
         ...(entry.formAsset ? { formAsset: entry.formAsset } : {}),
         ...(entry.sha256 ? { sha256: entry.sha256 } : {}),
       })),
+      ...(signatureRecord ? { signature: signatureRecord } : {}),
     }
     const index = await readTenantPackIndex(storeDir)
     const packs = index.packs.filter((pack) => pack.id !== packId)
@@ -228,11 +330,50 @@ export async function installTenantPack(
   }
 }
 
+async function signatureForRecord(
+  storeDir: string,
+  record: TenantPackIndexRecord,
+  trust: PackSignatureTrust,
+): Promise<PackSignatureInfo> {
+  if (record.signature === 'corrupt') {
+    return {
+      status: 'bad-signature',
+      problems: ['The stored signature record is damaged'],
+    }
+  }
+  if (!record.signature) return { status: 'unsigned', problems: [] }
+  const info = await verifyPackSignature(packPathOf(storeDir, record.id), trust)
+  if (info.status === 'unsigned') {
+    return {
+      status: 'missing-signature',
+      keyId: record.signature.keyId,
+      signedAt: record.signature.signedAt,
+      trustSource: record.signature.trustSource,
+      problems: ['The signature file is missing from an installed signed pack'],
+    }
+  }
+  if (info.status === 'valid' && info.keyId !== record.signature.keyId) {
+    return {
+      status: 'bad-signature',
+      keyId: info.keyId,
+      signedAt: info.signedAt,
+      problems: ['The installed signature uses a different key than the index recorded'],
+    }
+  }
+  return info
+}
+
 /** Check the forms of an installed pack against the hashes the index recorded. */
 export async function verifyTenantPack(
   storeDir: string,
   record: TenantPackIndexRecord,
-): Promise<{ verified: boolean; problems: string[]; formCount: number }> {
+  trust?: PackSignatureTrust | undefined,
+): Promise<{
+  verified: boolean
+  problems: string[]
+  formCount: number
+  signature: PackSignatureInfo
+}> {
   const problems: string[] = []
   let formCount = 0
   const packPath = packPathOf(storeDir, record.id)
@@ -257,20 +398,31 @@ export async function verifyTenantPack(
       problems.push(`${entry.id}: the form is missing`)
     }
   }
-  return { verified: problems.length === 0, problems, formCount }
+  const signature = await signatureForRecord(
+    storeDir,
+    record,
+    trust ?? (await loadSignatureTrust(storeDir)),
+  )
+  if (signature.status !== 'unsigned' && signature.status !== 'valid') {
+    problems.push(`${record.id}: the pack signature is not valid (${signature.status})`)
+  }
+  return { verified: problems.length === 0, problems, formCount, signature }
 }
 
-/** Every pack of the current tenant, with its forms re-checked. */
+/** Every pack of the current tenant, with its forms and signature re-checked. */
 export async function listTenantPacks(storeDir: string): Promise<TenantPackListItem[]> {
   const index = await readTenantPackIndex(storeDir)
+  const trust = await loadSignatureTrust(storeDir)
   const out: TenantPackListItem[] = []
   for (const record of index.packs) {
-    const check = await verifyTenantPack(storeDir, record)
+    const check = await verifyTenantPack(storeDir, record, trust)
     out.push({
       ...record,
       formCount: check.formCount,
       verified: check.verified,
       problems: check.problems,
+      signatureStatus: check.signature.status,
+      signatureInfo: check.signature,
     })
   }
   return out.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
@@ -292,6 +444,10 @@ export async function installedFormPath(
   if (!isInside(formPath, packPath)) return undefined
   const bytes = new Uint8Array(await readFile(formPath).catch(() => new Uint8Array()))
   if (bytes.byteLength === 0 || sha256Of(bytes) !== entry.sha256) return undefined
+  if (record.signature !== undefined) {
+    const info = await signatureForRecord(storeDir, record, await loadSignatureTrust(storeDir))
+    if (info.status !== 'valid') return undefined
+  }
   return formPath
 }
 

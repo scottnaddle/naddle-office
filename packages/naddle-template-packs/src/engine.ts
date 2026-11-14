@@ -27,6 +27,8 @@ import {
   type InstallTenantPackOptions,
   type TenantPackIndexRecord,
 } from './store'
+import type { PackSignatureTrust } from './signature'
+import { loadSignatureTrust } from './trust'
 import {
   previewFailure,
   validateTenantPack,
@@ -48,6 +50,8 @@ export interface TenantPackPrepareOptions {
   storeDir: string
   tempDir?: string | undefined
   homeDir?: string | undefined
+  /** overrides the tenant's loaded trust store (tests and callers with a snapshot) */
+  signatureTrust?: PackSignatureTrust | undefined
 }
 
 function tempRoot(options: { tempDir?: string | undefined }): string {
@@ -122,7 +126,7 @@ function mapCandidates(
 async function previewOf(
   imported: SkillImport,
   origin: TenantPackOrigin,
-  storeDir: string,
+  options: TenantPackPrepareOptions,
 ): Promise<{ preview: TenantPackPreview; root: string }> {
   const githubPath = imported.origin.kind === 'github' ? imported.origin.path : ''
   const resolved = await resolvePackRoot(imported.root, githubPath)
@@ -132,7 +136,8 @@ async function previewOf(
     preview = await validateTenantPack(resolved.root, {
       origin,
       candidates,
-      existingPackIds: await tenantPackIds(storeDir),
+      existingPackIds: await tenantPackIds(options.storeDir),
+      signatureTrust: options.signatureTrust ?? (await loadSignatureTrust(options.storeDir)),
     })
   } catch (error) {
     preview = previewFailure(origin, error)
@@ -157,7 +162,7 @@ export async function prepareTenantPackZip(
   }
   try {
     const origin: TenantPackOrigin = { kind: 'zip', file }
-    const { preview, root } = await previewOf(imported, origin, options.storeDir)
+    const { preview, root } = await previewOf(imported, origin, options)
     return {
       preview,
       root,
@@ -208,7 +213,7 @@ export async function prepareTenantPackFolder(
       throw mapImportError(error)
     }
     const origin: TenantPackOrigin = { kind: 'folder', folder }
-    const { preview, root } = await previewOf(imported, origin, options.storeDir)
+    const { preview, root } = await previewOf(imported, origin, options)
     return {
       preview,
       root,
@@ -266,7 +271,7 @@ export async function prepareTenantPackGitHub(
             path: source.path,
           }
         : { kind: 'github', repo: '', ref: '', commit: '', path: '' }
-    const { preview, root } = await previewOf(imported, origin, options.storeDir)
+    const { preview, root } = await previewOf(imported, origin, options)
     return {
       preview,
       root,

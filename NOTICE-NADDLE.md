@@ -46,6 +46,28 @@ The upstream `NOTICE` is kept verbatim. Its "Built-in skills" section says that 
   > OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   > SOFTWARE.
 
+- Business slide briefs (`slide-brief`): four briefs for executive briefings, board reports, client proposals and project retrospectives (경영진 보고, 이사회 자료, 고객 제안서, 프로젝트 회고). Their guidance is adapted from CyberPPT (https://github.com/crazyykhllc-bit/CyberPPT, MIT License, Copyright (c) 2026 CyberPPT contributors), read at commit `980e5576565f0673c67ee41b01d20ed66cb8417c`. We consulted SKILL.md and the README for principles, then wrote a NaddleOffice adaptation in Korean and English in our own words; we did not copy the upstream wording. The four ledger entries and `packages/ui/src/authoring/guides/business/ko.md` and `packages/ui/src/authoring/guides/business/en.md` carry that adaptation. No CyberPPT files, images, palettes or scripts are bundled with this repository or the installer.
+
+  The full MIT permission and disclaimer notice for that material follows:
+
+  > Permission is hereby granted, free of charge, to any person obtaining a copy
+  > of this software and associated documentation files (the "Software"), to deal
+  > in the Software without restriction, including without limitation the rights
+  > to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  > copies of the Software, and to permit persons to whom the Software is
+  > furnished to do so, subject to the following conditions:
+  >
+  > The above copyright notice and this permission notice shall be included in all
+  > copies or substantial portions of the Software.
+  >
+  > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  > IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  > FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  > AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  > LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  > OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  > SOFTWARE.
+
 The manifest does not include official Microsoft, Google or Hancom templates, fonts or forms, or forms from template marketplaces. None of the S3 form files was downloaded, scraped or copied from such a source, from a government or municipal original, or from any company's internal forms.
 
 ## Tenant template packs

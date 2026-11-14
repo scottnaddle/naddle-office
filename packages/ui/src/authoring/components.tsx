@@ -378,6 +378,8 @@ export interface TemplateGalleryProps {
   variant?: 'start' | 'panel'
   emptyText?: string
   header?: ReactNode
+  /** Overrides the default gallery title when the caller groups its templates. */
+  title?: ReactNode
 }
 
 /** The shared template grid. Grouping/filtering is left to the app's data. */
@@ -389,6 +391,7 @@ export function TemplateGallery({
   variant = 'panel',
   emptyText,
   header,
+  title,
 }: TemplateGalleryProps) {
   return (
     <section
@@ -396,7 +399,7 @@ export function TemplateGallery({
       aria-label={authoringText(lang, 'galleryTitle')}
     >
       <div className="authoring-card-head">
-        <strong>{authoringText(lang, 'galleryTitle')}</strong>
+        <strong>{title ?? authoringText(lang, 'galleryTitle')}</strong>
       </div>
       {header}
       {templates.length === 0 ? (

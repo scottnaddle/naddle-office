@@ -1713,6 +1713,24 @@
       "revert": "AuthoringFlow import, authoringOpen 상태, 열기 단추/흐름 블록을 지우고 authoringText import를 제거한다",
       "round": "S5",
       "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/guides/business/ko.md",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5c: 기업 보고 슬라이드 작성 지침 한국어 개작(MIT 고지, 원문 문장 미복제)",
+      "revert": "파일을 삭제한다",
+      "round": "S5c",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/guides/business/en.md",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "S5c: 기업 보고 슬라이드 작성 지침 영어 개작(MIT 고지, 원문 문장 미복제)",
+      "revert": "파일을 삭제한다",
+      "round": "S5c",
+      "owner": "api"
     }
   ],
   "baseline": {

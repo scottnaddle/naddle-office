@@ -62,12 +62,12 @@ describe('builtin template manifest', () => {
     expect(BUILTIN_TEMPLATE_MANIFEST.scope).toBe('builtin')
   })
 
-  it('has fifteen document briefs, twelve slide designs, four slide briefs and no form skills', () => {
+  it('has fifteen document briefs, twelve slide designs, eight slide briefs and no form skills', () => {
     expect(builtinTemplateEntries('document-brief')).toHaveLength(15)
     expect(builtinTemplateEntries('slide-design')).toHaveLength(12)
     expect(builtinTemplateEntries('form-skill')).toHaveLength(0)
-    expect(builtinTemplateEntries('slide-brief')).toHaveLength(4)
-    expect(BUILTIN_TEMPLATE_MANIFEST.entries).toHaveLength(31)
+    expect(builtinTemplateEntries('slide-brief')).toHaveLength(8)
+    expect(BUILTIN_TEMPLATE_MANIFEST.entries).toHaveLength(35)
   })
 
   it('keeps the S1 briefs unchanged', () => {

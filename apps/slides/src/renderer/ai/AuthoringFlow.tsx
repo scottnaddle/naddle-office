@@ -26,8 +26,8 @@ export interface AuthoringFlowProps {
 type Phase = 'gallery' | 'clarify' | 'brief' | 'generating' | 'done'
 
 /**
- * The slides app's academic brief flow. Every stage before generation is local
- * and model-free; the confirmed brief and its guidance go to the existing
+ * The slides app's slide-brief flow. Every stage before generation is local and
+ * model-free; the confirmed brief and its matching guidance go to the existing
  * slides writer through onGenerate. The visual design template stays separate.
  */
 export function AuthoringFlow({ lang, busy, onGenerate, onClose }: AuthoringFlowProps) {
@@ -38,6 +38,20 @@ export function AuthoringFlow({ lang, busy, onGenerate, onClose }: AuthoringFlow
   const [seenBusy, setSeenBusy] = useState(false)
 
   const templates = useMemo(() => slideBriefsFor(lang), [lang])
+  const groups = useMemo(() => {
+    const order: string[] = []
+    const byCategory = new Map<string, SlideBriefTemplate[]>()
+    for (const entry of templates) {
+      const key = entry.category ?? ''
+      const list = byCategory.get(key)
+      if (list) list.push(entry)
+      else {
+        byCategory.set(key, [entry])
+        order.push(key)
+      }
+    }
+    return order.map((category) => ({ category, templates: byCategory.get(category) ?? [] }))
+  }, [templates])
   const template = useMemo<SlideBriefTemplate | undefined>(
     () => templates.find((entry) => entry.id === templateId),
     [templates, templateId],
@@ -99,13 +113,19 @@ export function AuthoringFlow({ lang, busy, onGenerate, onClose }: AuthoringFlow
         </button>
       </div>
       {phase === 'gallery' && (
-        <TemplateGallery
-          lang={lang}
-          templates={templates}
-          onSelect={startQuestions}
-          variant="start"
-          header={<p className="authoring-muted">{authoringText(lang, 'slideBriefHint')}</p>}
-        />
+        <div className="authoring-gallery-groups">
+          {groups.map((group) => (
+            <TemplateGallery
+              key={group.category || 'all'}
+              lang={lang}
+              {...(group.category ? { title: group.category } : {})}
+              templates={group.templates}
+              onSelect={startQuestions}
+              variant="start"
+              header={<p className="authoring-muted">{authoringText(lang, 'slideBriefHint')}</p>}
+            />
+          ))}
+        </div>
       )}
       {phase === 'clarify' && template && (
         <ClarifyCard

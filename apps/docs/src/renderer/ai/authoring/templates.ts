@@ -1,9 +1,19 @@
 import { builtinTemplateEntries } from '@genoffice/ui'
-import type { AuthoringQuestion, AuthoringTemplate, BriefModel, BriefSection } from '@genoffice/ui'
+import type {
+  AuthoringQuestion,
+  AuthoringTemplate,
+  BriefModel,
+  BriefSection,
+  TemplateFormAsset,
+} from '@genoffice/ui'
 
 export interface DocumentTemplate extends AuthoringTemplate {
   questions: AuthoringQuestion[]
   sections: BriefSection[]
+  /** the HWPX file shipped with an S3 office form; absent on the five S1 briefs */
+  formAsset?: TemplateFormAsset
+  /** the ledger sha256 of that file */
+  sha256?: string
 }
 
 /**
@@ -16,13 +26,15 @@ export interface DocumentTemplate extends AuthoringTemplate {
  */
 export const DOCUMENT_TEMPLATES: readonly DocumentTemplate[] = builtinTemplateEntries(
   'document-brief',
-).map(({ questions, sections, tags, ...entry }) => ({
+).map(({ questions, sections, tags, formAsset, sha256, ...entry }) => ({
   id: entry.id,
   name: entry.name,
   description: entry.description,
   category: entry.category,
   ...(tags ? { tags: [...tags] } : {}),
   previewText: entry.previewText,
+  ...(formAsset ? { formAsset: { path: formAsset.path } } : {}),
+  ...(sha256 ? { sha256 } : {}),
   questions: questions.map((question) =>
     question.options
       ? { ...question, options: question.options.map((option) => ({ ...option })) }

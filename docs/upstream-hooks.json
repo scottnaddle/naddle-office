@@ -14,10 +14,21 @@
     "package-lock.json은 generated로 등록하되 counted에서 제외한다.",
     "오버레이(packages/tenant-config/, packages/naddle-*/)와 거버넌스(.github/, docs/)는 counted에서 제외하되 .github/workflows/ci.yml 수정은 exempt 항목으로 기록한다."
   ],
-  "exemptPrefixes": [".github/", "docs/"],
-  "overlayPrefixes": ["packages/tenant-config/", "packages/naddle-"],
-  "exemptPaths": ["NOTICE-NADDLE.md", "tenant.example.json"],
-  "generated": ["package-lock.json"],
+  "exemptPrefixes": [
+    ".github/",
+    "docs/"
+  ],
+  "overlayPrefixes": [
+    "packages/tenant-config/",
+    "packages/naddle-"
+  ],
+  "exemptPaths": [
+    "NOTICE-NADDLE.md",
+    "tenant.example.json"
+  ],
+  "generated": [
+    "package-lock.json"
+  ],
   "entries": [
     {
       "path": ".github/README.md",
@@ -1712,6 +1723,78 @@
       "purpose": "S5: 슬라이드 AiPanel에 학술 브리프 AuthoringFlow 탑재, opt-in 버튼, 브리프 선택 시에만 작성 지침을 사용자 지시에 주입",
       "revert": "AuthoringFlow import, authoringOpen 상태, 열기 단추/흐름 블록을 지우고 authoringText import를 제거한다",
       "round": "S5",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/build/assert-builtin-hwpx-forms.cjs",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "빌트인 HWPX 양식 10개가 패키지 안에 있는지 확인하는 빌드 도우미",
+      "revert": "이 파일을 삭제하고 electron-builder.cjs의 afterPack·소스 검사를 되돌린다",
+      "round": "hwpx-packaging",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/main/builtin-hwpx-forms.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "빌트인 HWPX 양식의 개발·설치본 경로 해석과 원장 sha256 검증",
+      "revert": "파일을 삭제하고 builtin-forms-ipc·templates·preload 배선을 되돌린다",
+      "round": "hwpx-packaging",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/main/builtin-forms-ipc.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "builtin-forms:open 채널로 검증된 HWPX 사본을 새 탭에 여는 배선",
+      "revert": "파일을 삭제하고 index.ts의 registerBuiltinFormsIpc 호출을 지운다",
+      "round": "hwpx-packaging",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/src/shared/builtin-forms-api.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "빌트인 양식 열기 채널 이름과 결과 타입",
+      "revert": "파일을 삭제하고 preload·main 배선을 되돌린다",
+      "round": "hwpx-packaging",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/shared/builtin-forms-api.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "문서 화면이 쓰는 빌트인 양식 열기 채널 이름과 결과 타입",
+      "revert": "파일을 삭제하고 preload·AuthoringFlow 배선을 되돌린다",
+      "round": "hwpx-packaging",
+      "owner": "api"
+    },
+    {
+      "path": "apps/docs/src/renderer/builtin-forms.d.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "window.aiOfficeBuiltinForms 전역 타입 선언",
+      "revert": "파일을 삭제한다",
+      "round": "hwpx-packaging",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/builtin-hwpx-forms-resource.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "양식 폴더 extraResources·afterPack·파일 검사 시험",
+      "revert": "파일을 삭제한다",
+      "round": "hwpx-packaging",
+      "owner": "api"
+    },
+    {
+      "path": "apps/shell/tests/builtin-hwpx-forms.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "개발·설치본 경로 해석과 sha256 검증 시험",
+      "revert": "파일을 삭제한다",
+      "round": "hwpx-packaging",
       "owner": "api"
     }
   ],

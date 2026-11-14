@@ -23,6 +23,12 @@ import {
   type TenantPackGalleryApi,
   type TenantPackOpenFormInput,
 } from '../shared/tenant-packs-api'
+import {
+  BUILTIN_FORMS_CHANNELS,
+  type BuiltinFormActionResult,
+  type BuiltinFormGalleryApi,
+  type BuiltinFormOpenInput,
+} from '../shared/builtin-forms-api'
 import type {
   AiChatRequest,
   AiSettings,
@@ -424,6 +430,14 @@ const tenantPackGalleryApi: TenantPackGalleryApi = {
     ) as Promise<TenantPackActionResult>,
 }
 contextBridge.exposeInMainWorld('aiOfficeTenantPacks', tenantPackGalleryApi)
+// Builtin office forms for the authoring gallery: open one of the ten shipped
+// .hwpx files as a new untitled tab. Only the ledger id crosses this bridge;
+// the shell resolves and verifies the file before opening it.
+const builtinFormGalleryApi: BuiltinFormGalleryApi = {
+  open: (input: BuiltinFormOpenInput) =>
+    ipcRenderer.invoke(BUILTIN_FORMS_CHANNELS.open, input) as Promise<BuiltinFormActionResult>,
+}
+contextBridge.exposeInMainWorld('aiOfficeBuiltinForms', builtinFormGalleryApi)
 // The shell's split panes: which pane this view is, and focus requests for it
 contextBridge.exposeInMainWorld('aiOfficeSplit', splitPaneBridge(ipcRenderer))
 

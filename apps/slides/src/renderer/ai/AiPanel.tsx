@@ -13,6 +13,7 @@ import {
   aiContextConfirmText,
   aiRunErrorText,
   aiSubscriptionText,
+  authoringText,
   clipboardPictureIsRendering,
   useAiSendGate,
   DriveAttachButton,
@@ -78,6 +79,7 @@ import { buildPageSystemPrompt } from './page-system-prompt'
 import { templateSelectionState } from './template-selection-state'
 import { TemplateStartGallery } from './TemplateGallery'
 import { TemplatePicker } from './TemplatePicker'
+import { AuthoringFlow } from './AuthoringFlow'
 import { EditQueueCard } from './EditQueueCard'
 import { deriveDeckProgressView, type DeckProgressSnapshot } from './deck-progress-view'
 import {
@@ -1030,6 +1032,7 @@ export function AiPanel({
 
   // Resolved when the user submits/cancels; the AI takes the answer and continues.
   const [activeClarify, setActiveClarify] = useState<ClarifyQuestion[] | null>(null)
+  const [authoringOpen, setAuthoringOpen] = useState(false)
   const clarifyResolverRef = useRef<((r: { answers: string; cancelled?: boolean }) => void) | null>(
     null,
   )
@@ -2882,6 +2885,26 @@ export function AiPanel({
         </div>
       ) : (
         <div className="ai-composer">
+          {!authoringOpen ? (
+            <div className="authoring-open-row">
+              <button
+                type="button"
+                className="authoring-open-btn"
+                onClick={() => setAuthoringOpen(true)}
+              >
+                {authoringText(lang, 'slideBriefOpen')}
+              </button>
+            </div>
+          ) : (
+            <AuthoringFlow
+              lang={lang}
+              busy={busy}
+              onGenerate={(instruction, displayText) =>
+                runWith(instruction, displayText ?? instruction)
+              }
+              onClose={() => setAuthoringOpen(false)}
+            />
+          )}
           {editQueue && editQueue.length > 0 && (
             <EditQueueCard
               items={editQueue}

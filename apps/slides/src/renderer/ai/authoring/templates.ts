@@ -1,7 +1,7 @@
 import {
-  academicSlideGuide,
   builtinTemplateEntries,
   resolveSlideBrief,
+  slideBriefGuide,
   slideBriefLanguage,
   type AuthoringQuestion,
   type BriefModel,
@@ -36,12 +36,12 @@ function templateFor(entry: (typeof ENTRIES)[number], lang: string): SlideBriefT
   }
 }
 
-/** The four academic slide briefs with their Korean default copy. */
+/** The eight slide briefs (academic four first, then business four) with Korean default copy. */
 export const SLIDE_BRIEFS: readonly SlideBriefTemplate[] = ENTRIES.map((entry) =>
   templateFor(entry, 'ko'),
 )
 
-/** The four academic slide briefs resolved into the active UI language. */
+/** The eight slide briefs resolved into the active UI language. */
 export function slideBriefsFor(lang: string | null | undefined): SlideBriefTemplate[] {
   return ENTRIES.map((entry) => templateFor(entry, lang ?? 'en'))
 }
@@ -83,7 +83,7 @@ export function buildSlideBrief(
   }
 }
 
-/** The instruction handed to the slides writer, including the academic guidance. */
+/** The instruction handed to the slides writer, including the matching family's guidance. */
 export function buildSlideBriefPrompt(
   template: SlideBriefTemplate,
   answers: Record<string, string>,
@@ -101,7 +101,7 @@ export function buildSlideBriefPrompt(
   const sections = brief.sections
     .map((section, index) => `${index + 1}. ${section.title}`)
     .join('\n')
-  const guidance = academicSlideGuide(language)
+  const guidance = slideBriefGuide(template.id, language)
   if (language === 'ko') {
     return [
       `다음 ${template.name} 슬라이드 덱을 만들어 주세요.`,

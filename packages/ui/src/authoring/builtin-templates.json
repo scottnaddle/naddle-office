@@ -2140,6 +2140,759 @@
           }
         }
       ]
+    },
+    {
+      "id": "executive-briefing",
+      "kind": "slide-brief",
+      "version": "1.0.0",
+      "name": "경영진 보고",
+      "nameI18n": {
+        "ko": "경영진 보고",
+        "en": "Executive briefing"
+      },
+      "description": "의사결정을 앞둔 경영진에게 상황·쟁점·권고를 압축해 전하는 보고 브리프",
+      "descriptionI18n": {
+        "ko": "의사결정을 앞둔 경영진에게 상황·쟁점·권고를 압축해 전하는 보고 브리프",
+        "en": "A compact situation, issue and recommendation brief for executives facing a decision."
+      },
+      "category": "기업 보고",
+      "categoryI18n": {
+        "ko": "기업 보고",
+        "en": "Business reports"
+      },
+      "tags": ["경영진", "보고", "executive", "briefing", "decision"],
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "crazyykhllc-bit/CyberPPT",
+        "commit": "980e5576565f0673c67ee41b01d20ed66cb8417c",
+        "path": "SKILL.md"
+      },
+      "author": "CyberPPT contributors (guidance); adapted by NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "questions": [
+        {
+          "id": "audience",
+          "label": "청중과 직급",
+          "labelI18n": {
+            "ko": "청중과 직급",
+            "en": "Audience and seniority"
+          },
+          "description": "누구에게, 어느 직급까지 보고하는지 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "누구에게, 어느 직급까지 보고하는지 적어 주세요.",
+            "en": "Who you report to and how senior the room is."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 대표이사와 임원진",
+          "placeholderI18n": {
+            "ko": "예: 대표이사와 임원진",
+            "en": "e.g. the CEO and the executive team"
+          }
+        },
+        {
+          "id": "decision",
+          "label": "요청할 결정",
+          "labelI18n": {
+            "ko": "요청할 결정",
+            "en": "Decision requested"
+          },
+          "description": "이 보고로 청중이 내려야 할 결정",
+          "descriptionI18n": {
+            "ko": "이 보고로 청중이 내려야 할 결정",
+            "en": "The decision the audience should make after this briefing."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 신규 사업 예산 집행 승인",
+          "placeholderI18n": {
+            "ko": "예: 신규 사업 예산 집행 승인",
+            "en": "e.g. approve the budget for the new business"
+          }
+        },
+        {
+          "id": "length",
+          "label": "보고 길이",
+          "labelI18n": {
+            "ko": "보고 길이",
+            "en": "Briefing length"
+          },
+          "description": "실제 시간을 고르거나 직접 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "실제 시간을 고르거나 직접 적어 주세요.",
+            "en": "Pick a length or write your own."
+          },
+          "options": [
+            {
+              "id": "5",
+              "label": "5분",
+              "labelI18n": {
+                "ko": "5분",
+                "en": "5 minutes"
+              }
+            },
+            {
+              "id": "10",
+              "label": "10분",
+              "labelI18n": {
+                "ko": "10분",
+                "en": "10 minutes"
+              }
+            },
+            {
+              "id": "15",
+              "label": "15분",
+              "labelI18n": {
+                "ko": "15분",
+                "en": "15 minutes"
+              }
+            },
+            {
+              "id": "20",
+              "label": "20분",
+              "labelI18n": {
+                "ko": "20분",
+                "en": "20 minutes"
+              }
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "figures",
+          "label": "다룰 기간과 핵심 수치",
+          "labelI18n": {
+            "ko": "다룰 기간과 핵심 수치",
+            "en": "Period and key figures"
+          },
+          "description": "숫자의 기준 기간과 핵심 지표를 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "숫자의 기준 기간과 핵심 지표를 적어 주세요.",
+            "en": "The period the numbers cover and the key figures."
+          },
+          "multiline": true,
+          "placeholder": "예: 3분기 매출, 전년 대비 8% 증가",
+          "placeholderI18n": {
+            "ko": "예: 3분기 매출, 전년 대비 8% 증가",
+            "en": "e.g. Q3 revenue, up 8% year over year"
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "title",
+          "title": "제목",
+          "titleI18n": {
+            "ko": "제목",
+            "en": "Title"
+          }
+        },
+        {
+          "id": "situation",
+          "title": "현재 상황",
+          "titleI18n": {
+            "ko": "현재 상황",
+            "en": "Situation"
+          }
+        },
+        {
+          "id": "complication",
+          "title": "변화와 위험",
+          "titleI18n": {
+            "ko": "변화와 위험",
+            "en": "Complication"
+          }
+        },
+        {
+          "id": "recommendation",
+          "title": "권고",
+          "titleI18n": {
+            "ko": "권고",
+            "en": "Recommendation"
+          }
+        },
+        {
+          "id": "evidence",
+          "title": "근거",
+          "titleI18n": {
+            "ko": "근거",
+            "en": "Evidence"
+          }
+        },
+        {
+          "id": "options",
+          "title": "대안",
+          "titleI18n": {
+            "ko": "대안",
+            "en": "Options"
+          }
+        },
+        {
+          "id": "decision-ask",
+          "title": "요청할 결정",
+          "titleI18n": {
+            "ko": "요청할 결정",
+            "en": "Decision requested"
+          }
+        },
+        {
+          "id": "next-steps",
+          "title": "다음 단계",
+          "titleI18n": {
+            "ko": "다음 단계",
+            "en": "Next steps"
+          }
+        },
+        {
+          "id": "appendix",
+          "title": "부록",
+          "titleI18n": {
+            "ko": "부록",
+            "en": "Appendix"
+          }
+        }
+      ]
+    },
+    {
+      "id": "board-report",
+      "kind": "slide-brief",
+      "version": "1.0.0",
+      "name": "이사회 자료",
+      "nameI18n": {
+        "ko": "이사회 자료",
+        "en": "Board report"
+      },
+      "description": "정기·임시 이사회에 보고할 실적·위험·요청 결정을 정리한 브리프",
+      "descriptionI18n": {
+        "ko": "정기·임시 이사회에 보고할 실적·위험·요청 결정을 정리한 브리프",
+        "en": "A brief that organises performance, risks and the decisions requested for a regular or special board meeting."
+      },
+      "category": "기업 보고",
+      "categoryI18n": {
+        "ko": "기업 보고",
+        "en": "Business reports"
+      },
+      "tags": ["이사회", "보고", "board", "report", "governance"],
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "crazyykhllc-bit/CyberPPT",
+        "commit": "980e5576565f0673c67ee41b01d20ed66cb8417c",
+        "path": "SKILL.md"
+      },
+      "author": "CyberPPT contributors (guidance); adapted by NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "questions": [
+        {
+          "id": "meeting-type",
+          "label": "회의 종류",
+          "labelI18n": {
+            "ko": "회의 종류",
+            "en": "Meeting type"
+          },
+          "options": [
+            {
+              "id": "regular",
+              "label": "정기 이사회",
+              "labelI18n": {
+                "ko": "정기 이사회",
+                "en": "Regular meeting"
+              }
+            },
+            {
+              "id": "special",
+              "label": "임시 이사회",
+              "labelI18n": {
+                "ko": "임시 이사회",
+                "en": "Special meeting"
+              }
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "period",
+          "label": "보고 기간",
+          "labelI18n": {
+            "ko": "보고 기간",
+            "en": "Reporting period"
+          },
+          "required": true,
+          "placeholder": "예: 2026 회계연도 상반기",
+          "placeholderI18n": {
+            "ko": "예: 2026 회계연도 상반기",
+            "en": "e.g. first half of fiscal 2026"
+          }
+        },
+        {
+          "id": "decisions",
+          "label": "이사회에 요청할 결정",
+          "labelI18n": {
+            "ko": "이사회에 요청할 결정",
+            "en": "Decisions requested from the board"
+          },
+          "description": "이사회가 승인하거나 판단해야 할 안건",
+          "descriptionI18n": {
+            "ko": "이사회가 승인하거나 판단해야 할 안건",
+            "en": "The items the board should approve or decide."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 배당안 승인, 신규 투자 검토",
+          "placeholderI18n": {
+            "ko": "예: 배당안 승인, 신규 투자 검토",
+            "en": "e.g. approve the dividend, review the new investment"
+          }
+        },
+        {
+          "id": "time-limit",
+          "label": "발표 시간 제한(선택)",
+          "labelI18n": {
+            "ko": "발표 시간 제한(선택)",
+            "en": "Time limit (optional)"
+          },
+          "description": "정해진 시간이 있으면 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "정해진 시간이 있으면 적어 주세요.",
+            "en": "Write the limit if there is one."
+          },
+          "placeholder": "예: 안건당 10분",
+          "placeholderI18n": {
+            "ko": "예: 안건당 10분",
+            "en": "e.g. 10 minutes per item"
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "title",
+          "title": "제목",
+          "titleI18n": {
+            "ko": "제목",
+            "en": "Title"
+          }
+        },
+        {
+          "id": "situation",
+          "title": "현재 상황",
+          "titleI18n": {
+            "ko": "현재 상황",
+            "en": "Situation"
+          }
+        },
+        {
+          "id": "performance",
+          "title": "실적",
+          "titleI18n": {
+            "ko": "실적",
+            "en": "Performance"
+          }
+        },
+        {
+          "id": "complication",
+          "title": "쟁점",
+          "titleI18n": {
+            "ko": "쟁점",
+            "en": "Complication"
+          }
+        },
+        {
+          "id": "risks",
+          "title": "위험",
+          "titleI18n": {
+            "ko": "위험",
+            "en": "Risks"
+          }
+        },
+        {
+          "id": "recommendation",
+          "title": "권고",
+          "titleI18n": {
+            "ko": "권고",
+            "en": "Recommendation"
+          }
+        },
+        {
+          "id": "governance",
+          "title": "지배구조와 준법",
+          "titleI18n": {
+            "ko": "지배구조와 준법",
+            "en": "Governance and compliance"
+          }
+        },
+        {
+          "id": "decision-ask",
+          "title": "요청할 결정",
+          "titleI18n": {
+            "ko": "요청할 결정",
+            "en": "Decision requested"
+          }
+        },
+        {
+          "id": "appendix",
+          "title": "부록",
+          "titleI18n": {
+            "ko": "부록",
+            "en": "Appendix"
+          }
+        }
+      ]
+    },
+    {
+      "id": "client-proposal",
+      "kind": "slide-brief",
+      "version": "1.0.0",
+      "name": "고객 제안서",
+      "nameI18n": {
+        "ko": "고객 제안서",
+        "en": "Client proposal"
+      },
+      "description": "고객의 문제를 짚고 제안·가치·일정을 설득력 있게 정리한 브리프",
+      "descriptionI18n": {
+        "ko": "고객의 문제를 짚고 제안·가치·일정을 설득력 있게 정리한 브리프",
+        "en": "A persuasive brief that frames the client's problem and sets out the offer, value and timeline."
+      },
+      "category": "기업 보고",
+      "categoryI18n": {
+        "ko": "기업 보고",
+        "en": "Business reports"
+      },
+      "tags": ["고객", "제안서", "client", "proposal", "sales"],
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "crazyykhllc-bit/CyberPPT",
+        "commit": "980e5576565f0673c67ee41b01d20ed66cb8417c",
+        "path": "SKILL.md"
+      },
+      "author": "CyberPPT contributors (guidance); adapted by NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "questions": [
+        {
+          "id": "client",
+          "label": "고객 또는 산업",
+          "labelI18n": {
+            "ko": "고객 또는 산업",
+            "en": "Client or industry"
+          },
+          "required": true,
+          "placeholder": "예: 물류 기업, 이커머스 산업",
+          "placeholderI18n": {
+            "ko": "예: 물류 기업, 이커머스 산업",
+            "en": "e.g. a logistics company, the e-commerce industry"
+          }
+        },
+        {
+          "id": "problem",
+          "label": "해결할 문제",
+          "labelI18n": {
+            "ko": "해결할 문제",
+            "en": "Problem to solve"
+          },
+          "description": "고객이 겪는 문제와 그 영향",
+          "descriptionI18n": {
+            "ko": "고객이 겪는 문제와 그 영향",
+            "en": "The client's problem and its impact."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 주문 처리 지연으로 이탈이 늘고 있다.",
+          "placeholderI18n": {
+            "ko": "예: 주문 처리 지연으로 이탈이 늘고 있다.",
+            "en": "e.g. order delays are increasing churn."
+          }
+        },
+        {
+          "id": "offer",
+          "label": "제안 내용",
+          "labelI18n": {
+            "ko": "제안 내용",
+            "en": "The offer"
+          },
+          "description": "무엇을 어떻게 제공하는지",
+          "descriptionI18n": {
+            "ko": "무엇을 어떻게 제공하는지",
+            "en": "What you offer and how you deliver it."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 주문 관리 자동화 도입과 운영 지원",
+          "placeholderI18n": {
+            "ko": "예: 주문 관리 자동화 도입과 운영 지원",
+            "en": "e.g. order-management automation plus operations support"
+          }
+        },
+        {
+          "id": "timeline",
+          "label": "일정(선택)",
+          "labelI18n": {
+            "ko": "일정(선택)",
+            "en": "Timeline (optional)"
+          },
+          "placeholder": "예: 8주 안에 시범 운영",
+          "placeholderI18n": {
+            "ko": "예: 8주 안에 시범 운영",
+            "en": "e.g. a pilot within eight weeks"
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "title",
+          "title": "제목",
+          "titleI18n": {
+            "ko": "제목",
+            "en": "Title"
+          }
+        },
+        {
+          "id": "situation",
+          "title": "현재 상황",
+          "titleI18n": {
+            "ko": "현재 상황",
+            "en": "Situation"
+          }
+        },
+        {
+          "id": "complication",
+          "title": "고객의 과제",
+          "titleI18n": {
+            "ko": "고객의 과제",
+            "en": "Complication"
+          }
+        },
+        {
+          "id": "approach",
+          "title": "접근 방식",
+          "titleI18n": {
+            "ko": "접근 방식",
+            "en": "Approach"
+          }
+        },
+        {
+          "id": "value",
+          "title": "기대 가치",
+          "titleI18n": {
+            "ko": "기대 가치",
+            "en": "Value"
+          }
+        },
+        {
+          "id": "plan",
+          "title": "실행 계획",
+          "titleI18n": {
+            "ko": "실행 계획",
+            "en": "Plan"
+          }
+        },
+        {
+          "id": "commercial",
+          "title": "상업 조건",
+          "titleI18n": {
+            "ko": "상업 조건",
+            "en": "Commercial terms"
+          }
+        },
+        {
+          "id": "next-steps",
+          "title": "다음 단계",
+          "titleI18n": {
+            "ko": "다음 단계",
+            "en": "Next steps"
+          }
+        },
+        {
+          "id": "appendix",
+          "title": "부록",
+          "titleI18n": {
+            "ko": "부록",
+            "en": "Appendix"
+          }
+        }
+      ]
+    },
+    {
+      "id": "project-retrospective",
+      "kind": "slide-brief",
+      "version": "1.0.0",
+      "name": "프로젝트 회고",
+      "nameI18n": {
+        "ko": "프로젝트 회고",
+        "en": "Project retrospective"
+      },
+      "description": "끝난 프로젝트의 결과와 배운 점, 다음 개선안을 정리한 브리프",
+      "descriptionI18n": {
+        "ko": "끝난 프로젝트의 결과와 배운 점, 다음 개선안을 정리한 브리프",
+        "en": "A brief that records a finished project's outcomes, lessons and recommended improvements."
+      },
+      "category": "기업 보고",
+      "categoryI18n": {
+        "ko": "기업 보고",
+        "en": "Business reports"
+      },
+      "tags": ["회고", "프로젝트", "retrospective", "project", "lessons"],
+      "license": "MIT",
+      "source": {
+        "type": "github",
+        "repo": "crazyykhllc-bit/CyberPPT",
+        "commit": "980e5576565f0673c67ee41b01d20ed66cb8417c",
+        "path": "SKILL.md"
+      },
+      "author": "CyberPPT contributors (guidance); adapted by NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "questions": [
+        {
+          "id": "project",
+          "label": "프로젝트 이름",
+          "labelI18n": {
+            "ko": "프로젝트 이름",
+            "en": "Project name"
+          },
+          "required": true,
+          "placeholder": "예: 고객 포털 개편",
+          "placeholderI18n": {
+            "ko": "예: 고객 포털 개편",
+            "en": "e.g. customer portal redesign"
+          }
+        },
+        {
+          "id": "period",
+          "label": "기간",
+          "labelI18n": {
+            "ko": "기간",
+            "en": "Period"
+          },
+          "required": true,
+          "placeholder": "예: 2026년 3월~7월",
+          "placeholderI18n": {
+            "ko": "예: 2026년 3월~7월",
+            "en": "e.g. March to July 2026"
+          }
+        },
+        {
+          "id": "outcome",
+          "label": "결과",
+          "labelI18n": {
+            "ko": "결과",
+            "en": "Outcome"
+          },
+          "options": [
+            {
+              "id": "met",
+              "label": "목표 달성",
+              "labelI18n": {
+                "ko": "목표 달성",
+                "en": "Goals met"
+              }
+            },
+            {
+              "id": "mixed",
+              "label": "일부 달성",
+              "labelI18n": {
+                "ko": "일부 달성",
+                "en": "Mixed"
+              }
+            },
+            {
+              "id": "missed",
+              "label": "목표 미달",
+              "labelI18n": {
+                "ko": "목표 미달",
+                "en": "Goals missed"
+              }
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "audience",
+          "label": "청중(선택)",
+          "labelI18n": {
+            "ko": "청중(선택)",
+            "en": "Audience (optional)"
+          },
+          "placeholder": "예: 프로젝트 팀과 부서장",
+          "placeholderI18n": {
+            "ko": "예: 프로젝트 팀과 부서장",
+            "en": "e.g. the project team and department heads"
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "title",
+          "title": "제목",
+          "titleI18n": {
+            "ko": "제목",
+            "en": "Title"
+          }
+        },
+        {
+          "id": "situation",
+          "title": "프로젝트 개요",
+          "titleI18n": {
+            "ko": "프로젝트 개요",
+            "en": "Situation"
+          }
+        },
+        {
+          "id": "outcomes",
+          "title": "결과",
+          "titleI18n": {
+            "ko": "결과",
+            "en": "Outcomes"
+          }
+        },
+        {
+          "id": "complication",
+          "title": "어려웠던 점",
+          "titleI18n": {
+            "ko": "어려웠던 점",
+            "en": "Complication"
+          }
+        },
+        {
+          "id": "lessons",
+          "title": "배운 점",
+          "titleI18n": {
+            "ko": "배운 점",
+            "en": "Lessons"
+          }
+        },
+        {
+          "id": "recommendations",
+          "title": "개선안",
+          "titleI18n": {
+            "ko": "개선안",
+            "en": "Recommendations"
+          }
+        },
+        {
+          "id": "next-steps",
+          "title": "다음 단계",
+          "titleI18n": {
+            "ko": "다음 단계",
+            "en": "Next steps"
+          }
+        },
+        {
+          "id": "appendix",
+          "title": "부록",
+          "titleI18n": {
+            "ko": "부록",
+            "en": "Appendix"
+          }
+        }
+      ]
     }
   ]
 }

@@ -19,6 +19,12 @@
   margin: 6px 10px 0;
 }
 
+.authoring-gallery-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .authoring-flow-head {
   display: flex;
   align-items: center;

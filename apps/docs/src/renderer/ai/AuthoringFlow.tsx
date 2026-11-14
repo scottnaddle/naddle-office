@@ -16,6 +16,7 @@ import {
   buildDocumentBrief,
   buildDocumentPrompt,
   documentTemplate,
+  type DocumentTemplate,
 } from './authoring/templates'
 
 export interface AuthoringFlowProps {
@@ -45,6 +46,10 @@ export function AuthoringFlow({ lang, busy, onGenerate, onClose }: AuthoringFlow
   const [companyChoice, setCompanyChoice] = useState<CompanyFormCard | null>(null)
   const [companyInstruction, setCompanyInstruction] = useState('')
   const [companyOpening, setCompanyOpening] = useState(false)
+  const [builtinChoice, setBuiltinChoice] = useState<DocumentTemplate | null>(null)
+  const [builtinInstruction, setBuiltinInstruction] = useState('')
+  const [builtinOpening, setBuiltinOpening] = useState(false)
+  const [builtinError, setBuiltinError] = useState<string | null>(null)
 
   const template = useMemo(() => documentTemplate(templateId), [templateId])
   const companyCards = useMemo(() => companyFormCards(companyPacks), [companyPacks])
@@ -78,10 +83,24 @@ export function AuthoringFlow({ lang, busy, onGenerate, onClose }: AuthoringFlow
   }, [loadCompanyForms])
 
   const startQuestions = (id: string) => {
+    setBuiltinChoice(null)
+    setBuiltinError(null)
     setTemplateId(id)
     setAnswers({})
     setBrief(null)
     setPhase('clarify')
+  }
+
+  const selectTemplate = (id: string) => {
+    const picked = documentTemplate(id)
+    if (picked?.formAsset) {
+      setCompanyChoice(null)
+      setBuiltinError(null)
+      setBuiltinInstruction('')
+      setBuiltinChoice(picked)
+      return
+    }
+    startQuestions(id)
   }
 
   const skipQuestions = () => {
@@ -111,11 +130,15 @@ export function AuthoringFlow({ lang, busy, onGenerate, onClose }: AuthoringFlow
     setAnswers({})
     setBrief(null)
     setSeenBusy(false)
+    setBuiltinChoice(null)
+    setBuiltinError(null)
     onClose()
   }
 
   const chooseCompanyForm = (card: CompanyFormCard) => {
     if (card.disabled) return
+    setBuiltinChoice(null)
+    setBuiltinError(null)
     setCompanyError(null)
     setCompanyChoice(card)
     setCompanyInstruction('')
@@ -147,6 +170,35 @@ export function AuthoringFlow({ lang, busy, onGenerate, onClose }: AuthoringFlow
     }
   }
 
+  const openBuiltinForm = async () => {
+    const bridge = window.aiOfficeBuiltinForms
+    const choice = builtinChoice
+    if (!choice || builtinOpening) return
+    setBuiltinOpening(true)
+    setBuiltinError(null)
+    try {
+      if (!bridge) {
+        setBuiltinError(authoringText(lang, 'formOpenFailed'))
+        return
+      }
+      const text = builtinInstruction.trim()
+      const result = await bridge.open({
+        entryId: choice.id,
+        ...(text ? { text } : {}),
+      })
+      if (!result.ok) {
+        setBuiltinError(authoringText(lang, 'formOpenFailed'))
+        return
+      }
+      setBuiltinChoice(null)
+      setBuiltinInstruction('')
+    } catch {
+      setBuiltinError(authoringText(lang, 'formOpenFailed'))
+    } finally {
+      setBuiltinOpening(false)
+    }
+  }
+
   return (
     <div className="authoring-flow" data-phase={phase}>
       <div className="authoring-flow-head">
@@ -160,9 +212,46 @@ export function AuthoringFlow({ lang, busy, onGenerate, onClose }: AuthoringFlow
           <TemplateGallery
             lang={lang}
             templates={DOCUMENT_TEMPLATES}
-            onSelect={startQuestions}
+            onSelect={selectTemplate}
             variant="start"
           />
+          {builtinChoice && (
+            <section className="authoring-company" data-testid="builtin-form-open">
+              <strong>{builtinChoice.name}</strong>
+              <label>
+                <span>{companyText(lang, 'instructionLabel')}</span>
+                <textarea
+                  value={builtinInstruction}
+                  placeholder={companyText(lang, 'instructionPlaceholder')}
+                  disabled={builtinOpening}
+                  onChange={(event) => setBuiltinInstruction(event.target.value)}
+                />
+              </label>
+              {builtinError && (
+                <p className="authoring-muted" role="alert">
+                  {builtinError}
+                </p>
+              )}
+              <div className="authoring-actions">
+                <button
+                  type="button"
+                  className="authoring-btn is-primary"
+                  disabled={builtinOpening}
+                  onClick={() => void openBuiltinForm()}
+                >
+                  {companyText(lang, 'open')}
+                </button>
+                <button
+                  type="button"
+                  className="authoring-btn"
+                  disabled={builtinOpening}
+                  onClick={() => setBuiltinChoice(null)}
+                >
+                  {companyText(lang, 'cancel')}
+                </button>
+              </div>
+            </section>
+          )}
           <section className="authoring-company" data-testid="company-forms">
             <div className="authoring-card-head">
               <strong>{companyText(lang, 'heading')}</strong>

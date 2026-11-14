@@ -10,6 +10,9 @@
 const { execFileSync } = require('node:child_process')
 const { existsSync, readFileSync, readdirSync, rmSync } = require('node:fs')
 const { join } = require('node:path')
+const { BUILTIN_HWPX_FORMS_DIR_NAME, assertBuiltinHwpxForms } = require(
+  join(__dirname, 'build/assert-builtin-hwpx-forms.cjs'),
+)
 
 // Product identity of the installed app. PRODUCT_NAME must equal PRODUCT_NAME
 // in packages/i18n/src/product.ts and "productName" in ./package.json, and the
@@ -54,6 +57,11 @@ const winArch = winArm64 ? 'arm64' : 'x64'
 const winSidecarTarget = winArm64 ? 'aarch64-pc-windows-msvc' : 'x86_64-pc-windows-gnu'
 const WIN_SIDECAR = `../sheets/native/xlsx-engine/target/${winSidecarTarget}/release/xlsx-sidecar.exe`
 
+// The ten builtin HWPX forms live in the checkout as source assets; a packaged
+// app must carry them because the gallery opens the real file, not a generated
+// substitute.
+const BUILTIN_HWPX_FORMS_SOURCE = '../../packages/ui/src/authoring/assets'
+
 function assertExtraResourceSources() {
   for (const rel of [
     '../../LICENSE',
@@ -73,6 +81,9 @@ function assertExtraResourceSources() {
       )
     }
   }
+  // electron-builder exits 0 on a missing extraResources source, so a checkout
+  // that lost one form would ship an installer whose gallery silently fails.
+  assertBuiltinHwpxForms(join(__dirname, BUILTIN_HWPX_FORMS_SOURCE))
 }
 
 // macOS local-OCR helper (scanned-page text recovery): a swiftc output, not
@@ -327,6 +338,25 @@ function ensureThirdPartyNotices() {
   if (problems.length > 0) {
     throw new Error(`third-party notice cannot ship: ${problems.join('; ')}`)
   }
+}
+
+/** The packaged app's resources directory for one afterPack context. */
+function packagedResourcesDir(context) {
+  if (context.electronPlatformName === 'darwin') {
+    const productFilename = context.packager?.appInfo?.productFilename || PRODUCT_NAME
+    return join(context.appOutDir, `${productFilename}.app`, 'Contents', 'Resources')
+  }
+  return join(context.appOutDir, 'resources')
+}
+
+/**
+ * Verify the forms actually landed in the packaged app. This runs after the app
+ * directory exists and before the installer is built, so a pack that dropped
+ * the folder (or one form) fails here instead of shipping.
+ */
+async function afterPackBuiltinHwpxForms(context) {
+  const formsDir = join(packagedResourcesDir(context), BUILTIN_HWPX_FORMS_DIR_NAME)
+  assertBuiltinHwpxForms(formsDir)
 }
 
 /** @type {import('electron-builder').Configuration} */
@@ -681,6 +711,16 @@ const config = {
       from: '../../packages/ui/template-fonts',
       to: 'template-fonts',
     },
+    // The ten self-authored HWPX office forms (the S3 document briefs) open as
+    // real copies with their approval box. They ship once, like the fonts,
+    // because a Vite asset import would copy them into an editor's build
+    // output; main finds the folder with builtinHwpxFormsDir
+    // (src/main/builtin-hwpx-forms).
+    {
+      from: BUILTIN_HWPX_FORMS_SOURCE,
+      to: BUILTIN_HWPX_FORMS_DIR_NAME,
+      filter: ['*.hwpx'],
+    },
     // the skills shipped with the app (read-only in the install folder): each
     // folder is the upstream skill as fetched, listed with its source, commit
     // and license in builtin-skills.json and NOTICE
@@ -939,6 +979,7 @@ const config = {
   dmg: {
     sign: true,
   },
+  afterPack: afterPackBuiltinHwpxForms,
   afterAllArtifactBuild: 'build/notarize-dmg.js',
 }
 

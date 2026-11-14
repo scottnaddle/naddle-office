@@ -36,6 +36,7 @@ import type {
   WebContents,
 } from 'electron'
 import { atomicWriteFile } from './atomic-write'
+import { registerBuiltinFormsIpc } from './builtin-forms-ipc'
 import { tabStripOverlay } from './title-bar-overlay'
 import { shellWindowBackground } from './window-background'
 import { installPointerSize } from './pointer-size'
@@ -9504,6 +9505,26 @@ const templateTabs = createTemplateTabs({
   now: () => Date.now(),
 })
 registerTemplateTabsIpc(templateTabs)
+
+// The ten builtin office forms open as copies of the shipped .hwpx (the same
+// untitled-tab path company forms use); main resolves and verifies the file.
+registerBuiltinFormsIpc({
+  host: {
+    isPackaged: app.isPackaged,
+    getAppPath: () => app.getAppPath(),
+    resourcesPath: process.resourcesPath,
+  },
+  openCopy: async (input) => {
+    const opened = await templateTabs.openCopy({
+      bytes: input.bytes,
+      fileName: input.fileName,
+      title: input.title,
+      text: input.text ?? '',
+      chips: [],
+    })
+    return opened.ok ? { ok: true, tabId: opened.tabId } : { ok: false, reason: opened.reason }
+  },
+})
 
 /** A template copy's new untitled tab: sheets here (its backing workbook), the others in the tab manager */
 async function openTemplateCopyTab(copy: TemplateCopy): Promise<OpenedCopyTab | null> {

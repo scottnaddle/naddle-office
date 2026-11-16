@@ -86,10 +86,10 @@ these components:
 
 - three.js 0.170.0 — MIT License, Copyright © 2010-2024 three.js authors.
   Official minified build (`three.module.min.js`) and `LICENSE`, unmodified,
-  under `packages/naddle-video/vendor/three/`.
+  under `packages/naddle-video/src/vendor/three/`.
 - anime.js 4.5.0 — MIT License, Copyright (c) 2025 Julian Garnier. Official
   minified ESM bundle (`anime.esm.min.js`) and `LICENSE.md`, unmodified, under
-  `packages/naddle-video/vendor/anime/`.
+  `packages/naddle-video/src/vendor/anime/`.
 - Mediabunny 1.66.0 — Mozilla Public License 2.0, Copyright (c) 2026-present,
   Vanilagy and contributors. Used unmodified as a production npm dependency; no
   source files are vendored and no changes are made. Mediabunny is used as a library

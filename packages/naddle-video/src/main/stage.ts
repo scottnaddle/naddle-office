@@ -29,7 +29,7 @@ import {
 import { STAGE_FLUSH_SCRIPT, STAGE_READY_SCRIPT, frameSeekScript } from './stage-scripts'
 
 const DEFAULT_PER_FRAME_TIMEOUT_MS = 5_000
-const DEFAULT_VENDOR_DIR = fileURLToPath(new URL('../../vendor/', import.meta.url))
+const DEFAULT_VENDOR_DIR = fileURLToPath(new URL('../vendor/', import.meta.url))
 const VENDOR_PREFIX = '/vendor/'
 
 /** Documents are held in memory only, keyed by a random id that is also the URL. */

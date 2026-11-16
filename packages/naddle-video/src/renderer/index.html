@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'"
+    />
+    <title>영상 · Video</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family:
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          'Malgun Gothic',
+          sans-serif;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #f6f6f8;
+        color: #1f2024;
+      }
+      main {
+        max-width: 34rem;
+        padding: 2.5rem 2rem;
+        text-align: center;
+      }
+      h1 {
+        margin: 0 0 1rem;
+        font-size: 1.35rem;
+        font-weight: 600;
+      }
+      p {
+        margin: 0.35rem 0;
+        line-height: 1.6;
+        color: #55575f;
+      }
+      .lang {
+        margin-top: 1.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid #dddde3;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #1b1c20;
+          color: #ececf0;
+        }
+        p {
+          color: #b4b6bf;
+        }
+        .lang {
+          border-top-color: #34353c;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>영상</h1>
+      <p>영상 탭입니다. 제작과 렌더링 기능은 다음에 연결됩니다.</p>
+      <div class="lang" lang="en">
+        <h1>Video</h1>
+        <p>This is the video tab. Authoring and rendering controls will be connected later.</p>
+      </div>
+    </main>
+  </body>
+</html>

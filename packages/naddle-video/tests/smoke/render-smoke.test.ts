@@ -92,7 +92,7 @@ describe.skipIf(!SMOKE_ENABLED)('offscreen render smoke', () => {
     })
     await writeFile(
       inputPath,
-      JSON.stringify({ html, outDir: work, vendorDir: join(packageRoot, 'vendor') }),
+      JSON.stringify({ html, outDir: work, vendorDir: join(packageRoot, 'src/vendor') }),
     )
   })
 

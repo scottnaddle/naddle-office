@@ -20,6 +20,9 @@
  * - `slide-brief`: a structured presentation brief (questions + ordered
  *   sections) for an academic deck. It carries Korean and English copy and no
  *   form file; the slide authoring flow reads it at runtime.
+ * - `video-brief`: a structured motion-graphic brief (questions + ordered
+ *   scenes) with Korean and English copy and the duration, aspect and library
+ *   limits the renderer enforces. It ships no form file.
  *
  * Pure module: no file system, no network. Safe to import in the renderer.
  */
@@ -34,6 +37,7 @@ export const TEMPLATE_MANIFEST_KINDS = [
   'slide-design',
   'form-skill',
   'slide-brief',
+  'video-brief',
 ] as const
 export type TemplateManifestKind = (typeof TEMPLATE_MANIFEST_KINDS)[number]
 
@@ -188,8 +192,44 @@ export interface SlideBriefEntry extends TemplateManifestEntryBase {
   sections: SlideBriefSection[]
 }
 
+/** The three aspect ratios a video brief may offer. */
+export const VIDEO_BRIEF_ASPECTS = ['16:9', '9:16', '1:1'] as const
+export type VideoBriefAspect = (typeof VIDEO_BRIEF_ASPECTS)[number]
+
+/** The animation libraries the in-app renderer may load from its own scheme. */
+export const VIDEO_BRIEF_LIBRARIES = ['waapi', 'anime', 'three'] as const
+export type VideoBriefLibrary = (typeof VIDEO_BRIEF_LIBRARIES)[number]
+
+/** Longest clip a video brief may ask for, in seconds. */
+export const VIDEO_BRIEF_MAX_SECONDS = 90
+
+export interface VideoBriefDuration {
+  min: number
+  max: number
+  default: number
+}
+
+/** Rendering limits a video brief carries so the flow can pre-check them. */
+export interface VideoBriefSettings {
+  durationSec: VideoBriefDuration
+  aspects: readonly VideoBriefAspect[]
+  libraries: readonly VideoBriefLibrary[]
+  requiresWebGL: boolean
+}
+
+export interface VideoBriefEntry extends TemplateManifestEntryBase {
+  kind: 'video-brief'
+  locales: readonly ['ko', 'en']
+  nameI18n: LocalizedText
+  descriptionI18n?: LocalizedText
+  categoryI18n?: LocalizedText
+  questions: SlideBriefQuestion[]
+  sections: SlideBriefSection[]
+  video: VideoBriefSettings
+}
+
 export type TemplateManifestEntry =
-  DocumentBriefEntry | SlideDesignEntry | FormSkillEntry | SlideBriefEntry
+  DocumentBriefEntry | SlideDesignEntry | FormSkillEntry | SlideBriefEntry | VideoBriefEntry
 
 export interface TemplateManifest {
   manifest: typeof TEMPLATE_MANIFEST_ID
@@ -290,7 +330,7 @@ function localizedTextProblems(name: string, value: unknown): string[] {
   return []
 }
 
-function slideBriefProblems(entry: Record<string, unknown>): string[] {
+function briefCopyProblems(entry: Record<string, unknown>): string[] {
   const problems: string[] = []
   const locales = entry.locales
   if (!Array.isArray(locales) || !locales.includes('ko') || !locales.includes('en')) {
@@ -347,8 +387,70 @@ function slideBriefProblems(entry: Record<string, unknown>): string[] {
       problems.push(...localizedTextProblems(`section ${id} titleI18n`, section.titleI18n))
     }
   }
+  return problems
+}
+
+function slideBriefProblems(entry: Record<string, unknown>): string[] {
+  const problems = briefCopyProblems(entry)
   if (entry.scheme !== undefined) problems.push('slide-brief must not set scheme')
   if (entry.formAsset !== undefined) problems.push('slide-brief must not set formAsset')
+  return problems
+}
+
+const isInteger = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isInteger(value)
+
+function videoBriefProblems(entry: Record<string, unknown>): string[] {
+  const problems = briefCopyProblems(entry)
+  if (Array.isArray(entry.questions) && entry.questions.length !== 4) {
+    problems.push('video-brief must have exactly four questions')
+  }
+  const video = entry.video
+  if (!isRecord(video)) {
+    problems.push('video is required')
+  } else {
+    const duration = video.durationSec
+    if (!isRecord(duration)) {
+      problems.push('video.durationSec is required')
+    } else {
+      const { min, max, default: fallback } = duration
+      if (!isInteger(min)) problems.push('video.durationSec.min must be an integer')
+      if (!isInteger(max)) problems.push('video.durationSec.max must be an integer')
+      if (!isInteger(fallback)) problems.push('video.durationSec.default must be an integer')
+      if (isInteger(min) && isInteger(max) && isInteger(fallback)) {
+        const inRange =
+          1 <= min && min <= fallback && fallback <= max && max <= VIDEO_BRIEF_MAX_SECONDS
+        if (!inRange) {
+          problems.push(
+            `video.durationSec must satisfy 1 <= min <= default <= max <= ${VIDEO_BRIEF_MAX_SECONDS}`,
+          )
+        }
+      }
+    }
+    if (!Array.isArray(video.aspects) || video.aspects.length === 0) {
+      problems.push('video.aspects must be a non-empty array')
+    } else if (
+      !video.aspects.every((aspect) => (VIDEO_BRIEF_ASPECTS as readonly unknown[]).includes(aspect))
+    ) {
+      problems.push('video.aspects may only be 16:9, 9:16 or 1:1')
+    }
+    if (!Array.isArray(video.libraries) || video.libraries.length === 0) {
+      problems.push('video.libraries must be a non-empty array')
+    } else if (
+      !video.libraries.every((library) =>
+        (VIDEO_BRIEF_LIBRARIES as readonly unknown[]).includes(library),
+      )
+    ) {
+      problems.push('video.libraries may only be waapi, anime or three')
+    } else if (video.libraries.includes('three') && video.requiresWebGL !== true) {
+      problems.push('video.requiresWebGL must be true when three.js is used')
+    }
+    if (typeof video.requiresWebGL !== 'boolean') {
+      problems.push('video.requiresWebGL must be a boolean')
+    }
+  }
+  if (entry.scheme !== undefined) problems.push('video-brief must not set scheme')
+  if (entry.formAsset !== undefined) problems.push('video-brief must not set formAsset')
   return problems
 }
 
@@ -398,10 +500,11 @@ export function templateEntryProblems(entry: unknown, scope: TemplateManifestSco
     problems.push('sha256 must be absent or null without formAsset')
   }
 
-  if (kind === 'document-brief' || kind === 'slide-brief')
+  if (kind === 'document-brief' || kind === 'slide-brief' || kind === 'video-brief')
     problems.push(...briefProblems(entry, true))
   else problems.push(...briefProblems(entry, false))
   if (kind === 'slide-brief') problems.push(...slideBriefProblems(entry))
+  if (kind === 'video-brief') problems.push(...videoBriefProblems(entry))
   if (kind === 'slide-design' && !['light', 'dark', 'mixed'].includes(entry.scheme as string)) {
     problems.push('scheme must be light, dark or mixed')
   }
@@ -472,9 +575,22 @@ export interface ResolvedSlideBrief {
   sections: BriefSection[]
 }
 
-/** Resolves a ledger entry's names, questions and sections into the active UI language. */
-export function resolveSlideBrief(
-  entry: SlideBriefEntry,
+/** The bilingual copy both brief kinds carry, before language resolution. */
+interface BilingualBriefEntry {
+  id: string
+  name: string
+  nameI18n: LocalizedText
+  description?: string
+  descriptionI18n?: LocalizedText
+  category?: string
+  categoryI18n?: LocalizedText
+  tags?: string[]
+  questions: SlideBriefQuestion[]
+  sections: SlideBriefSection[]
+}
+
+function resolveBriefCopy(
+  entry: BilingualBriefEntry,
   lang: string | null | undefined,
 ): ResolvedSlideBrief {
   const language = slideBriefLanguage(lang)
@@ -517,6 +633,35 @@ export function resolveSlideBrief(
       ...(section.meta !== undefined ? { meta: section.meta } : {}),
       ...(section.locked !== undefined ? { locked: section.locked } : {}),
     })),
+  }
+}
+
+/** Resolves a ledger entry's names, questions and sections into the active UI language. */
+export function resolveSlideBrief(
+  entry: SlideBriefEntry,
+  lang: string | null | undefined,
+): ResolvedSlideBrief {
+  return resolveBriefCopy(entry, lang)
+}
+
+/** A video brief with its copy resolved and its rendering limits copied. */
+export interface ResolvedVideoBrief extends ResolvedSlideBrief {
+  video: VideoBriefSettings
+}
+
+/** Resolves a video brief into the active UI language, keeping its video limits. */
+export function resolveVideoBrief(
+  entry: VideoBriefEntry,
+  lang: string | null | undefined,
+): ResolvedVideoBrief {
+  return {
+    ...resolveBriefCopy(entry, lang),
+    video: {
+      durationSec: { ...entry.video.durationSec },
+      aspects: [...entry.video.aspects],
+      libraries: [...entry.video.libraries],
+      requiresWebGL: entry.video.requiresWebGL,
+    },
   }
 }
 

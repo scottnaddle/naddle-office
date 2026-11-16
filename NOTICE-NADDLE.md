@@ -64,3 +64,19 @@ embeddings, external relationships and HWPX `Scripts/`) are refused, and a form
 file must match the sha256 the pack declares. The person importing the pack must
 confirm the tenant's right to use its forms. The package reuses the upstream
 skill import helpers without modifying them.
+
+## Video tab briefs and guides
+
+The video tab's five built-in briefs (`video-brief`: `product-promo`,
+`training-explainer`, `kpi-highlight`, `announcement-teaser`,
+`product-3d-showcase`) and their authoring guides
+(`packages/ui/src/authoring/guides/video/ko.md` and `en.md`) are written by
+NaddleOffice and licensed under Apache-2.0 with the rest of this repository.
+
+The general approach — a model writes an HTML/CSS/SVG/Canvas/WebGL animation
+and the app records it frame by frame into a video file — was informed by the
+public list at https://github.com/yihui-dev/awesome-opus5-5-videos (MIT).
+No prompt, question, sentence or code from that list or from the projects it
+links to is included; prompts were not copied.
+
+No ffmpeg binary is shipped with the app.

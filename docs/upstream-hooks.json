@@ -1713,6 +1713,33 @@
       "revert": "AuthoringFlow import, authoringOpen 상태, 열기 단추/흐름 블록을 지우고 authoringText import를 제거한다",
       "round": "S5",
       "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/guides/video/ko.md",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "V1: 영상 브리프 작성 지침 한국어 자체 작성(페이지 계약·허용 라이브러리·금지 사항·길이 상한, 외부 문구 미복제)",
+      "revert": "파일을 삭제하고 guides.ts의 video 지침 import를 지운다",
+      "round": "V1",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/src/authoring/guides/video/en.md",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "V1: 영상 브리프 작성 지침 영어 자체 작성(페이지 계약·허용 라이브러리·금지 사항·길이 상한, 외부 문구 미복제)",
+      "revert": "파일을 삭제하고 guides.ts의 video 지침 import를 지운다",
+      "round": "V1",
+      "owner": "api"
+    },
+    {
+      "path": "packages/ui/tests/video-brief-manifest.test.ts",
+      "kind": "added",
+      "lines": "-",
+      "purpose": "V1: video-brief 5종 원장·4문항·이중 언어·길이/비율/라이브러리 검증·지침·NOTICE 테스트",
+      "revert": "파일을 삭제한다",
+      "round": "V1",
+      "owner": "api"
     }
   ],
   "baseline": {

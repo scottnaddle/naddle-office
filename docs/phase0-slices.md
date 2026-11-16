@@ -75,39 +75,41 @@ P0-5 Release pipeline design (devops) ─────┘
 
 ---
 
-## P0-2 — Integration and authentication boundaries
+## P0-2 — Tenant config wiring and integration boundaries
 
-**Goal:** Make the four integration seams explicit and provider-neutral, with the current vendor implementation moved behind an adapter.
+**Direction (2026-11-11, replaces the earlier SSO-first wording):** the first real `IdentityProvider` implementation is **Google login** (desktop app: system browser + PKCE + loopback). Enterprise SSO (OIDC/SAML/LDAP), SCIM and directory sync are the **last stage**; OTP and Ubion/Daou messenger premises are **out of scope** for this product.
+
+**Goal:** Connect the tenant config to the app and make the integration seams provider-neutral. Default adapters keep today's behavior, and no authentication or guard is weakened.
 
 **Scope**
 
+- Load the main-owned tenant config once at startup, fail closed on invalid config, and deliver a **redacted snapshot** to the renderer over IPC (no secret references or values).
+- Select the runtime display name from the tenant config in `packages/i18n/src/product.ts`; the installed app/file names stay build-time.
 - Define interfaces and error taxonomy for:
-  - `DaouClient` (identity interaction)
-  - `OfficeBrokerClient` (session/token/profile)
-  - `RelayClient` (model gateway)
-  - `WikiApiClient` (knowledge source)
-- Define an adapter-selection contract driven by `TenantConfig`.
-- Select the runtime product/display name from the loaded tenant config in `packages/i18n/src/product.ts` (`PRODUCT_NAME`, `productName()`, `brandText()`).
-- Deliver the resolved tenant config to the renderer over IPC: the main process owns the tenant file, and the renderer reads the config through IPC rather than the filesystem.
-- Move the current vendor-specific implementation into an adapter without changing its behavior.
-- Define token/claims expectations: issuer, audience, subject, roles, expiry, revocation.
-- Keep the existing login flow as the default adapter.
+  - `IdentityProvider` — first adapter: Google OAuth 2.0 (Authorization Code + PKCE, system browser, loopback redirect); SSO later.
+  - `ModelGateway` — keep the app's existing AI provider selection.
+  - `KnowledgeSource` — no source wired; explicit disabled default.
+- Adapter selection is driven by `TenantConfig`; unknown kinds fail closed.
+- Define Google token/claims expectations: issuer `https://accounts.google.com`, audience = client ID, subject, email/domain restriction, expiry, revocation.
+- Keep the current behavior as the default adapter (the product has no enterprise login yet).
 
 **Deliverables**
 
 - Interface specifications with method contracts and error codes.
-- Default adapter preserving current behavior.
+- Default adapters preserving current behavior.
 - A test-only fake adapter for each interface.
 - Contract tests covering success, denial, expiry, revocation, and malformed responses.
 - A dependency rule: feature code must not import a vendor SDK/client directly.
+- Google client ID/domain policy and token storage stay in the design for the Google adapter phase, not in P0-2 code.
 
 **Verification**
 
-- Existing login/session/wiki tests pass unchanged (or with only test wiring changes).
+- Existing auth/provider tests pass unchanged (or with only test wiring changes).
 - A fake adapter can be selected in tests without touching feature code.
 - No direct vendor import outside the adapter directory.
 - Auth guards and token audiences are unchanged.
-- Changing the tenant config changes endpoints/branding in the running app without a rebuild.
+- Changing the tenant config changes branding/endpoints in the running app without a rebuild.
+- The renderer snapshot contains no secret references or values.
 - Typecheck and test suite pass.
 
 **Prerequisite:** P0-1 (adapter selection comes from tenant config). **Estimate:** 4–6 days.
@@ -242,7 +244,7 @@ P0-5 Release pipeline design (devops) ─────┘
 
 ## 4. Out of scope for Phase 0
 
-- Implementing OIDC/SAML/LDAP providers or SCIM.
+- Implementing Google login, SSO (OIDC/SAML/LDAP) providers or SCIM. Google login is Phase 1; SSO is the last stage.
 - Building the knowledge ingestion pipeline or search index.
 - Building the template authoring/approval UI.
 - Deploying server changes or enabling a public release.
@@ -256,7 +258,7 @@ These belong to Phase 1/2 and require separate approval.
 Phase 0 is done when:
 
 1. Runtime tenant configuration is the only way endpoints/branding are selected.
-2. The four integration seams have interfaces, default adapters, and contract tests.
+2. The integration contracts (`IdentityProvider`, `ModelGateway`, `KnowledgeSource`) have interfaces, default adapters, and contract tests.
 3. The overlay ledger and checker enforce the hook budget on a clean upstream baseline.
 4. The server tenant boundary, audit schema, and isolation checklist are documented.
 5. The release/update design and rollback procedure are reviewed.
@@ -266,6 +268,6 @@ Phase 0 is done when:
 
 - Which configuration format wins for desktop tenants: JSON, YAML, or a signed bundle? (P0-1)
 - Where do tenant secrets live on desktop vs server: OS keychain, secret manager, or both? (P0-1/P0-4)
-- Does the first enterprise customer require SAML at MVP, or is OIDC sufficient? (P0-2)
+- Google login: which OAuth client/domain restriction policy (Workspace `hd`, account linking) is required? (Google adapter phase)
 - Is the release feed public, private, or split from the source repository? (P0-5)
 - Which ring model is required for enterprise updates? (P0-5)

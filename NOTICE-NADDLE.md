@@ -98,3 +98,9 @@ these components:
   (`node_modules/mediabunny/LICENSE`).
 
 No GSAP is bundled. Still: no ffmpeg binary or ffmpeg.wasm is shipped.
+
+Remote rendering is not implemented. The settings code in
+`packages/naddle-video/src/settings` only stores and validates a remote server
+endpoint in `naddle-video.json` under the app's user-data folder. Tokens are
+stored as references only (`env:NAME` or `file:/absolute/path`); this code does
+not read or resolve them, and no request is sent.

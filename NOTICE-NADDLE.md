@@ -91,8 +91,8 @@ these components:
   minified ESM bundle (`anime.esm.min.js`) and `LICENSE.md`, unmodified, under
   `packages/naddle-video/vendor/anime/`.
 - Mediabunny 1.66.0 — Mozilla Public License 2.0, Copyright (c) 2026-present,
-  Vanilagy and contributors. Used unmodified as an npm dependency; no source
-  files are vendored and no changes are made. Mediabunny is used as a library
+  Vanilagy and contributors. Used unmodified as a production npm dependency; no
+  source files are vendored and no changes are made. Mediabunny is used as a library
   only. Its source is available at https://github.com/Vanilagy/mediabunny, and
   the full MPL-2.0 text is distributed with the package
   (`node_modules/mediabunny/LICENSE`).

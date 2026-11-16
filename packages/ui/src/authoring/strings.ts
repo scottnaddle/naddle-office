@@ -57,6 +57,16 @@ const en = {
   progressFailed: 'Generation failed',
   queueTitle: 'Pending edits',
   queueSubmit: 'Apply all',
+  videoBriefOpen: 'Start from a video brief',
+  videoBriefGallery: 'Video briefs',
+  videoBriefHint: 'Confirm or edit before the video is rendered.',
+  videoBriefCategory: 'Business video',
+  videoStepGenerate: 'Generate scenes',
+  videoStepCheck: 'Check',
+  videoStepFrames: 'Capture frames',
+  videoStepEncode: 'Encode video',
+  videoStepSave: 'Save',
+  videoRenderProgress: 'Rendering {percent}%',
 } satisfies Record<string, string>
 
 export type AuthoringStringKey = keyof typeof en
@@ -91,6 +101,16 @@ const ko: Dict = {
   progressFailed: '생성 실패',
   queueTitle: '대기 중인 수정',
   queueSubmit: '모두 적용',
+  videoBriefOpen: '영상 브리프로 시작',
+  videoBriefGallery: '영상 브리프',
+  videoBriefHint: '영상을 렌더하기 전에 확인하거나 고치세요.',
+  videoBriefCategory: '기업 영상',
+  videoStepGenerate: '장면 생성',
+  videoStepCheck: '검사',
+  videoStepFrames: '프레임 캡처',
+  videoStepEncode: '영상 인코딩',
+  videoStepSave: '저장',
+  videoRenderProgress: '렌더 중 {percent}%',
 }
 
 const zh: Dict = {
@@ -121,6 +141,16 @@ const zh: Dict = {
   progressFailed: '生成失败',
   queueTitle: '待处理的修改',
   queueSubmit: '全部应用',
+  videoBriefOpen: '从视频简报开始',
+  videoBriefGallery: '视频简报',
+  videoBriefHint: '渲染视频前可以确认或修改。',
+  videoBriefCategory: '企业视频',
+  videoStepGenerate: '生成场景',
+  videoStepCheck: '检查',
+  videoStepFrames: '捕获帧',
+  videoStepEncode: '编码视频',
+  videoStepSave: '保存',
+  videoRenderProgress: '渲染中 {percent}%',
 }
 
 const zhTW: Dict = {
@@ -151,6 +181,16 @@ const zhTW: Dict = {
   progressFailed: '產生失敗',
   queueTitle: '待處理的修改',
   queueSubmit: '全部套用',
+  videoBriefOpen: '從影片簡報開始',
+  videoBriefGallery: '影片簡報',
+  videoBriefHint: '算繪影片前可以確認或修改。',
+  videoBriefCategory: '企業影片',
+  videoStepGenerate: '產生場景',
+  videoStepCheck: '檢查',
+  videoStepFrames: '擷取影格',
+  videoStepEncode: '編碼影片',
+  videoStepSave: '儲存',
+  videoRenderProgress: '算繪中 {percent}%',
 }
 
 const ja: Dict = {
@@ -181,6 +221,16 @@ const ja: Dict = {
   progressFailed: '生成に失敗しました',
   queueTitle: '保留中の編集',
   queueSubmit: 'すべて適用',
+  videoBriefOpen: '動画ブリーフから始める',
+  videoBriefGallery: '動画ブリーフ',
+  videoBriefHint: '動画をレンダリングする前に確認・編集できます。',
+  videoBriefCategory: '企業動画',
+  videoStepGenerate: 'シーンを生成',
+  videoStepCheck: '確認',
+  videoStepFrames: 'フレームをキャプチャ',
+  videoStepEncode: '動画をエンコード',
+  videoStepSave: '保存',
+  videoRenderProgress: 'レンダリング中 {percent}%',
 }
 
 const fr: Dict = {
@@ -211,6 +261,16 @@ const fr: Dict = {
   progressFailed: 'Échec de la génération',
   queueTitle: 'Modifications en attente',
   queueSubmit: 'Tout appliquer',
+  videoBriefOpen: 'Partir d’un brief vidéo',
+  videoBriefGallery: 'Briefs vidéo',
+  videoBriefHint: 'Confirmez ou modifiez avant le rendu de la vidéo.',
+  videoBriefCategory: 'Vidéo d’entreprise',
+  videoStepGenerate: 'Générer les scènes',
+  videoStepCheck: 'Vérifier',
+  videoStepFrames: 'Capturer les images',
+  videoStepEncode: 'Encoder la vidéo',
+  videoStepSave: 'Enregistrer',
+  videoRenderProgress: 'Rendu {percent} %',
 }
 
 const de: Dict = {
@@ -241,6 +301,16 @@ const de: Dict = {
   progressFailed: 'Erstellung fehlgeschlagen',
   queueTitle: 'Ausstehende Änderungen',
   queueSubmit: 'Alle anwenden',
+  videoBriefOpen: 'Mit einem Video-Briefing starten',
+  videoBriefGallery: 'Video-Briefings',
+  videoBriefHint: 'Vor dem Rendern des Videos bestätigen oder bearbeiten.',
+  videoBriefCategory: 'Unternehmensvideo',
+  videoStepGenerate: 'Szenen erstellen',
+  videoStepCheck: 'Prüfen',
+  videoStepFrames: 'Frames aufnehmen',
+  videoStepEncode: 'Video kodieren',
+  videoStepSave: 'Speichern',
+  videoRenderProgress: 'Rendern {percent} %',
 }
 
 const es: Dict = {
@@ -271,6 +341,16 @@ const es: Dict = {
   progressFailed: 'Error al generar',
   queueTitle: 'Cambios pendientes',
   queueSubmit: 'Aplicar todo',
+  videoBriefOpen: 'Empezar con un brief de vídeo',
+  videoBriefGallery: 'Briefs de vídeo',
+  videoBriefHint: 'Confirma o edita antes de renderizar el vídeo.',
+  videoBriefCategory: 'Vídeo corporativo',
+  videoStepGenerate: 'Generar escenas',
+  videoStepCheck: 'Revisar',
+  videoStepFrames: 'Capturar fotogramas',
+  videoStepEncode: 'Codificar el vídeo',
+  videoStepSave: 'Guardar',
+  videoRenderProgress: 'Renderizando {percent} %',
 }
 
 const pt: Dict = {
@@ -301,6 +381,16 @@ const pt: Dict = {
   progressFailed: 'Falha ao gerar',
   queueTitle: 'Alterações pendentes',
   queueSubmit: 'Aplicar tudo',
+  videoBriefOpen: 'Começar com um brief de vídeo',
+  videoBriefGallery: 'Briefs de vídeo',
+  videoBriefHint: 'Confirme ou edite antes de renderizar o vídeo.',
+  videoBriefCategory: 'Vídeo corporativo',
+  videoStepGenerate: 'Gerar cenas',
+  videoStepCheck: 'Verificar',
+  videoStepFrames: 'Capturar quadros',
+  videoStepEncode: 'Codificar o vídeo',
+  videoStepSave: 'Salvar',
+  videoRenderProgress: 'Renderizando {percent} %',
 }
 
 const it: Dict = {
@@ -331,6 +421,16 @@ const it: Dict = {
   progressFailed: 'Generazione non riuscita',
   queueTitle: 'Modifiche in sospeso',
   queueSubmit: 'Applica tutto',
+  videoBriefOpen: 'Inizia da un brief video',
+  videoBriefGallery: 'Brief video',
+  videoBriefHint: 'Conferma o modifica prima del rendering del video.',
+  videoBriefCategory: 'Video aziendale',
+  videoStepGenerate: 'Genera scene',
+  videoStepCheck: 'Controlla',
+  videoStepFrames: 'Acquisisci i fotogrammi',
+  videoStepEncode: 'Codifica il video',
+  videoStepSave: 'Salva',
+  videoRenderProgress: 'Rendering {percent}%',
 }
 
 const nl: Dict = {
@@ -361,6 +461,16 @@ const nl: Dict = {
   progressFailed: 'Maken mislukt',
   queueTitle: 'Openstaande wijzigingen',
   queueSubmit: 'Alles toepassen',
+  videoBriefOpen: 'Begin met een videobrief',
+  videoBriefGallery: 'Videobrieven',
+  videoBriefHint: 'Bevestig of bewerk voordat de video wordt gerenderd.',
+  videoBriefCategory: 'Bedrijfsvideo',
+  videoStepGenerate: 'Scènes maken',
+  videoStepCheck: 'Controleren',
+  videoStepFrames: 'Frames vastleggen',
+  videoStepEncode: 'Video coderen',
+  videoStepSave: 'Opslaan',
+  videoRenderProgress: 'Bezig met renderen {percent}%',
 }
 
 const pl: Dict = {
@@ -391,6 +501,16 @@ const pl: Dict = {
   progressFailed: 'Generowanie nie powiodło się',
   queueTitle: 'Oczekujące zmiany',
   queueSubmit: 'Zastosuj wszystko',
+  videoBriefOpen: 'Zacznij od briefu wideo',
+  videoBriefGallery: 'Briefy wideo',
+  videoBriefHint: 'Potwierdź lub edytuj przed renderowaniem wideo.',
+  videoBriefCategory: 'Wideo firmowe',
+  videoStepGenerate: 'Generuj sceny',
+  videoStepCheck: 'Sprawdź',
+  videoStepFrames: 'Przechwyć klatki',
+  videoStepEncode: 'Koduj wideo',
+  videoStepSave: 'Zapisz',
+  videoRenderProgress: 'Renderowanie {percent}%',
 }
 
 const cs: Dict = {
@@ -421,6 +541,16 @@ const cs: Dict = {
   progressFailed: 'Vytvoření se nezdařilo',
   queueTitle: 'Čekající úpravy',
   queueSubmit: 'Použít vše',
+  videoBriefOpen: 'Začít s video zadáním',
+  videoBriefGallery: 'Video zadání',
+  videoBriefHint: 'Před vykreslením videa potvrďte nebo upravte.',
+  videoBriefCategory: 'Firemní video',
+  videoStepGenerate: 'Vytvořit scény',
+  videoStepCheck: 'Zkontrolovat',
+  videoStepFrames: 'Zachytit snímky',
+  videoStepEncode: 'Zakódovat video',
+  videoStepSave: 'Uložit',
+  videoRenderProgress: 'Vykreslování {percent} %',
 }
 
 const ru: Dict = {
@@ -451,6 +581,16 @@ const ru: Dict = {
   progressFailed: 'Не удалось создать',
   queueTitle: 'Ожидающие правки',
   queueSubmit: 'Применить всё',
+  videoBriefOpen: 'Начать с видеобрифа',
+  videoBriefGallery: 'Видеобрифы',
+  videoBriefHint: 'Подтвердите или измените перед рендерингом видео.',
+  videoBriefCategory: 'Корпоративное видео',
+  videoStepGenerate: 'Создать сцены',
+  videoStepCheck: 'Проверить',
+  videoStepFrames: 'Захватить кадры',
+  videoStepEncode: 'Закодировать видео',
+  videoStepSave: 'Сохранить',
+  videoRenderProgress: 'Рендеринг {percent}%',
 }
 
 const id: Dict = {
@@ -481,6 +621,16 @@ const id: Dict = {
   progressFailed: 'Gagal membuat',
   queueTitle: 'Perubahan tertunda',
   queueSubmit: 'Terapkan semua',
+  videoBriefOpen: 'Mulai dari brief video',
+  videoBriefGallery: 'Brief video',
+  videoBriefHint: 'Konfirmasi atau ubah sebelum video dirender.',
+  videoBriefCategory: 'Video bisnis',
+  videoStepGenerate: 'Buat adegan',
+  videoStepCheck: 'Periksa',
+  videoStepFrames: 'Ambil bingkai',
+  videoStepEncode: 'Enkode video',
+  videoStepSave: 'Simpan',
+  videoRenderProgress: 'Merender {percent}%',
 }
 
 const ms: Dict = {
@@ -511,6 +661,16 @@ const ms: Dict = {
   progressFailed: 'Gagal menjana',
   queueTitle: 'Perubahan tertunda',
   queueSubmit: 'Guna semua',
+  videoBriefOpen: 'Mula dengan brief video',
+  videoBriefGallery: 'Brief video',
+  videoBriefHint: 'Sahkan atau ubah sebelum video dirender.',
+  videoBriefCategory: 'Video perniagaan',
+  videoStepGenerate: 'Jana babak',
+  videoStepCheck: 'Semak',
+  videoStepFrames: 'Tangkap bingkai',
+  videoStepEncode: 'Kodkan video',
+  videoStepSave: 'Simpan',
+  videoRenderProgress: 'Merender {percent}%',
 }
 
 const th: Dict = {
@@ -541,6 +701,16 @@ const th: Dict = {
   progressFailed: 'สร้างไม่สำเร็จ',
   queueTitle: 'การแก้ไขที่รอ',
   queueSubmit: 'ใช้ทั้งหมด',
+  videoBriefOpen: 'เริ่มจากบรีฟวิดีโอ',
+  videoBriefGallery: 'บรีฟวิดีโอ',
+  videoBriefHint: 'ยืนยันหรือแก้ไขก่อนเรนเดอร์วิดีโอ',
+  videoBriefCategory: 'วิดีโอธุรกิจ',
+  videoStepGenerate: 'สร้างฉาก',
+  videoStepCheck: 'ตรวจสอบ',
+  videoStepFrames: 'จับภาพเฟรม',
+  videoStepEncode: 'เข้ารหัสวิดีโอ',
+  videoStepSave: 'บันทึก',
+  videoRenderProgress: 'กำลังเรนเดอร์ {percent}%',
 }
 
 const ar: Dict = {
@@ -571,6 +741,16 @@ const ar: Dict = {
   progressFailed: 'فشل الإنشاء',
   queueTitle: 'تعديلات معلّقة',
   queueSubmit: 'تطبيق الكل',
+  videoBriefOpen: 'ابدأ من موجز فيديو',
+  videoBriefGallery: 'موجزات الفيديو',
+  videoBriefHint: 'أكّد أو عدّل قبل تصيير الفيديو.',
+  videoBriefCategory: 'فيديو أعمال',
+  videoStepGenerate: 'إنشاء المشاهد',
+  videoStepCheck: 'تحقق',
+  videoStepFrames: 'التقاط الإطارات',
+  videoStepEncode: 'ترميز الفيديو',
+  videoStepSave: 'حفظ',
+  videoRenderProgress: 'جارٍ التصيير {percent}%',
 }
 
 const he: Dict = {
@@ -601,6 +781,16 @@ const he: Dict = {
   progressFailed: 'היצירה נכשלה',
   queueTitle: 'עריכות ממתינות',
   queueSubmit: 'החל הכל',
+  videoBriefOpen: 'התחל מתקציר וידאו',
+  videoBriefGallery: 'תקצירי וידאו',
+  videoBriefHint: 'אשר או ערוך לפני עיבוד הווידאו.',
+  videoBriefCategory: 'וידאו עסקי',
+  videoStepGenerate: 'צור סצנות',
+  videoStepCheck: 'בדוק',
+  videoStepFrames: 'לכוד פריימים',
+  videoStepEncode: 'קודד וידאו',
+  videoStepSave: 'שמור',
+  videoRenderProgress: 'מעבד {percent}%',
 }
 
 const hi: Dict = {
@@ -631,6 +821,16 @@ const hi: Dict = {
   progressFailed: 'बनाना विफल',
   queueTitle: 'लंबित बदलाव',
   queueSubmit: 'सभी लागू करें',
+  videoBriefOpen: 'वीडियो ब्रीफ़ से शुरू करें',
+  videoBriefGallery: 'वीडियो ब्रीफ़',
+  videoBriefHint: 'वीडियो रेंडर करने से पहले पुष्टि या बदलाव करें।',
+  videoBriefCategory: 'व्यावसायिक वीडियो',
+  videoStepGenerate: 'दृश्य बनाएँ',
+  videoStepCheck: 'जाँचें',
+  videoStepFrames: 'फ़्रेम कैप्चर करें',
+  videoStepEncode: 'वीडियो एन्कोड करें',
+  videoStepSave: 'सहेजें',
+  videoRenderProgress: 'रेंडर हो रहा है {percent}%',
 }
 
 const vi: Dict = {
@@ -661,6 +861,16 @@ const vi: Dict = {
   progressFailed: 'Tạo thất bại',
   queueTitle: 'Thay đổi đang chờ',
   queueSubmit: 'Áp dụng tất cả',
+  videoBriefOpen: 'Bắt đầu từ brief video',
+  videoBriefGallery: 'Brief video',
+  videoBriefHint: 'Xác nhận hoặc sửa trước khi kết xuất video.',
+  videoBriefCategory: 'Video doanh nghiệp',
+  videoStepGenerate: 'Tạo cảnh',
+  videoStepCheck: 'Kiểm tra',
+  videoStepFrames: 'Chụp khung hình',
+  videoStepEncode: 'Mã hóa video',
+  videoStepSave: 'Lưu',
+  videoRenderProgress: 'Đang kết xuất {percent}%',
 }
 
 const STRINGS: Record<AuthoringLang, Dict> = {

@@ -20,10 +20,14 @@ describe('authoring strings', () => {
       expect(authoringText(lang, 'galleryOpen').trim().length, lang).toBeGreaterThan(0)
       expect(authoringText(lang, 'briefGenerate').trim().length, lang).toBeGreaterThan(0)
       expect(authoringText(lang, 'progressDone').trim().length, lang).toBeGreaterThan(0)
+      expect(authoringText(lang, 'videoBriefOpen').trim().length, lang).toBeGreaterThan(0)
+      expect(authoringText(lang, 'videoRenderProgress', { percent: 40 }), lang).toContain('40')
     }
     expect(authoringText('ko', 'galleryOpen')).toBe('템플릿으로 시작')
     expect(authoringText('en-US', 'galleryOpen')).toBe('Start from a template')
     expect(authoringText('unknown', 'galleryOpen')).toBe('Start from a template')
+    expect(authoringText('ko', 'videoBriefOpen')).toBe('영상 브리프로 시작')
+    expect(authoringText('en-US', 'videoBriefOpen')).toBe('Start from a video brief')
   })
 })
 

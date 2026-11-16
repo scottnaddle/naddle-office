@@ -2140,6 +2140,733 @@
           }
         }
       ]
+    },
+    {
+      "id": "product-promo",
+      "kind": "video-brief",
+      "version": "1.0.0",
+      "name": "제품·서비스 소개 모션그래픽",
+      "nameI18n": {
+        "ko": "제품·서비스 소개 모션그래픽",
+        "en": "Product and service motion graphic"
+      },
+      "description": "제품이나 서비스의 가치를 20~30초 모션그래픽으로 소개하는 브리프",
+      "descriptionI18n": {
+        "ko": "제품이나 서비스의 가치를 20~30초 모션그래픽으로 소개하는 브리프",
+        "en": "A brief for a 20–30 second motion graphic that introduces a product or service."
+      },
+      "category": "기업 영상",
+      "categoryI18n": {
+        "ko": "기업 영상",
+        "en": "Business video"
+      },
+      "tags": ["제품", "서비스", "모션그래픽", "product", "promo", "motion"],
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "video": {
+        "durationSec": { "min": 20, "max": 30, "default": 25 },
+        "aspects": ["16:9", "9:16", "1:1"],
+        "libraries": ["waapi", "anime"],
+        "requiresWebGL": false
+      },
+      "questions": [
+        {
+          "id": "product",
+          "label": "제품·서비스와 한 줄 가치",
+          "labelI18n": {
+            "ko": "제품·서비스와 한 줄 가치",
+            "en": "Product or service and its one-line value"
+          },
+          "description": "소개할 제품이나 서비스, 그리고 한 문장으로 줄인 가치를 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "소개할 제품이나 서비스, 그리고 한 문장으로 줄인 가치를 적어 주세요.",
+            "en": "Name the product or service and reduce its value to one sentence."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 매일 쓰는 노트 앱 — 메모를 한 번에 정리합니다.",
+          "placeholderI18n": {
+            "ko": "예: 매일 쓰는 노트 앱 — 메모를 한 번에 정리합니다.",
+            "en": "e.g. A daily note app that tidies your notes in one step."
+          }
+        },
+        {
+          "id": "audience",
+          "label": "보는 사람",
+          "labelI18n": {
+            "ko": "보는 사람",
+            "en": "Audience"
+          },
+          "description": "이 영상을 누구에게 보여 줄지 고르세요.",
+          "descriptionI18n": {
+            "ko": "이 영상을 누구에게 보여 줄지 고르세요.",
+            "en": "Choose who will see this video."
+          },
+          "options": [
+            {
+              "id": "customer",
+              "label": "고객",
+              "labelI18n": { "ko": "고객", "en": "Customer" }
+            },
+            {
+              "id": "partner",
+              "label": "파트너",
+              "labelI18n": { "ko": "파트너", "en": "Partner" }
+            },
+            {
+              "id": "internal",
+              "label": "사내",
+              "labelI18n": { "ko": "사내", "en": "Internal team" }
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "features",
+          "label": "꼭 보여 줄 특징",
+          "labelI18n": {
+            "ko": "꼭 보여 줄 특징",
+            "en": "Features to show"
+          },
+          "description": "세 가지 이하로 적어 주세요. 입력하지 않은 특징은 지어내지 않습니다.",
+          "descriptionI18n": {
+            "ko": "세 가지 이하로 적어 주세요. 입력하지 않은 특징은 지어내지 않습니다.",
+            "en": "List up to three. The model will not invent features you did not enter."
+          },
+          "multiline": true,
+          "placeholder": "예: 한 번에 정리, 오프라인 사용, 공유 링크",
+          "placeholderI18n": {
+            "ko": "예: 한 번에 정리, 오프라인 사용, 공유 링크",
+            "en": "e.g. tidy in one step, offline use, shareable links"
+          }
+        },
+        {
+          "id": "tone",
+          "label": "톤과 브랜드 색",
+          "labelI18n": {
+            "ko": "톤과 브랜드 색",
+            "en": "Tone and brand colors"
+          },
+          "description": "차분함·경쾌함 같은 느낌과 HEX 색을 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "차분함·경쾌함 같은 느낌과 HEX 색을 적어 주세요.",
+            "en": "Describe the feel, such as calm or lively, and give HEX colors."
+          },
+          "placeholder": "예: 차분함, #1F4E79, #F2F2F2",
+          "placeholderI18n": {
+            "ko": "예: 차분함, #1F4E79, #F2F2F2",
+            "en": "e.g. calm, #1F4E79, #F2F2F2"
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "opening-logo",
+          "title": "오프닝 로고",
+          "titleI18n": { "ko": "오프닝 로고", "en": "Opening logo" }
+        },
+        {
+          "id": "problem",
+          "title": "문제",
+          "titleI18n": { "ko": "문제", "en": "Problem" }
+        },
+        {
+          "id": "solution",
+          "title": "해결",
+          "titleI18n": { "ko": "해결", "en": "Solution" }
+        },
+        {
+          "id": "features",
+          "title": "특징",
+          "titleI18n": { "ko": "특징", "en": "Features" }
+        },
+        {
+          "id": "close",
+          "title": "마무리 문구",
+          "titleI18n": { "ko": "마무리 문구", "en": "Closing line" }
+        }
+      ]
+    },
+    {
+      "id": "training-explainer",
+      "kind": "video-brief",
+      "version": "1.0.0",
+      "name": "사내 교육 설명 영상",
+      "nameI18n": {
+        "ko": "사내 교육 설명 영상",
+        "en": "Internal training explainer"
+      },
+      "description": "45~90초 사내 교육 영상의 학습 목표·단계·주의 사항을 정리하는 브리프",
+      "descriptionI18n": {
+        "ko": "45~90초 사내 교육 영상의 학습 목표·단계·주의 사항을 정리하는 브리프",
+        "en": "A brief for a 45–90 second internal training video covering goals, steps and cautions."
+      },
+      "category": "기업 영상",
+      "categoryI18n": {
+        "ko": "기업 영상",
+        "en": "Business video"
+      },
+      "tags": ["교육", "사내", "설명", "training", "explainer", "onboarding"],
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "video": {
+        "durationSec": { "min": 45, "max": 90, "default": 60 },
+        "aspects": ["16:9", "9:16", "1:1"],
+        "libraries": ["waapi"],
+        "requiresWebGL": false
+      },
+      "questions": [
+        {
+          "id": "topic",
+          "label": "주제와 끝난 뒤 할 수 있는 일",
+          "labelI18n": {
+            "ko": "주제와 끝난 뒤 할 수 있는 일",
+            "en": "Topic and what viewers can do afterwards"
+          },
+          "description": "배울 주제와, 영상을 본 뒤 할 수 있어야 하는 일을 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "배울 주제와, 영상을 본 뒤 할 수 있어야 하는 일을 적어 주세요.",
+            "en": "State the topic and what viewers should be able to do after watching."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 새 결재 절차 — 결재선을 직접 만들 수 있다.",
+          "placeholderI18n": {
+            "ko": "예: 새 결재 절차 — 결재선을 직접 만들 수 있다.",
+            "en": "e.g. the new approval flow — build an approval chain yourself."
+          }
+        },
+        {
+          "id": "audience",
+          "label": "대상",
+          "labelI18n": {
+            "ko": "대상",
+            "en": "Audience"
+          },
+          "description": "이 교육을 듣는 사람을 고르세요.",
+          "descriptionI18n": {
+            "ko": "이 교육을 듣는 사람을 고르세요.",
+            "en": "Choose who takes this training."
+          },
+          "options": [
+            {
+              "id": "new-hire",
+              "label": "신입",
+              "labelI18n": { "ko": "신입", "en": "New hire" }
+            },
+            {
+              "id": "all-staff",
+              "label": "전 직원",
+              "labelI18n": { "ko": "전 직원", "en": "All staff" }
+            },
+            {
+              "id": "manager",
+              "label": "관리자",
+              "labelI18n": { "ko": "관리자", "en": "Manager" }
+            }
+          ],
+          "required": true
+        },
+        {
+          "id": "steps",
+          "label": "단계 또는 핵심 개념",
+          "labelI18n": {
+            "ko": "단계 또는 핵심 개념",
+            "en": "Steps or key concepts"
+          },
+          "description": "순서대로 적어 주세요. 영상은 이 순서를 장면으로 나눕니다.",
+          "descriptionI18n": {
+            "ko": "순서대로 적어 주세요. 영상은 이 순서를 장면으로 나눕니다.",
+            "en": "List them in order. The video turns this order into scenes."
+          },
+          "multiline": true,
+          "placeholder": "예: 1. 결재선 열기 2. 결재자 추가 3. 저장",
+          "placeholderI18n": {
+            "ko": "예: 1. 결재선 열기 2. 결재자 추가 3. 저장",
+            "en": "e.g. 1. open the approval chain 2. add approvers 3. save"
+          }
+        },
+        {
+          "id": "cautions",
+          "label": "주의 사항과 자주 하는 실수",
+          "labelI18n": {
+            "ko": "주의 사항과 자주 하는 실수",
+            "en": "Cautions and common mistakes"
+          },
+          "description": "영상에서 짚어 줄 주의 사항이 있으면 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "영상에서 짚어 줄 주의 사항이 있으면 적어 주세요.",
+            "en": "Add any caution the video should mention."
+          },
+          "multiline": true,
+          "placeholder": "예: 저장 전에 결재자 순서를 확인하세요.",
+          "placeholderI18n": {
+            "ko": "예: 저장 전에 결재자 순서를 확인하세요.",
+            "en": "e.g. check the approver order before saving."
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "title",
+          "title": "제목",
+          "titleI18n": { "ko": "제목", "en": "Title" }
+        },
+        {
+          "id": "why",
+          "title": "왜 필요한가",
+          "titleI18n": { "ko": "왜 필요한가", "en": "Why it matters" }
+        },
+        {
+          "id": "steps",
+          "title": "단계",
+          "titleI18n": { "ko": "단계", "en": "Steps" }
+        },
+        {
+          "id": "summary",
+          "title": "요약",
+          "titleI18n": { "ko": "요약", "en": "Summary" }
+        },
+        {
+          "id": "check",
+          "title": "확인 질문",
+          "titleI18n": { "ko": "확인 질문", "en": "Check question" }
+        }
+      ]
+    },
+    {
+      "id": "kpi-highlight",
+      "kind": "video-brief",
+      "version": "1.0.0",
+      "name": "데이터·실적 하이라이트",
+      "nameI18n": {
+        "ko": "데이터·실적 하이라이트",
+        "en": "Performance highlight"
+      },
+      "description": "20~40초 실적 영상에 넣을 숫자와 강조할 변화를 정리하는 브리프",
+      "descriptionI18n": {
+        "ko": "20~40초 실적 영상에 넣을 숫자와 강조할 변화를 정리하는 브리프",
+        "en": "A brief for a 20–40 second results video: the numbers and the changes to emphasize."
+      },
+      "category": "기업 영상",
+      "categoryI18n": {
+        "ko": "기업 영상",
+        "en": "Business video"
+      },
+      "tags": ["데이터", "실적", "차트", "kpi", "numbers", "chart"],
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "video": {
+        "durationSec": { "min": 20, "max": 40, "default": 30 },
+        "aspects": ["16:9", "9:16", "1:1"],
+        "libraries": ["waapi", "anime"],
+        "requiresWebGL": false
+      },
+      "questions": [
+        {
+          "id": "period",
+          "label": "기간과 조직",
+          "labelI18n": {
+            "ko": "기간과 조직",
+            "en": "Period and organization"
+          },
+          "description": "숫자가 어느 기간, 어느 조직의 것인지 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "숫자가 어느 기간, 어느 조직의 것인지 적어 주세요.",
+            "en": "Say which period and organization the numbers cover."
+          },
+          "required": true,
+          "placeholder": "예: 2026년 1분기, 영업팀",
+          "placeholderI18n": {
+            "ko": "예: 2026년 1분기, 영업팀",
+            "en": "e.g. Q1 2026, sales team"
+          }
+        },
+        {
+          "id": "numbers",
+          "label": "숫자 표",
+          "labelI18n": {
+            "ko": "숫자 표",
+            "en": "Number table"
+          },
+          "description": "항목, 값, 단위를 줄마다 붙여 넣어 주세요. 입력한 숫자만 씁니다.",
+          "descriptionI18n": {
+            "ko": "항목, 값, 단위를 줄마다 붙여 넣어 주세요. 입력한 숫자만 씁니다.",
+            "en": "Paste item, value and unit on each line. Only these numbers are used."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 문의 건수 | 128 | 건",
+          "placeholderI18n": {
+            "ko": "예: 문의 건수 | 128 | 건",
+            "en": "e.g. inquiries | 128 | cases"
+          }
+        },
+        {
+          "id": "changes",
+          "label": "강조할 변화",
+          "labelI18n": {
+            "ko": "강조할 변화",
+            "en": "Changes to emphasize"
+          },
+          "description": "한 개에서 세 개까지 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "한 개에서 세 개까지 적어 주세요.",
+            "en": "List one to three."
+          },
+          "multiline": true,
+          "placeholder": "예: 지난 분기보다 12% 증가",
+          "placeholderI18n": {
+            "ko": "예: 지난 분기보다 12% 증가",
+            "en": "e.g. 12% higher than last quarter"
+          }
+        },
+        {
+          "id": "format",
+          "label": "숫자 표시 규칙",
+          "labelI18n": {
+            "ko": "숫자 표시 규칙",
+            "en": "Number format"
+          },
+          "description": "소수점 자리와 통화 단위를 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "소수점 자리와 통화 단위를 적어 주세요.",
+            "en": "State the decimal places and currency unit."
+          },
+          "placeholder": "예: 소수점 첫째 자리, 원화",
+          "placeholderI18n": {
+            "ko": "예: 소수점 첫째 자리, 원화",
+            "en": "e.g. one decimal place, KRW"
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "title",
+          "title": "제목",
+          "titleI18n": { "ko": "제목", "en": "Title" }
+        },
+        {
+          "id": "key-numbers",
+          "title": "핵심 숫자",
+          "titleI18n": { "ko": "핵심 숫자", "en": "Key numbers" }
+        },
+        {
+          "id": "trend",
+          "title": "추이 차트",
+          "titleI18n": { "ko": "추이 차트", "en": "Trend chart" }
+        },
+        {
+          "id": "changes",
+          "title": "강조 변화",
+          "titleI18n": { "ko": "강조 변화", "en": "Highlighted changes" }
+        },
+        {
+          "id": "close",
+          "title": "맺음",
+          "titleI18n": { "ko": "맺음", "en": "Closing" }
+        }
+      ]
+    },
+    {
+      "id": "announcement-teaser",
+      "kind": "video-brief",
+      "version": "1.0.0",
+      "name": "공지·이벤트 티저",
+      "nameI18n": {
+        "ko": "공지·이벤트 티저",
+        "en": "Announcement or event teaser"
+      },
+      "description": "10~20초 티저로 행사·공지의 핵심 정보와 행동 요청을 전하는 브리프",
+      "descriptionI18n": {
+        "ko": "10~20초 티저로 행사·공지의 핵심 정보와 행동 요청을 전하는 브리프",
+        "en": "A brief for a 10–20 second teaser that gives an event's key facts and a call to action."
+      },
+      "category": "기업 영상",
+      "categoryI18n": {
+        "ko": "기업 영상",
+        "en": "Business video"
+      },
+      "tags": ["공지", "이벤트", "티저", "announcement", "event", "teaser"],
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "video": {
+        "durationSec": { "min": 10, "max": 20, "default": 15 },
+        "aspects": ["16:9", "9:16", "1:1"],
+        "libraries": ["waapi"],
+        "requiresWebGL": false
+      },
+      "questions": [
+        {
+          "id": "name",
+          "label": "행사·공지 이름",
+          "labelI18n": {
+            "ko": "행사·공지 이름",
+            "en": "Event or notice name"
+          },
+          "description": "화면에 크게 보여 줄 이름을 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "화면에 크게 보여 줄 이름을 적어 주세요.",
+            "en": "Give the name that should appear large on screen."
+          },
+          "required": true,
+          "placeholder": "예: 하반기 보안 교육",
+          "placeholderI18n": {
+            "ko": "예: 하반기 보안 교육",
+            "en": "e.g. second-half security training"
+          }
+        },
+        {
+          "id": "when-where",
+          "label": "일시와 장소",
+          "labelI18n": {
+            "ko": "일시와 장소",
+            "en": "Date, time and place"
+          },
+          "description": "온라인이면 온라인이라고 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "온라인이면 온라인이라고 적어 주세요.",
+            "en": "Write online if it is online."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 11월 20일 14시, 3층 대회의실",
+          "placeholderI18n": {
+            "ko": "예: 11월 20일 14시, 3층 대회의실",
+            "en": "e.g. Nov 20, 2 p.m., third-floor hall"
+          }
+        },
+        {
+          "id": "cta",
+          "label": "행동 요청과 주소",
+          "labelI18n": {
+            "ko": "행동 요청과 주소",
+            "en": "Call to action and address"
+          },
+          "description": "신청·참석·확인 중 무엇을 해야 하는지와 화면에 보여 줄 주소를 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "신청·참석·확인 중 무엇을 해야 하는지와 화면에 보여 줄 주소를 적어 주세요.",
+            "en": "Say whether to apply, attend or confirm, and give any address to show."
+          },
+          "multiline": true,
+          "placeholder": "예: 신청 링크와 마감일을 화면에 표시",
+          "placeholderI18n": {
+            "ko": "예: 신청 링크와 마감일을 화면에 표시",
+            "en": "e.g. show the signup link and deadline"
+          }
+        },
+        {
+          "id": "mood",
+          "label": "분위기와 색",
+          "labelI18n": {
+            "ko": "분위기와 색",
+            "en": "Mood and color"
+          },
+          "description": "티저의 분위기와 HEX 색을 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "티저의 분위기와 HEX 색을 적어 주세요.",
+            "en": "Describe the mood and give HEX colors."
+          },
+          "placeholder": "예: 밝고 경쾌함, #FF7A00",
+          "placeholderI18n": {
+            "ko": "예: 밝고 경쾌함, #FF7A00",
+            "en": "e.g. bright and lively, #FF7A00"
+          }
+        }
+      ],
+      "sections": [
+        {
+          "id": "hook",
+          "title": "훅 문구",
+          "titleI18n": { "ko": "훅 문구", "en": "Hook" }
+        },
+        {
+          "id": "facts",
+          "title": "핵심 정보",
+          "titleI18n": { "ko": "핵심 정보", "en": "Key facts" }
+        },
+        {
+          "id": "when-where",
+          "title": "일시·장소",
+          "titleI18n": { "ko": "일시·장소", "en": "Date and place" }
+        },
+        {
+          "id": "cta",
+          "title": "행동 요청",
+          "titleI18n": { "ko": "행동 요청", "en": "Call to action" }
+        }
+      ]
+    },
+    {
+      "id": "product-3d-showcase",
+      "kind": "video-brief",
+      "version": "1.0.0",
+      "name": "3D 제품 쇼케이스",
+      "nameI18n": {
+        "ko": "3D 제품 쇼케이스",
+        "en": "3D product showcase"
+      },
+      "description": "15~30초 3D 제품 쇼케이스의 모양·특징·카메라 움직임을 정리하는 브리프",
+      "descriptionI18n": {
+        "ko": "15~30초 3D 제품 쇼케이스의 모양·특징·카메라 움직임을 정리하는 브리프",
+        "en": "A brief for a 15–30 second 3D product showcase: shape, features and camera moves."
+      },
+      "category": "기업 영상",
+      "categoryI18n": {
+        "ko": "기업 영상",
+        "en": "Business video"
+      },
+      "tags": ["3D", "제품", "WebGL", "showcase", "three"],
+      "license": "Apache-2.0",
+      "source": {
+        "type": "self"
+      },
+      "author": "NaddleOffice",
+      "locale": "ko",
+      "locales": ["ko", "en"],
+      "sha256": null,
+      "video": {
+        "durationSec": { "min": 15, "max": 30, "default": 20 },
+        "aspects": ["16:9", "9:16", "1:1"],
+        "libraries": ["three"],
+        "requiresWebGL": true
+      },
+      "questions": [
+        {
+          "id": "product",
+          "label": "제품 이름과 모양",
+          "labelI18n": {
+            "ko": "제품 이름과 모양",
+            "en": "Product name and shape"
+          },
+          "description": "기본 도형을 조합해 어떻게 보이는지 적어 주세요. 외부 3D 모델 파일은 쓰지 않습니다.",
+          "descriptionI18n": {
+            "ko": "기본 도형을 조합해 어떻게 보이는지 적어 주세요. 외부 3D 모델 파일은 쓰지 않습니다.",
+            "en": "Describe the shape as a mix of basic primitives. No external 3D model file is used."
+          },
+          "multiline": true,
+          "required": true,
+          "placeholder": "예: 둥근 상자 위에 원기둥 버튼 두 개",
+          "placeholderI18n": {
+            "ko": "예: 둥근 상자 위에 원기둥 버튼 두 개",
+            "en": "e.g. a rounded box with two cylinder buttons"
+          }
+        },
+        {
+          "id": "parts",
+          "label": "강조할 부위·특징",
+          "labelI18n": {
+            "ko": "강조할 부위·특징",
+            "en": "Parts or features to highlight"
+          },
+          "description": "세 가지 이하로 적어 주세요. 입력하지 않은 부위는 지어내지 않습니다.",
+          "descriptionI18n": {
+            "ko": "세 가지 이하로 적어 주세요. 입력하지 않은 부위는 지어내지 않습니다.",
+            "en": "List up to three. The model will not invent parts you did not enter."
+          },
+          "multiline": true,
+          "placeholder": "예: 상단 버튼, 옆면 손잡이, 바닥 받침",
+          "placeholderI18n": {
+            "ko": "예: 상단 버튼, 옆면 손잡이, 바닥 받침",
+            "en": "e.g. top button, side handle, base stand"
+          }
+        },
+        {
+          "id": "material",
+          "label": "배경과 재질 느낌",
+          "labelI18n": {
+            "ko": "배경과 재질 느낌",
+            "en": "Background and material feel"
+          },
+          "description": "배경색과 재질의 느낌을 적어 주세요.",
+          "descriptionI18n": {
+            "ko": "배경색과 재질의 느낌을 적어 주세요.",
+            "en": "Describe the background color and material feel."
+          },
+          "placeholder": "예: 어두운 배경, 무광 금속",
+          "placeholderI18n": {
+            "ko": "예: 어두운 배경, 무광 금속",
+            "en": "e.g. dark background, matte metal"
+          }
+        },
+        {
+          "id": "camera",
+          "label": "카메라 움직임",
+          "labelI18n": {
+            "ko": "카메라 움직임",
+            "en": "Camera move"
+          },
+          "description": "장면 전체의 카메라 움직임을 고르세요.",
+          "descriptionI18n": {
+            "ko": "장면 전체의 카메라 움직임을 고르세요.",
+            "en": "Choose the camera move for the scene."
+          },
+          "options": [
+            {
+              "id": "orbit",
+              "label": "회전",
+              "labelI18n": { "ko": "회전", "en": "Orbit" }
+            },
+            {
+              "id": "zoom",
+              "label": "줌",
+              "labelI18n": { "ko": "줌", "en": "Zoom" }
+            },
+            {
+              "id": "lock",
+              "label": "고정",
+              "labelI18n": { "ko": "고정", "en": "Lock" }
+            }
+          ],
+          "required": true
+        }
+      ],
+      "sections": [
+        {
+          "id": "entrance",
+          "title": "등장",
+          "titleI18n": { "ko": "등장", "en": "Entrance" }
+        },
+        {
+          "id": "orbit",
+          "title": "회전",
+          "titleI18n": { "ko": "회전", "en": "Orbit" }
+        },
+        {
+          "id": "callouts",
+          "title": "특징 콜아웃",
+          "titleI18n": { "ko": "특징 콜아웃", "en": "Feature callouts" }
+        },
+        {
+          "id": "close",
+          "title": "마무리",
+          "titleI18n": { "ko": "마무리", "en": "Closing" }
+        }
+      ]
     }
   ]
 }

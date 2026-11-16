@@ -30,6 +30,9 @@ const FAMILY_BY_KIND: Record<Exclude<TabKind, 'home' | 'help'>, EditorFamily> = 
   hwp: 'hwp',
   epub: 'epub',
   diagram: 'drawio',
+  // V3 video tabs are placeholders with no readable content; the family keeps
+  // the type label sane while READABLE_KINDS deliberately leaves video out.
+  video: 'html',
 }
 
 /** families whose live content can be read back over MCP */

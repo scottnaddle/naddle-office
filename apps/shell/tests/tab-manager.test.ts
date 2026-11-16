@@ -223,6 +223,13 @@ vi.mock('../../diagram/src/main/diagram-main', () => ({
   diagramTabIdentity: (id: number) => diagramTabIdentity(id),
 }))
 
+const createVideoView = vi.fn(() => makeFakeView())
+
+vi.mock('@naddle/video/main', () => ({
+  createVideoView: (...args: unknown[]) => createVideoView(...(args as [])),
+  videoIsDirty: () => false,
+}))
+
 import { helpTopicParam, helpViewUrl, TabManager } from '../src/main/tab-manager'
 import type { TabKind } from '../src/shared/tabs-api'
 
@@ -1109,9 +1116,10 @@ describe('file path bookkeeping', () => {
       const after = manager.list()
       if (after.length > before) opened.push(after[after.length - 1]!.kind)
     }
-    // file-less tabs (the in-app manual) have no path to rename, so they are
-    // opened by the enumeration but must not demand a RENAMABLE case
-    const fileless = new Set(['help'])
+    // file-less tabs (the in-app manual, and V3's untitled video placeholder)
+    // have no path to rename, so they are opened by the enumeration but must
+    // not demand a RENAMABLE case
+    const fileless = new Set(['help', 'video'])
     expect([...new Set(opened.filter((k) => !fileless.has(k)))].sort()).toEqual(
       RENAMABLE.map((c) => c.kind).sort(),
     )

@@ -206,6 +206,7 @@ function assertModuleTreesPresent() {
     '../hwp/out',
     '../epub/out',
     '../diagram/out/drawio/index.html',
+    '../../packages/naddle-video/out/renderer/index.html',
     '../../packages/cli/dist/genoffice.cjs',
     '../../packages/cli/dist/node_modules/jsdom',
   ]) {
@@ -605,6 +606,11 @@ const config = {
       from: '../diagram/out',
       to: 'modules/diagram',
       filter: ['**/*', '!drawio.stamp.json'],
+    },
+    // the video tab's placeholder renderer (V3)
+    {
+      from: '../../packages/naddle-video/out',
+      to: 'modules/video',
     },
     // PDF text editing engines: the bundled main resolves these under
     // Resources/wasm when node_modules is absent (apps/pdf/src/main/wasm-path.ts)

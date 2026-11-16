@@ -167,9 +167,9 @@ describe('the diagram editor runtime', () => {
 
   it('registers the draw.io scheme in the single privileged-scheme call, before ready', () => {
     expect(main.match(/registerPrivilegedSchemes\(\[/g)).toHaveLength(1)
-    expect(main).toContain(
-      'registerPrivilegedSchemes([EPUB_ASSET_SCHEME_PRIVILEGE, DRAWIO_SCHEME_PRIVILEGE])',
-    )
+    const call = main.slice(main.indexOf('registerPrivilegedSchemes(['))
+    expect(call).toContain('EPUB_ASSET_SCHEME_PRIVILEGE')
+    expect(call).toContain('DRAWIO_SCHEME_PRIVILEGE')
     expect(main.indexOf('configureDiagramRuntime({')).toBeLessThan(
       main.indexOf('app.whenReady().then(async () => {'),
     )

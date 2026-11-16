@@ -42,6 +42,7 @@ import {
   requestMindmapClose,
 } from '../../../mindmap/src/main/mindmap-main'
 import { createEpubView, epubIsDirty, requestEpubClose } from '../../../epub/src/main/epub-main'
+import { createVideoView } from '@naddle/video/main'
 import {
   createDiagramView,
   diagramIsDirty,
@@ -524,6 +525,9 @@ export class TabManager {
         return epubIsDirty(wc.id)
       case 'diagram':
         return diagramIsDirty(wc.id)
+      case 'video':
+        // V3 video tabs are placeholders with no document to save
+        return false
       default:
         return false
     }
@@ -750,6 +754,27 @@ export class TabManager {
           ? basename(openPath)
           : this.untitled('diagram', 'Diagram'),
       filePath: imported ? undefined : openPath,
+    })
+    this.activateTab(id)
+    return id
+  }
+
+  /**
+   * Opens an untitled video tab. V3 has no file open or file association for
+   * video; the tab holds a placeholder surface until authoring is connected.
+   */
+  openVideoTab(): string {
+    const view = createVideoView()
+    const id = `t${this.nextId++}`
+    this.shellWindow.contentView.addChildView(view)
+    view.setVisible(false)
+    this.trackHtmlFullScreen(view)
+    this.trackPaneFocus(view)
+    this.tabs.push({
+      id,
+      kind: 'video',
+      view,
+      title: this.untitled('video', 'Video'),
     })
     this.activateTab(id)
     return id
@@ -1433,6 +1458,8 @@ export class TabManager {
         return path ? this.openEpubTab(path) : null
       case 'diagram':
         return this.openDiagramTab(path)
+      case 'video':
+        return this.openVideoTab()
       default:
         return null
     }
@@ -2059,6 +2086,8 @@ export function createPlainEditorView(kind: DocumentTabKind, filePath?: string):
       return createEpubView(filePath)
     case 'diagram':
       return createDiagramView(filePath)
+    case 'video':
+      return createVideoView()
   }
 }
 

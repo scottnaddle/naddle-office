@@ -394,6 +394,8 @@ import {
 } from '../../../diagram/src/main/mcp-queries'
 import { exportDiagramHeadless } from '../../../diagram/src/main/headless-main'
 import type { DiagramMenuCommand } from '../../../diagram/src/shared/ipc'
+import { configureVideoRuntime } from '@naddle/video/main'
+import { VIDEO_SCHEME_PRIVILEGES } from '@naddle/video'
 import type {
   AutoSaveDefault,
   AuthorNameSetting,
@@ -746,6 +748,9 @@ const EPUB_OUT = app.isPackaged
 const DIAGRAM_OUT = app.isPackaged
   ? join(process.resourcesPath, 'modules', 'diagram')
   : join(APPS_ROOT, 'diagram', 'out')
+const VIDEO_OUT = app.isPackaged
+  ? join(process.resourcesPath, 'modules', 'video')
+  : join(APPS_ROOT, '..', 'packages', 'naddle-video', 'out')
 const SIDECAR_BIN = app.isPackaged
   ? join(process.resourcesPath, 'native', SIDECAR_EXE)
   : join(APPS_ROOT, 'sheets', 'native', 'xlsx-engine', 'target', 'release', SIDECAR_EXE)
@@ -891,10 +896,18 @@ configureDiagramRuntime({
   newDocumentDir: (id) => newDocumentFolderFor(id),
   writeNewDocument: (id, fileName, bytes) => writeProjectNewDocument(id, fileName, bytes),
 })
+configureVideoRuntime({
+  rendererUrl: process.env.VIDEO_RENDERER_URL,
+  rendererFile: join(VIDEO_OUT, 'renderer', 'index.html'),
+})
 // privileged-scheme registration is only legal before app ready, and only once
-// per process: the html module's call carries the book's asset scheme and the
-// diagram editor's draw.io scheme along
-registerPrivilegedSchemes([EPUB_ASSET_SCHEME_PRIVILEGE, DRAWIO_SCHEME_PRIVILEGE])
+// per process: the html module's call carries the book's asset scheme, the
+// diagram editor's draw.io scheme and the video stage/library schemes along
+registerPrivilegedSchemes([
+  EPUB_ASSET_SCHEME_PRIVILEGE,
+  DRAWIO_SCHEME_PRIVILEGE,
+  ...VIDEO_SCHEME_PRIVILEGES,
+])
 
 // ---- UI language ----
 // Persisted in userData/app-settings.json so the editor modules can read the
@@ -1168,6 +1181,7 @@ const tMain = createI18n({
     untitledHtml: '未命名 HTML',
     untitledMindmap: '未命名思维导图',
     untitledDiagram: '未命名图表',
+    untitledVideo: '未命名视频',
     untitledHwp: '未命名 HWP',
     untitledPdf: '未命名 PDF',
     menuNewSlide: 'AI Slides',
@@ -1175,6 +1189,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: '思维导图',
     menuNewDiagram: '图表',
+    menuNewVideo: '视频',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: '导出为 PDF…',
@@ -1326,6 +1341,7 @@ const tMain = createI18n({
     untitledHtml: 'Untitled HTML',
     untitledMindmap: 'Untitled Mind Map',
     untitledDiagram: 'Untitled Diagram',
+    untitledVideo: 'Untitled Video',
     untitledHwp: 'Untitled HWP',
     untitledPdf: 'Untitled PDF',
     menuNewSlide: 'AI Slides',
@@ -1333,6 +1349,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Mind Map',
     menuNewDiagram: 'Diagram',
+    menuNewVideo: 'Video',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Export as PDF…',
@@ -1484,6 +1501,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML chưa có tiêu đề',
     untitledMindmap: 'Sơ đồ tư duy chưa có tiêu đề',
     untitledDiagram: 'Sơ đồ chưa có tiêu đề',
+    untitledVideo: 'Video chưa có tiêu đề',
     untitledHwp: 'HWP chưa có tiêu đề',
     untitledPdf: 'PDF chưa có tiêu đề',
     menuNewSlide: 'AI Slides',
@@ -1491,6 +1509,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Sơ đồ tư duy',
     menuNewDiagram: 'Sơ đồ',
+    menuNewVideo: 'Video',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Xuất dưới dạng PDF…',
@@ -1647,6 +1666,7 @@ const tMain = createI18n({
     untitledHtml: '無題の HTML',
     untitledMindmap: '無題のマインドマップ',
     untitledDiagram: '無題のダイアグラム',
+    untitledVideo: '無題の動画',
     untitledHwp: '無題の HWP',
     untitledPdf: '無題の PDF',
     menuNewSlide: 'AI Slides',
@@ -1654,6 +1674,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'マインドマップ',
     menuNewDiagram: 'ダイアグラム',
+    menuNewVideo: '動画',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'PDF として書き出す…',
@@ -1811,6 +1832,7 @@ const tMain = createI18n({
     untitledHtml: '제목 없는 HTML',
     untitledMindmap: '제목 없는 마인드맵',
     untitledDiagram: '제목 없는 다이어그램',
+    untitledVideo: '제목 없는 영상',
     untitledHwp: '제목 없는 한글 문서',
     untitledPdf: '제목 없는 PDF',
     menuNewSlide: 'AI Slides',
@@ -1818,6 +1840,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: '마인드맵',
     menuNewDiagram: '다이어그램',
+    menuNewVideo: '영상',
     menuNewHwp: 'AI 한글',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'PDF로 내보내기…',
@@ -1973,6 +1996,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML sans titre',
     untitledMindmap: 'Carte mentale sans titre',
     untitledDiagram: 'Diagramme sans titre',
+    untitledVideo: 'Vidéo sans titre',
     untitledHwp: 'HWP sans titre',
     untitledPdf: 'PDF sans titre',
     menuNewSlide: 'AI Slides',
@@ -1980,6 +2004,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Carte mentale',
     menuNewDiagram: 'Diagramme',
+    menuNewVideo: 'Vidéo',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Exporter en PDF…',
@@ -2138,6 +2163,7 @@ const tMain = createI18n({
     untitledHtml: 'Unbenanntes HTML',
     untitledMindmap: 'Unbenannte Mindmap',
     untitledDiagram: 'Unbenanntes Diagramm',
+    untitledVideo: 'Unbenanntes Video',
     untitledHwp: 'Unbenanntes HWP',
     untitledPdf: 'Unbenanntes PDF',
     menuNewSlide: 'AI Slides',
@@ -2145,6 +2171,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Mindmap',
     menuNewDiagram: 'Diagramm',
+    menuNewVideo: 'Video',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Als PDF exportieren…',
@@ -2303,6 +2330,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML sin título',
     untitledMindmap: 'Mapa mental sin título',
     untitledDiagram: 'Diagrama sin título',
+    untitledVideo: 'Vídeo sin título',
     untitledHwp: 'HWP sin título',
     untitledPdf: 'PDF sin título',
     menuNewSlide: 'AI Slides',
@@ -2310,6 +2338,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Mapa mental',
     menuNewDiagram: 'Diagrama',
+    menuNewVideo: 'Vídeo',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Exportar como PDF…',
@@ -2467,6 +2496,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML ไม่มีชื่อ',
     untitledMindmap: 'แผนที่ความคิดไม่มีชื่อ',
     untitledDiagram: 'ไดอะแกรมไม่มีชื่อ',
+    untitledVideo: 'วิดีโอไม่มีชื่อ',
     untitledHwp: 'HWP ไม่มีชื่อ',
     untitledPdf: 'PDF ไม่มีชื่อ',
     menuNewSlide: 'AI Slides',
@@ -2474,6 +2504,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'แผนที่ความคิด',
     menuNewDiagram: 'ไดอะแกรม',
+    menuNewVideo: 'วิดีโอ',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'ส่งออกเป็น PDF…',
@@ -2627,6 +2658,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML tanpa judul',
     untitledMindmap: 'Peta pikiran tanpa judul',
     untitledDiagram: 'Diagram tanpa judul',
+    untitledVideo: 'Video tanpa judul',
     untitledHwp: 'HWP tanpa judul',
     untitledPdf: 'PDF tanpa judul',
     menuNewSlide: 'AI Slides',
@@ -2634,6 +2666,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Peta pikiran',
     menuNewDiagram: 'Diagram',
+    menuNewVideo: 'Video',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Ekspor sebagai PDF…',
@@ -2791,6 +2824,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML без названия',
     untitledMindmap: 'Интеллект-карта без названия',
     untitledDiagram: 'Диаграмма без названия',
+    untitledVideo: 'Видео без названия',
     untitledHwp: 'HWP без названия',
     untitledPdf: 'PDF без названия',
     menuNewSlide: 'AI Slides',
@@ -2798,6 +2832,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Интеллект-карта',
     menuNewDiagram: 'Диаграмма',
+    menuNewVideo: 'Видео',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Экспортировать в PDF…',
@@ -2954,6 +2989,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML بدون عنوان',
     untitledMindmap: 'خريطة ذهنية بدون عنوان',
     untitledDiagram: 'مخطط بدون عنوان',
+    untitledVideo: 'فيديو بدون عنوان',
     untitledHwp: 'HWP بدون عنوان',
     untitledPdf: 'PDF بدون عنوان',
     menuNewSlide: 'AI Slides',
@@ -2961,6 +2997,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'خريطة ذهنية',
     menuNewDiagram: 'مخطط',
+    menuNewVideo: 'فيديو',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'تصدير بتنسيق PDF…',
@@ -3114,6 +3151,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML sem título',
     untitledMindmap: 'Mapa mental sem título',
     untitledDiagram: 'Diagrama sem título',
+    untitledVideo: 'Vídeo sem título',
     untitledHwp: 'HWP sem título',
     untitledPdf: 'PDF sem título',
     menuNewSlide: 'AI Slides',
@@ -3121,6 +3159,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Mapa mental',
     menuNewDiagram: 'Diagrama',
+    menuNewVideo: 'Vídeo',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Exportar como PDF…',
@@ -3278,6 +3317,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML senza titolo',
     untitledMindmap: 'Mappa mentale senza titolo',
     untitledDiagram: 'Diagramma senza titolo',
+    untitledVideo: 'Video senza titolo',
     untitledHwp: 'HWP senza titolo',
     untitledPdf: 'PDF senza titolo',
     menuNewSlide: 'AI Slides',
@@ -3285,6 +3325,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Mappa mentale',
     menuNewDiagram: 'Diagramma',
+    menuNewVideo: 'Video',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Esporta come PDF…',
@@ -3442,6 +3483,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML bez tytułu',
     untitledMindmap: 'Mapa myśli bez tytułu',
     untitledDiagram: 'Diagram bez tytułu',
+    untitledVideo: 'Wideo bez tytułu',
     untitledHwp: 'HWP bez tytułu',
     untitledPdf: 'PDF bez tytułu',
     menuNewSlide: 'AI Slides',
@@ -3449,6 +3491,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Mapa myśli',
     menuNewDiagram: 'Diagram',
+    menuNewVideo: 'Wideo',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Eksportuj jako PDF…',
@@ -3605,6 +3648,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML bez názvu',
     untitledMindmap: 'Myšlenková mapa bez názvu',
     untitledDiagram: 'Diagram bez názvu',
+    untitledVideo: 'Video bez názvu',
     untitledHwp: 'HWP bez názvu',
     untitledPdf: 'PDF bez názvu',
     menuNewSlide: 'AI Slides',
@@ -3612,6 +3656,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Myšlenková mapa',
     menuNewDiagram: 'Diagram',
+    menuNewVideo: 'Video',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Exportovat jako PDF…',
@@ -3767,6 +3812,7 @@ const tMain = createI18n({
     untitledHtml: 'Naamloos HTML',
     untitledMindmap: 'Naamloze mindmap',
     untitledDiagram: 'Naamloos diagram',
+    untitledVideo: 'Naamloze video',
     untitledHwp: 'Naamloos HWP',
     untitledPdf: 'Naamloze PDF',
     menuNewSlide: 'AI Slides',
@@ -3774,6 +3820,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Mindmap',
     menuNewDiagram: 'Diagram',
+    menuNewVideo: 'Video',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Exporteren als PDF…',
@@ -3932,6 +3979,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML tanpa tajuk',
     untitledMindmap: 'Peta minda tanpa tajuk',
     untitledDiagram: 'Rajah tanpa tajuk',
+    untitledVideo: 'Video tanpa tajuk',
     untitledHwp: 'HWP tanpa tajuk',
     untitledPdf: 'PDF tanpa tajuk',
     menuNewSlide: 'AI Slides',
@@ -3939,6 +3987,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'Peta minda',
     menuNewDiagram: 'Rajah',
+    menuNewVideo: 'Video',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'Eksport sebagai PDF…',
@@ -4094,6 +4143,7 @@ const tMain = createI18n({
     untitledHtml: 'HTML ללא שם',
     untitledMindmap: 'מפת חשיבה ללא שם',
     untitledDiagram: 'תרשים ללא שם',
+    untitledVideo: 'וידאו ללא שם',
     untitledHwp: 'HWP ללא שם',
     untitledPdf: 'PDF ללא שם',
     menuNewSlide: 'AI Slides',
@@ -4101,6 +4151,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'מפת חשיבה',
     menuNewDiagram: 'תרשים',
+    menuNewVideo: 'וידאו',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'ייצוא כ-PDF…',
@@ -4255,6 +4306,7 @@ const tMain = createI18n({
     untitledHtml: 'अनाम HTML',
     untitledMindmap: 'अनाम माइंड मैप',
     untitledDiagram: 'अनाम आरेख',
+    untitledVideo: 'अनाम वीडियो',
     untitledHwp: 'अनाम HWP',
     untitledPdf: 'अनाम PDF',
     menuNewSlide: 'AI Slides',
@@ -4262,6 +4314,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: 'माइंड मैप',
     menuNewDiagram: 'आरेख',
+    menuNewVideo: 'वीडियो',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: 'PDF के रूप में निर्यात…',
@@ -4418,6 +4471,7 @@ const tMain = createI18n({
     untitledHtml: '未命名 HTML',
     untitledMindmap: '未命名心智圖',
     untitledDiagram: '未命名圖表',
+    untitledVideo: '未命名影片',
     untitledHwp: '未命名 HWP',
     untitledPdf: '未命名 PDF',
     menuNewSlide: 'AI Slides',
@@ -4425,6 +4479,7 @@ const tMain = createI18n({
     menuNewHtml: 'AI HTML',
     menuNewMindmap: '心智圖',
     menuNewDiagram: '圖表',
+    menuNewVideo: '影片',
     menuNewHwp: 'AI HWP',
     menuNewPdf: 'AI PDF',
     menuExportPdf: '匯出為 PDF…',
@@ -4908,6 +4963,9 @@ function applyMenuFor(kind: TabKind): void {
     case 'diagram':
       buildDiagramMenu()
       break
+    case 'video':
+      buildHomeMenu()
+      break
     default:
       buildHomeMenu()
   }
@@ -5147,7 +5205,9 @@ function createShellWindow(): void {
                     ? tm('untitledHwp')
                     : kind === 'diagram'
                       ? tm('untitledDiagram')
-                      : tm('untitledSheet'),
+                      : kind === 'video'
+                        ? tm('untitledVideo')
+                        : tm('untitledSheet'),
     // the tab strip is interface chrome, so its height follows the scale
     () => currentUiScale,
     // every split change: remember it, re-role the pane views, tell the strip
@@ -5876,6 +5936,14 @@ function newMindmapTab(): void {
 function newDiagramTab(): void {
   try {
     bindPendingDir('diagram', tabManager?.openDiagramTab())
+  } catch (err) {
+    surfaceNewTabError(err)
+  }
+}
+
+function newVideoTab(): void {
+  try {
+    bindPendingDir('video', tabManager?.openVideoTab())
   } catch (err) {
     surfaceNewTabError(err)
   }
@@ -7105,6 +7173,7 @@ const TAB_MENU_ICON: Record<TabKind, keyof MenuIconSet> = {
   hwp: 'hwp',
   epub: 'epub',
   diagram: 'diagram',
+  video: 'html',
   help: 'home',
 }
 
@@ -7153,6 +7222,16 @@ function newDocumentMenuItems(opts: {
   })
   if (items.length > 0 && opts.accelerator) {
     items[0] = { ...items[0], accelerator: opts.accelerator }
+  }
+  // The video tab is not a Home kind (V3): it appears after the visible home
+  // kinds in the File menu and the tab strip's "+" menu, but never in a menu
+  // that names its own shorter list (the macOS dock).
+  if (!opts.only) {
+    items.push({
+      label: tm('menuNewVideo'),
+      ...(opts.icons ? { icon: menuIcons().html } : {}),
+      click: () => newVideoTab(),
+    })
   }
   if (!opts.section || items.length === 0) return items
   return [
@@ -9642,6 +9721,8 @@ app.whenReady().then(async () => {
     epub: join(EPUB_OUT, 'renderer'),
     // the diagram tab's own partition gets the same root from the editor (diagram-session.ts)
     diagram: join(DIAGRAM_OUT, 'renderer'),
+    // the video tab's placeholder renderer (V3)
+    video: join(VIDEO_OUT, 'renderer'),
     // the manual shares the shell's own renderer bundle (help mode)
     help: join(__dirname, '../renderer'),
   })

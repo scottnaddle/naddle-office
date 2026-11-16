@@ -12,6 +12,7 @@ export type TabKind =
   | 'hwp'
   | 'epub'
   | 'diagram'
+  | 'video'
   | 'help'
 
 /** a tab that holds a document — every kind except the Home screen and the in-app manual */

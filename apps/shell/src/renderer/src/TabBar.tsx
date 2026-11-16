@@ -76,6 +76,15 @@ function HomeIcon() {
   )
 }
 
+function VideoIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor" />
+    </svg>
+  )
+}
+
 const KIND_ICON: Record<TabSummary['kind'], ReactElement> = {
   home: <HomeIcon />,
   docs: <FileKindIcon src={iconDocx} />,
@@ -88,6 +97,7 @@ const KIND_ICON: Record<TabSummary['kind'], ReactElement> = {
   hwp: <FileKindIcon src={iconHwp} />,
   epub: <FileKindIcon src={iconEpub} />,
   diagram: <FileKindIcon src={iconDiagram} />,
+  video: <VideoIcon />,
   help: <HelpIcon />,
 }
 

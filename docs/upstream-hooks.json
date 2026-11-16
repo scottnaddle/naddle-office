@@ -1740,6 +1740,15 @@
       "revert": "파일을 삭제한다",
       "round": "V1",
       "owner": "api"
+    },
+    {
+      "path": "tools/license-allowlist.mjs",
+      "kind": "modified",
+      "lines": "9",
+      "purpose": "Mediabunny(MPL-2.0) 프로덕션 의존성을 허용",
+      "revert": "MPL-2.0을 허용 목록에서 삭제한다",
+      "round": "V2",
+      "owner": "api"
     }
   ],
   "baseline": {

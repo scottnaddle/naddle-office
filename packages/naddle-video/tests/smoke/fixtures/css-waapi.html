@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #101418;
+      }
+      #bar {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 80px;
+        height: 60px;
+        background: #22d3ee;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="bar"></div>
+    <script>
+      document
+        .getElementById('bar')
+        .animate([{ transform: 'translateX(0px)' }, { transform: 'translateX(200px)' }], {
+          duration: 2000,
+          fill: 'both',
+          easing: 'linear',
+        })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "@naddle/video",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "NaddleOffice video render core: deterministic offscreen HTML capture and local WebCodecs encoding (main process only)",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./src/index.ts",
+    "./main": "./src/main/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "electron": "^43.7.6",
+    "esbuild": "^0.25.10",
+    "mediabunny": "1.66.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}

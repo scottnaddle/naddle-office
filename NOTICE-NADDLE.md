@@ -80,3 +80,21 @@ No prompt, question, sentence or code from that list or from the projects it
 links to is included; prompts were not copied.
 
 No ffmpeg binary is shipped with the app.
+
+The in-app render core (`packages/naddle-video`, Apache-2.0) bundles or uses
+these components:
+
+- three.js 0.170.0 — MIT License, Copyright © 2010-2024 three.js authors.
+  Official minified build (`three.module.min.js`) and `LICENSE`, unmodified,
+  under `packages/naddle-video/vendor/three/`.
+- anime.js 4.5.0 — MIT License, Copyright (c) 2025 Julian Garnier. Official
+  minified ESM bundle (`anime.esm.min.js`) and `LICENSE.md`, unmodified, under
+  `packages/naddle-video/vendor/anime/`.
+- Mediabunny 1.66.0 — Mozilla Public License 2.0, Copyright (c) 2026-present,
+  Vanilagy and contributors. Used unmodified as an npm dependency; no source
+  files are vendored and no changes are made. Mediabunny is used as a library
+  only. Its source is available at https://github.com/Vanilagy/mediabunny, and
+  the full MPL-2.0 text is distributed with the package
+  (`node_modules/mediabunny/LICENSE`).
+
+No GSAP is bundled. Still: no ffmpeg binary or ffmpeg.wasm is shipped.
